@@ -1,0 +1,20 @@
+PODS:
+  - ColorThiefSwift (0.4.1)
+  - ReachabilitySwift (5.0.0)
+
+DEPENDENCIES:
+  - ColorThiefSwift (>= 0.4.1)
+  - ReachabilitySwift
+
+SPEC REPOS:
+  trunk:
+    - ColorThiefSwift
+    - ReachabilitySwift
+
+SPEC CHECKSUMS:
+  ColorThiefSwift: 34455b0c204ab48d1138d6161a048e5225ec3174
+  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
+
+PODFILE CHECKSUM: c8c49ede72b7592a48fa8c34475a3c6495664498
+
+COCOAPODS: 1.9.3

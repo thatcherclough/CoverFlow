@@ -12,7 +12,7 @@ Unfortunately, CoverFlow will not run in the background, however a fix is being 
 CoverFlow is only compatible with Apple Music.
 
 ## Installation
-CoverFlow can be installed from the [App Store]().
+CoverFlow can be installed from the [App Store](https://apps.apple.com/us/app/coverflow/id1537471277).
 
 ## Credits
 - [@bermudalckt](https://twitter.com/bermudalckt) for advice and help with [ColorThief](https://github.com/yamoridon/ColorThiefSwift).

@@ -185,7 +185,8 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         startButtonText.text = "Start"
         
-        // TO-DO: stop backgrouning
+        // TO-DO: stop backgrounding
+        stopBackgrounding()
         
         if timer != nil {
             timer.invalidate()
@@ -227,7 +228,8 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                             startButtonText.text = "Starting..."
                             
                             DispatchQueue.global(qos: .background).async {
-                                // TO-DO: start backgrouning
+                                // TO-DO: start backgrounding
+                                self.startBackgrounding()
                                 
                                 self.start()
                             }
@@ -235,7 +237,8 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                             startButtonText.text = "Start"
                             
                             DispatchQueue.global(qos: .background).async {
-                                // TO-DO: stop backgrouning
+                                // TO-DO: stop backgrounding
+                                self.stopBackgrounding()
                                 
                                 if self.timer != nil {
                                     self.timer.invalidate()
@@ -308,11 +311,17 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                     }
                 }
                 
+                if self.backgroundPlayer != nil && !self.backgroundPlayer!.isPlaying {
+                    self.startBackgrounding()
+                }
+                
                 let currentSongAndArtist = self.getCurrentSongAndArtist()
                 if currentSongAndArtist != songAndArtist {
                     songAndArtist = currentSongAndArtist
                     self.setCurrentSongHues()
                     currentHueIndex = 0
+                    
+                    self.playAudio(fileName: "songChange", fileExtension: "mp3")
                 } else {
                     currentHueIndex += 1
                     if currentHueIndex >= self.currentHues.count {
@@ -420,6 +429,43 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     
     // MARK: Other
     
+    var audioPlayer: AVAudioPlayer?
+    func playAudio(fileName: String, fileExtension: String) {
+        do {
+            let audioFile = URL(fileURLWithPath: Bundle.main.path(forResource: fileName, ofType: fileExtension)!)
+            audioPlayer = try AVAudioPlayer(contentsOf: audioFile)
+            audioPlayer!.volume = 0.05
+            audioPlayer!.prepareToPlay()
+            audioPlayer!.play()
+        } catch {
+            alert(title: "Notice", body: "Could not play sound \"\(fileName).\(fileExtension)\".")
+        }
+    }
+    
+    var backgroundPlayer: AVAudioPlayer?
+    func startBackgrounding() {
+        do {
+            let audioCheck = URL(fileURLWithPath: Bundle.main.path(forResource: "audioCheck", ofType: "mp3")!)
+            backgroundPlayer = try AVAudioPlayer(contentsOf: audioCheck)
+            backgroundPlayer!.numberOfLoops = -1
+            backgroundPlayer!.prepareToPlay()
+            backgroundPlayer!.play()
+        } catch {
+            alert(title: "Notice", body: "Could not initialize background mode.")
+        }
+        
+        var backgroundTask = UIBackgroundTaskIdentifier(rawValue: 0)
+        backgroundTask = UIApplication.shared.beginBackgroundTask(expirationHandler: {
+            UIApplication.shared.endBackgroundTask(backgroundTask)
+        })
+    }
+    
+    func stopBackgrounding() {
+        if backgroundPlayer != nil && backgroundPlayer!.isPlaying {
+            backgroundPlayer?.stop()
+        }
+    }
+    
     func alertAndNotify(title: String, body: String) {
         alert(title: title, body: body)
         if canPushNotifications {
@@ -472,7 +518,8 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                 if ViewController.bridge != nil {
                     ViewController.bridge.disconnect()
                     
-                    // TO-DO: stop backgrouning
+                    // TO-DO: stop backgrounding
+                    stopBackgrounding()
                     
                     if timer != nil {
                         timer.invalidate()

@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		B6EE4D5E6C89C5D1D011CD19 /* Pods_CoverFlow.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE561888D47C9248FD364BBD /* Pods_CoverFlow.framework */; };
+		DD42841E254E743500E6E3D1 /* songChange.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DD42841D254E743500E6E3D1 /* songChange.mp3 */; };
+		DD428420254E74FF00E6E3D1 /* audioCheck.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DD42841F254E74FF00E6E3D1 /* audioCheck.mp3 */; };
 		DDAEDC98253CF53D002F3175 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDC97253CF53D002F3175 /* AppDelegate.swift */; };
 		DDAEDC9A253CF53D002F3175 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDC99253CF53D002F3175 /* SceneDelegate.swift */; };
 		DDAEDC9C253CF53D002F3175 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDC9B253CF53D002F3175 /* ViewController.swift */; };
@@ -41,6 +43,8 @@
 		66953F2EC209EF73DCB309AE /* Pods-TempName.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempName.release.xcconfig"; path = "Target Support Files/Pods-TempName/Pods-TempName.release.xcconfig"; sourceTree = "<group>"; };
 		90BB89A3DAB3B6ABDD25053E /* Pods-TempName.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempName.debug.xcconfig"; path = "Target Support Files/Pods-TempName/Pods-TempName.debug.xcconfig"; sourceTree = "<group>"; };
 		9FB6E60052D5E69CAB8CF1B2 /* Pods-CoverFlow.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoverFlow.debug.xcconfig"; path = "Target Support Files/Pods-CoverFlow/Pods-CoverFlow.debug.xcconfig"; sourceTree = "<group>"; };
+		DD42841D254E743500E6E3D1 /* songChange.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = songChange.mp3; path = CoverFlow/Assets.xcassets/songChange.mp3; sourceTree = "<group>"; };
+		DD42841F254E74FF00E6E3D1 /* audioCheck.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = audioCheck.mp3; path = CoverFlow/Assets.xcassets/audioCheck.mp3; sourceTree = "<group>"; };
 		DDAEDC94253CF53D002F3175 /* CoverFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoverFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDAEDC97253CF53D002F3175 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DDAEDC99253CF53D002F3175 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -95,6 +99,8 @@
 			children = (
 				DDAEDCAD253CF56F002F3175 /* CoverFlow-Bridging-Header.h */,
 				DDAEDCB1253CF585002F3175 /* HueSDK.framework */,
+				DD42841F254E74FF00E6E3D1 /* audioCheck.mp3 */,
+				DD42841D254E743500E6E3D1 /* songChange.mp3 */,
 				DDAEDC96253CF53D002F3175 /* CoverFlow */,
 				DDAEDC95253CF53D002F3175 /* Products */,
 				8CDE867E1AF6CD0C9F350EFD /* Pods */,
@@ -190,6 +196,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				DDAEDCA4253CF541002F3175 /* LaunchScreen.storyboard in Resources */,
+				DD42841E254E743500E6E3D1 /* songChange.mp3 in Resources */,
+				DD428420254E74FF00E6E3D1 /* audioCheck.mp3 in Resources */,
 				DDAEDCA1253CF541002F3175 /* Assets.xcassets in Resources */,
 				DDAEDC9F253CF53D002F3175 /* Main.storyboard in Resources */,
 			);
@@ -412,7 +420,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.thatcherclough.CoverFlow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "CoverFlow-Bridging-Header.h";
@@ -442,7 +450,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.thatcherclough.CoverFlow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "CoverFlow-Bridging-Header.h";

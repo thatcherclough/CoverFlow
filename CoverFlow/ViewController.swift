@@ -21,6 +21,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet var startButtonText: UILabel!
     
     var currentHues: [NSNumber] = []
+    var currentLightsStates: [String: PHSLightState] = [:]
     static var bridge: PHSBridge! = nil
     static var bridgeInfo: BridgeInfo! = nil
     static var authenticated: Bool = false
@@ -223,6 +224,8 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                             DispatchQueue.global(qos: .background).async {
                                 self.startBackgrounding()
                                 
+                                self.getCurrentLightsStates()
+                                
                                 self.start()
                             }
                         } else {
@@ -230,6 +233,8 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                             
                             DispatchQueue.global(qos: .background).async {
                                 self.stopBackgrounding()
+                                
+                                self.setCurrentLightsStates()
                                 
                                 if self.timer != nil {
                                     self.timer.invalidate()
@@ -255,6 +260,40 @@ class ViewController: UITableViewController, UITextFieldDelegate {
             builder?.bridgeConnectionObserver = self
             builder?.add(self)
         }, withAppName: "CoverFlow", withDeviceName: "iDevice")
+    }
+    
+    func getCurrentLightsStates() {
+        currentLightsStates.removeAll()
+        
+        for light in ViewController.bridge.bridgeState.getDevicesOf(.light) {
+            let lightName = (light as! PHSDevice).name!
+            
+            if ViewController.lights.contains(lightName) {
+                currentLightsStates[lightName] = (light as! PHSLightPoint).lightState
+            }
+        }
+    }
+    
+    func setCurrentLightsStates() {
+        for light in ViewController.bridge.bridgeState.getDevicesOf(.light) {
+            let lightName = (light as! PHSDevice).name!
+            
+            if ViewController.lights.contains(lightName) && currentLightsStates.keys.contains(lightName) {
+                let lightPoint = light as! PHSLightPoint
+                
+                lightPoint.update(currentLightsStates[lightName], allowedConnectionTypes: .local) { (responses, errors, returnCode) in
+                    if errors != nil && errors!.count > 0 {
+                        var errorText = "Could not restore light state."
+                        for generalError in errors! {
+                            if let error = generalError as? PHSClipError {
+                                errorText += " " + error.errorDescription + "."
+                            }
+                        }
+                        self.alertAndNotify(title: "Error", body: errorText)
+                    }
+                }
+            }
+        }
     }
     
     var timer: Timer!

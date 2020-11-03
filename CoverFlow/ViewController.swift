@@ -330,22 +330,12 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     }
     
     func getCurrentSongAndArtist() -> String {
-        var tries: Int = 0
-        var player = MPMusicPlayerController.systemMusicPlayer
-        var nowPlaying: MPMediaItem? = player.nowPlayingItem
-        var songName: Any? = nowPlaying!.value(forProperty: MPMediaItemPropertyTitle)
-        var artistName: Any? = nowPlaying!.value(forProperty: MPMediaItemPropertyArtist)
-        while ((nowPlaying == nil || songName == nil || artistName == nil) && tries <= 2) {
-            player = MPMusicPlayerController.systemMusicPlayer
-            nowPlaying = player.nowPlayingItem
-            if nowPlaying != nil {
-                songName = nowPlaying!.value(forProperty: MPMediaItemPropertyTitle)
-                artistName = nowPlaying!.value(forProperty: MPMediaItemPropertyArtist)
-            }
-            tries += 1
-        }
+        let player = MPMusicPlayerController.systemMusicPlayer
+        let nowPlaying: MPMediaItem? = player.nowPlayingItem
+        let songName: Any? = nowPlaying?.value(forProperty: MPMediaItemPropertyTitle)
+        let artistName: Any? = nowPlaying?.value(forProperty: MPMediaItemPropertyArtist)
         
-        if tries == 3 || (songName == nil || artistName == nil) {
+        if songName == nil || artistName == nil {
             return "N/A"
         } else {
             return (songName as! String) + (artistName as! String)
@@ -355,25 +345,13 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     func setCurrentSongHues() {
         currentHues.removeAll()
         
-        var tries: Int = 0
-        var player = MPMusicPlayerController.systemMusicPlayer
-        var nowPlaying: MPMediaItem? = player.nowPlayingItem
-        var albumArt: Any? = nowPlaying?.value(forProperty: MPMediaItemPropertyArtwork)
-        var image = nowPlaying!.artwork?.image(at: CGSize(width: 200, height: 200)) ?? nil
-        while ((nowPlaying == nil || albumArt == nil || image == nil) && tries <= 2) {
-            player = MPMusicPlayerController.systemMusicPlayer
-            nowPlaying = player.nowPlayingItem
-            if nowPlaying != nil {
-                albumArt = nowPlaying!.value(forProperty: MPMediaItemPropertyArtwork)
-                if albumArt != nil {
-                    image = nowPlaying!.artwork!.image(at: CGSize(width: 200, height: 200)) ?? nil
-                }
-            }
-            tries += 1
-        }
+        let player = MPMusicPlayerController.systemMusicPlayer
+        let nowPlaying: MPMediaItem? = player.nowPlayingItem
+        let albumArt: Any? = nowPlaying?.value(forProperty: MPMediaItemPropertyArtwork)
+        let image = nowPlaying?.artwork?.image(at: CGSize(width: 200, height: 200)) ?? nil
         
-        if tries == 3 || albumArt == nil || image == nil {
-            alertAndNotify(title: "Error", body: "Could not get the current song's album cover. Try restarting Cover Flow and Apple Music.")
+        if albumArt == nil || image == nil {
+            alertAndNotify(title: "Error", body: "Could not get the current song's album cover. Try skipping the song and coming back to it.")
         } else {
             guard let colors = ColorThief.getPalette(from: image!, colorCount: 4, quality: 5, ignoreWhite: true) else {
                 self.alertAndNotify(title: "Notice", body: "Could not extract colors form the current song's album cover.")

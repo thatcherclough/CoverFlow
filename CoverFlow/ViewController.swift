@@ -162,19 +162,13 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     var hasPermissions: Bool = false
     var canPushNotifications: Bool = false
     func checkPermissions() {
-        SKCloudServiceController.requestAuthorization { status in
-            if SKCloudServiceController.authorizationStatus() == .authorized {
-                SKCloudServiceController().requestCapabilities { capabilities, error in
-                    if capabilities.contains(.musicCatalogPlayback) {
-                        let _ = ProcessInfo.processInfo.hostName
-                        self.hasPermissions = true
-                        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
-                            granted, error in
-                            self.canPushNotifications = granted
-                        }
-                    } else {
-                        self.alert(title: "Notice", body: "CoverFlow will not work on this device because this device does not have Apple Music.")
-                    }
+        MPMediaLibrary.requestAuthorization { authorizationStatus in
+            if authorizationStatus == .authorized {
+                let _ = ProcessInfo.processInfo.hostName
+                self.hasPermissions = true
+                UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+                    granted, error in
+                    self.canPushNotifications = granted
                 }
             } else {
                 self.alert(title: "Notice", body: "CoverFlow will not work on this device because Apple Music access is not enabled. Please enable \"Media and Apple Music\" access in settings.")
@@ -185,7 +179,6 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         startButtonText.text = "Start"
         
-        // TO-DO: stop backgrounding
         stopBackgrounding()
         
         if timer != nil {
@@ -228,7 +221,6 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                             startButtonText.text = "Starting..."
                             
                             DispatchQueue.global(qos: .background).async {
-                                // TO-DO: start backgrounding
                                 self.startBackgrounding()
                                 
                                 self.start()
@@ -237,7 +229,6 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                             startButtonText.text = "Start"
                             
                             DispatchQueue.global(qos: .background).async {
-                                // TO-DO: stop backgrounding
                                 self.stopBackgrounding()
                                 
                                 if self.timer != nil {
@@ -518,7 +509,6 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                 if ViewController.bridge != nil {
                     ViewController.bridge.disconnect()
                     
-                    // TO-DO: stop backgrounding
                     stopBackgrounding()
                     
                     if timer != nil {

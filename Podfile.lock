@@ -1,9 +1,11 @@
 PODS:
   - ColorThiefSwift (0.4.1)
+  - Keys (1.0.1)
   - ReachabilitySwift (5.0.0)
 
 DEPENDENCIES:
   - ColorThiefSwift (>= 0.4.1)
+  - Keys (from `Pods/CocoaPodsKeys`)
   - ReachabilitySwift
 
 SPEC REPOS:
@@ -11,10 +13,15 @@ SPEC REPOS:
     - ColorThiefSwift
     - ReachabilitySwift
 
+EXTERNAL SOURCES:
+  Keys:
+    :path: Pods/CocoaPodsKeys
+
 SPEC CHECKSUMS:
   ColorThiefSwift: 34455b0c204ab48d1138d6161a048e5225ec3174
+  Keys: a576f4c9c1c641ca913a959a9c62ed3f215a8de9
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
 
-PODFILE CHECKSUM: c8c49ede72b7592a48fa8c34475a3c6495664498
+PODFILE CHECKSUM: 28dba13c6b6e36e321c7708b06ff6305e8b579a7
 
 COCOAPODS: 1.9.3

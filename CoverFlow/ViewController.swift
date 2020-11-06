@@ -11,10 +11,14 @@ import ColorThiefSwift
 import StoreKit
 import Reachability
 import AVFoundation
+import Keys
 
 class ViewController: UITableViewController, UITextFieldDelegate {
     
     // MARK: Cells, slider, and variables
+    
+    let keys = CoverFlowKeys()
+    var countryCode: String!
     
     @IBOutlet var bridgeCell: UITableViewCell!
     @IBOutlet var lightsCell: UITableViewCell!
@@ -74,6 +78,8 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        getCountryCode()
+        
         observeReachability()
         
         colorDurationSlider.minimumValue = 0
@@ -116,6 +122,19 @@ class ViewController: UITableViewController, UITextFieldDelegate {
         setUpLastConnectedBridge()
     }
     
+    func getCountryCode() {
+        DispatchQueue.global(qos: .background).async {
+            let controller = SKCloudServiceController()
+            controller.requestStorefrontCountryCode { countryCode, error in
+                if error != nil {
+                    self.countryCode = "us"
+                } else {
+                    self.countryCode = countryCode
+                }
+            }
+        }
+    }
+    
     func setUpLastConnectedBridge() {
         var lastConnectedBridge: BridgeInfo! {
             get {
@@ -127,6 +146,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                 }
             }
         }
+        
         if lastConnectedBridge != nil {
             ViewController.bridgeInfo = lastConnectedBridge
         }
@@ -302,7 +322,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
         var songAndArtist = getCurrentSongAndArtist()
         let wait = self.colorDuration + self.transitionDuration
         
-        setCurrentSongHues()
+        getCoverImageAndSetCurrentSongHues()
         
         DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(withTimeInterval: wait, repeats: true) { (timer) in
@@ -348,7 +368,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                 let currentSongAndArtist = self.getCurrentSongAndArtist()
                 if currentSongAndArtist != songAndArtist {
                     songAndArtist = currentSongAndArtist
-                    self.setCurrentSongHues()
+                    self.getCoverImageAndSetCurrentSongHues()
                     currentHueIndex = 0
                     
                     self.playAudio(fileName: "songChange", fileExtension: "mp3")
@@ -371,44 +391,140 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     func getCurrentSongAndArtist() -> String {
         let player = MPMusicPlayerController.systemMusicPlayer
         let nowPlaying: MPMediaItem? = player.nowPlayingItem
-        let songName: Any? = nowPlaying?.value(forProperty: MPMediaItemPropertyTitle)
-        let artistName: Any? = nowPlaying?.value(forProperty: MPMediaItemPropertyArtist)
+        let songName = nowPlaying?.title
+        let artistName = nowPlaying?.artist
         
         if songName == nil || artistName == nil {
             return "N/A"
         } else {
-            return (songName as! String) + (artistName as! String)
+            return songName! + artistName!
         }
     }
     
-    func setCurrentSongHues() {
-        currentHues.removeAll()
-        
+    func getCoverImageAndSetCurrentSongHues() {
         let player = MPMusicPlayerController.systemMusicPlayer
         let nowPlaying: MPMediaItem? = player.nowPlayingItem
-        let albumArt: Any? = nowPlaying?.value(forProperty: MPMediaItemPropertyArtwork)
-        let image = nowPlaying?.artwork?.image(at: CGSize(width: 200, height: 200)) ?? nil
+        let albumArt = nowPlaying?.artwork
+        let albumName = nowPlaying?.albumTitle
+        let albumArtistName = nowPlaying?.albumArtist
         
-        if albumArt == nil || image == nil {
-            alertAndNotify(title: "Error", body: "Could not get the current song's album cover. Try skipping the song and coming back to it.")
+        if nowPlaying != nil {
+            let image = albumArt?.image(at: CGSize(width: 200, height: 200)) ?? nil
+            
+            if image != nil {
+                setCurrentSongHues(image: image!)
+            } else {
+                if albumName != nil && albumArtistName != nil {
+                    self.getCoverFromAPI(albumName: albumName!, albumArtistName: albumArtistName!) { (url) in
+                        if url != nil {
+                            self.getData(from: URL(string: url!)!) { data, response, error in
+                                if data == nil || error != nil {
+                                    self.alertAndNotify(title: "Error", body: "Could not downlaod the current song's album cover.")
+                                    return
+                                }
+                                
+                                DispatchQueue.main.async() {
+                                    let image = UIImage(data: data!)
+                                    self.setCurrentSongHues(image: image!)
+                                }
+                            }
+                        } else {
+                            self.alertAndNotify(title: "Error", body: "Could not get the current song's album cover. The Apple Music API did not return a URL.")
+                        }
+                    }
+                } else {
+                    alertAndNotify(title: "Error", body: "Could not get the current song's album cover. Album name or album artist is nil.")
+                }
+            }
         } else {
-            guard let colors = ColorThief.getPalette(from: image!, colorCount: 4, quality: 5, ignoreWhite: true) else {
-                self.alertAndNotify(title: "Notice", body: "Could not extract colors form the current song's album cover.")
+            alertAndNotify(title: "Error", body: "Could not get the current song's album cover. Now playing item is nil.")
+        }
+    }
+    
+    func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
+        URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
+    }
+    
+    func getCoverFromAPI(albumName: String, albumArtistName: String, completion: @escaping (String?)->()) {
+        let searchTerm  = albumName.replacingOccurrences(of: " ", with: "+")
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api.music.apple.com"
+        components.path = "/v1/catalog/\(countryCode ?? "us")/search"
+        components.queryItems = [
+            URLQueryItem(name: "term", value: searchTerm),
+            URLQueryItem(name: "limit", value: "25"),
+            URLQueryItem(name: "types", value: "albums"),
+        ]
+        let url = components.url!
+        
+        let session = URLSession.shared
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(keys.appleMusicAPIKey1)", forHTTPHeaderField: "Authorization")
+        
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { data, response, error in
+            guard error == nil else {
+                return
+            }
+            guard let data = data else {
                 return
             }
             
-            for color in colors {
-                let rgb = rgbToHue(r: CGFloat(color.r), g: CGFloat(color.g), b: CGFloat(color.b))
-                let hue: CGFloat = rgb.h
-                let saturation: CGFloat = rgb.s
-                if hue > 0 && saturation > 0.2 {
-                    currentHues.append((hue * 182) as NSNumber)
+            do {
+                if let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String: Any] {
+                    if let results = json["results"] as? [String: Any] {
+                        if let albums = results["albums"] as? [String: Any] {
+                            if let data = albums["data"] as? NSArray {
+                                for album in data {
+                                    guard let albumJson = album as? [String: Any] else {
+                                        continue
+                                    }
+                                    guard let attributes = albumJson["attributes"] as? [String: Any] else {
+                                        continue
+                                    }
+                                    
+                                    if (attributes["name"] as! String == albumName) && (attributes["artistName"] as! String == albumArtistName) {
+                                        guard let artwork = attributes["artwork"] as? [String: Any] else {
+                                            continue
+                                        }
+                                        
+                                        var url = artwork["url"] as? String
+                                        url = url?.replacingOccurrences(of: "{w}", with: "200")
+                                        url = url?.replacingOccurrences(of: "{h}", with: "200")
+                                        return completion(url)
+                                    }
+                                }
+                                return completion(nil)
+                            }
+                        }
+                    }
                 }
+            } catch {
+                return
             }
-            
-            if currentHues.isEmpty {
-                alertAndNotify(title: "Notice", body: "The current song's album cover does not have any distinct colors.")
+        })
+        task.resume()
+    }
+    
+    func setCurrentSongHues(image: UIImage) {
+        currentHues.removeAll()
+        
+        guard let colors = ColorThief.getPalette(from: image, colorCount: 4, quality: 5, ignoreWhite: true) else {
+            self.alertAndNotify(title: "Notice", body: "Could not extract colors form the current song's album cover.")
+            return
+        }
+        
+        for color in colors {
+            let rgb = rgbToHue(r: CGFloat(color.r), g: CGFloat(color.g), b: CGFloat(color.b))
+            let hue: CGFloat = rgb.h
+            let saturation: CGFloat = rgb.s
+            if hue > 0 && saturation > 0.2 {
+                currentHues.append((hue * 182) as NSNumber)
             }
+        }
+        
+        if currentHues.isEmpty {
+            alertAndNotify(title: "Notice", body: "The current song's album cover does not have any distinct colors.")
         }
     }
     

@@ -9,6 +9,9 @@ CoverFlow uses [ColorThief](https://github.com/yamoridon/ColorThiefSwift) to fin
 
 CoverFlow is only compatible with Apple Music.
 
+Note: While this project will compile, it will not run properly because an Apple Music API key is required when running ``pod install``. 
+Instruction for obtains this key can be found [here](https://developer.apple.com/documentation/applemusicapi/getting_keys_and_creating_tokens). 
+In addition to following those instructions, I also used [this python program](https://github.com/pelauimagineering/apple-music-token-generator) to generate the key after gathering the necessary information.
 ## Installation
 CoverFlow can be installed from the [App Store](https://apps.apple.com/us/app/coverflow/id1537471277).
 

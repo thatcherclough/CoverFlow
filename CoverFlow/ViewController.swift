@@ -11,16 +11,21 @@ import ColorThiefSwift
 import StoreKit
 import Reachability
 import AVFoundation
+import Keys
 
 class ViewController: UITableViewController, UITextFieldDelegate {
     
     // MARK: Cells, slider, and variables
+    
+    let keys = CoverFlowKeys()
+    var countryCode: String!
     
     @IBOutlet var bridgeCell: UITableViewCell!
     @IBOutlet var lightsCell: UITableViewCell!
     @IBOutlet var startButtonText: UILabel!
     
     var currentHues: [NSNumber] = []
+    var currentLightsStates: [String: PHSLightState] = [:]
     static var bridge: PHSBridge! = nil
     static var bridgeInfo: BridgeInfo! = nil
     static var authenticated: Bool = false
@@ -73,6 +78,8 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        getCountryCode()
+        
         observeReachability()
         
         colorDurationSlider.minimumValue = 0
@@ -115,6 +122,19 @@ class ViewController: UITableViewController, UITextFieldDelegate {
         setUpLastConnectedBridge()
     }
     
+    func getCountryCode() {
+        DispatchQueue.global(qos: .background).async {
+            let controller = SKCloudServiceController()
+            controller.requestStorefrontCountryCode { countryCode, error in
+                if error != nil {
+                    self.countryCode = "us"
+                } else {
+                    self.countryCode = countryCode
+                }
+            }
+        }
+    }
+    
     func setUpLastConnectedBridge() {
         var lastConnectedBridge: BridgeInfo! {
             get {
@@ -126,6 +146,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                 }
             }
         }
+        
         if lastConnectedBridge != nil {
             ViewController.bridgeInfo = lastConnectedBridge
         }
@@ -162,19 +183,13 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     var hasPermissions: Bool = false
     var canPushNotifications: Bool = false
     func checkPermissions() {
-        SKCloudServiceController.requestAuthorization { status in
-            if SKCloudServiceController.authorizationStatus() == .authorized {
-                SKCloudServiceController().requestCapabilities { capabilities, error in
-                    if capabilities.contains(.musicCatalogPlayback) {
-                        let _ = ProcessInfo.processInfo.hostName
-                        self.hasPermissions = true
-                        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
-                            granted, error in
-                            self.canPushNotifications = granted
-                        }
-                    } else {
-                        self.alert(title: "Notice", body: "CoverFlow will not work on this device because this device does not have Apple Music.")
-                    }
+        MPMediaLibrary.requestAuthorization { authorizationStatus in
+            if authorizationStatus == .authorized {
+                let _ = ProcessInfo.processInfo.hostName
+                self.hasPermissions = true
+                UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+                    granted, error in
+                    self.canPushNotifications = granted
                 }
             } else {
                 self.alert(title: "Notice", body: "CoverFlow will not work on this device because Apple Music access is not enabled. Please enable \"Media and Apple Music\" access in settings.")
@@ -185,7 +200,6 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         startButtonText.text = "Start"
         
-        // TO-DO: stop backgrounding
         stopBackgrounding()
         
         if timer != nil {
@@ -228,8 +242,9 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                             startButtonText.text = "Starting..."
                             
                             DispatchQueue.global(qos: .background).async {
-                                // TO-DO: start backgrounding
                                 self.startBackgrounding()
+                                
+                                self.getCurrentLightsStates()
                                 
                                 self.start()
                             }
@@ -237,8 +252,9 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                             startButtonText.text = "Start"
                             
                             DispatchQueue.global(qos: .background).async {
-                                // TO-DO: stop backgrounding
                                 self.stopBackgrounding()
+                                
+                                self.setCurrentLightsStates()
                                 
                                 if self.timer != nil {
                                     self.timer.invalidate()
@@ -266,13 +282,47 @@ class ViewController: UITableViewController, UITextFieldDelegate {
         }, withAppName: "CoverFlow", withDeviceName: "iDevice")
     }
     
+    func getCurrentLightsStates() {
+        currentLightsStates.removeAll()
+        
+        for light in ViewController.bridge.bridgeState.getDevicesOf(.light) {
+            let lightName = (light as! PHSDevice).name!
+            
+            if ViewController.lights.contains(lightName) {
+                currentLightsStates[lightName] = (light as! PHSLightPoint).lightState
+            }
+        }
+    }
+    
+    func setCurrentLightsStates() {
+        for light in ViewController.bridge.bridgeState.getDevicesOf(.light) {
+            let lightName = (light as! PHSDevice).name!
+            
+            if ViewController.lights.contains(lightName) && currentLightsStates.keys.contains(lightName) {
+                let lightPoint = light as! PHSLightPoint
+                
+                lightPoint.update(currentLightsStates[lightName], allowedConnectionTypes: .local) { (responses, errors, returnCode) in
+                    if errors != nil && errors!.count > 0 {
+                        var errorText = "Could not restore light state."
+                        for generalError in errors! {
+                            if let error = generalError as? PHSClipError {
+                                errorText += " " + error.errorDescription + "."
+                            }
+                        }
+                        self.alertAndNotify(title: "Error", body: errorText)
+                    }
+                }
+            }
+        }
+    }
+    
     var timer: Timer!
     func start() {
         var currentHueIndex: Int = 0
         var songAndArtist = getCurrentSongAndArtist()
         let wait = self.colorDuration + self.transitionDuration
         
-        setCurrentSongHues()
+        getCoverImageAndSetCurrentSongHues()
         
         DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(withTimeInterval: wait, repeats: true) { (timer) in
@@ -318,7 +368,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                 let currentSongAndArtist = self.getCurrentSongAndArtist()
                 if currentSongAndArtist != songAndArtist {
                     songAndArtist = currentSongAndArtist
-                    self.setCurrentSongHues()
+                    self.getCoverImageAndSetCurrentSongHues()
                     currentHueIndex = 0
                     
                     self.playAudio(fileName: "songChange", fileExtension: "mp3")
@@ -339,68 +389,142 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     }
     
     func getCurrentSongAndArtist() -> String {
-        var tries: Int = 0
-        var player = MPMusicPlayerController.systemMusicPlayer
-        var nowPlaying: MPMediaItem? = player.nowPlayingItem
-        var songName: Any? = nowPlaying!.value(forProperty: MPMediaItemPropertyTitle)
-        var artistName: Any? = nowPlaying!.value(forProperty: MPMediaItemPropertyArtist)
-        while ((nowPlaying == nil || songName == nil || artistName == nil) && tries <= 2) {
-            player = MPMusicPlayerController.systemMusicPlayer
-            nowPlaying = player.nowPlayingItem
-            if nowPlaying != nil {
-                songName = nowPlaying!.value(forProperty: MPMediaItemPropertyTitle)
-                artistName = nowPlaying!.value(forProperty: MPMediaItemPropertyArtist)
-            }
-            tries += 1
-        }
+        let player = MPMusicPlayerController.systemMusicPlayer
+        let nowPlaying: MPMediaItem? = player.nowPlayingItem
+        let songName = nowPlaying?.title
+        let artistName = nowPlaying?.artist
         
-        if tries == 3 || (songName == nil || artistName == nil) {
+        if songName == nil || artistName == nil {
             return "N/A"
         } else {
-            return (songName as! String) + (artistName as! String)
+            return songName! + artistName!
         }
     }
     
-    func setCurrentSongHues() {
-        currentHues.removeAll()
+    func getCoverImageAndSetCurrentSongHues() {
+        let player = MPMusicPlayerController.systemMusicPlayer
+        let nowPlaying: MPMediaItem? = player.nowPlayingItem
+        let albumArt = nowPlaying?.artwork
+        let albumName = nowPlaying?.albumTitle
+        let albumArtistName = nowPlaying?.albumArtist
         
-        var tries: Int = 0
-        var player = MPMusicPlayerController.systemMusicPlayer
-        var nowPlaying: MPMediaItem? = player.nowPlayingItem
-        var albumArt: Any? = nowPlaying?.value(forProperty: MPMediaItemPropertyArtwork)
-        var image = nowPlaying!.artwork?.image(at: CGSize(width: 200, height: 200)) ?? nil
-        while ((nowPlaying == nil || albumArt == nil || image == nil) && tries <= 2) {
-            player = MPMusicPlayerController.systemMusicPlayer
-            nowPlaying = player.nowPlayingItem
-            if nowPlaying != nil {
-                albumArt = nowPlaying!.value(forProperty: MPMediaItemPropertyArtwork)
-                if albumArt != nil {
-                    image = nowPlaying!.artwork!.image(at: CGSize(width: 200, height: 200)) ?? nil
+        if nowPlaying != nil {
+            let image = albumArt?.image(at: CGSize(width: 200, height: 200)) ?? nil
+            
+            if image != nil {
+                setCurrentSongHues(image: image!)
+            } else {
+                if albumName != nil && albumArtistName != nil {
+                    self.getCoverFromAPI(albumName: albumName!, albumArtistName: albumArtistName!) { (url) in
+                        if url != nil {
+                            self.getData(from: URL(string: url!)!) { data, response, error in
+                                if data == nil || error != nil {
+                                    self.alertAndNotify(title: "Error", body: "Could not downlaod the current song's album cover.")
+                                    return
+                                }
+                                
+                                DispatchQueue.main.async() {
+                                    let image = UIImage(data: data!)
+                                    self.setCurrentSongHues(image: image!)
+                                }
+                            }
+                        } else {
+                            self.alertAndNotify(title: "Error", body: "Could not get the current song's album cover. The Apple Music API did not return a URL.")
+                        }
+                    }
+                } else {
+                    alertAndNotify(title: "Error", body: "Could not get the current song's album cover. Album name or album artist is nil.")
                 }
             }
-            tries += 1
-        }
-        
-        if tries == 3 || albumArt == nil || image == nil {
-            alertAndNotify(title: "Error", body: "Could not get the current song's album cover. Try restarting Cover Flow and Apple Music.")
         } else {
-            guard let colors = ColorThief.getPalette(from: image!, colorCount: 4, quality: 5, ignoreWhite: true) else {
-                self.alertAndNotify(title: "Notice", body: "Could not extract colors form the current song's album cover.")
+            alertAndNotify(title: "Error", body: "Could not get the current song's album cover. Now playing item is nil.")
+        }
+    }
+    
+    func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
+        URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
+    }
+    
+    func getCoverFromAPI(albumName: String, albumArtistName: String, completion: @escaping (String?)->()) {
+        let searchTerm  = albumName.replacingOccurrences(of: " ", with: "+")
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api.music.apple.com"
+        components.path = "/v1/catalog/\(countryCode ?? "us")/search"
+        components.queryItems = [
+            URLQueryItem(name: "term", value: searchTerm),
+            URLQueryItem(name: "limit", value: "25"),
+            URLQueryItem(name: "types", value: "albums"),
+        ]
+        let url = components.url!
+        
+        let session = URLSession.shared
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(keys.appleMusicAPIKey1)", forHTTPHeaderField: "Authorization")
+        
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { data, response, error in
+            guard error == nil else {
+                return
+            }
+            guard let data = data else {
                 return
             }
             
-            for color in colors {
-                let rgb = rgbToHue(r: CGFloat(color.r), g: CGFloat(color.g), b: CGFloat(color.b))
-                let hue: CGFloat = rgb.h
-                let saturation: CGFloat = rgb.s
-                if hue > 0 && saturation > 0.2 {
-                    currentHues.append((hue * 182) as NSNumber)
+            do {
+                if let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String: Any] {
+                    if let results = json["results"] as? [String: Any] {
+                        if let albums = results["albums"] as? [String: Any] {
+                            if let data = albums["data"] as? NSArray {
+                                for album in data {
+                                    guard let albumJson = album as? [String: Any] else {
+                                        continue
+                                    }
+                                    guard let attributes = albumJson["attributes"] as? [String: Any] else {
+                                        continue
+                                    }
+                                    
+                                    if (attributes["name"] as! String == albumName) && (attributes["artistName"] as! String == albumArtistName) {
+                                        guard let artwork = attributes["artwork"] as? [String: Any] else {
+                                            continue
+                                        }
+                                        
+                                        var url = artwork["url"] as? String
+                                        url = url?.replacingOccurrences(of: "{w}", with: "200")
+                                        url = url?.replacingOccurrences(of: "{h}", with: "200")
+                                        return completion(url)
+                                    }
+                                }
+                                return completion(nil)
+                            }
+                        }
+                    }
                 }
+            } catch {
+                return
             }
-            
-            if currentHues.isEmpty {
-                alertAndNotify(title: "Notice", body: "The current song's album cover does not have any distinct colors.")
+        })
+        task.resume()
+    }
+    
+    func setCurrentSongHues(image: UIImage) {
+        currentHues.removeAll()
+        
+        guard let colors = ColorThief.getPalette(from: image, colorCount: 4, quality: 5, ignoreWhite: true) else {
+            self.alertAndNotify(title: "Notice", body: "Could not extract colors form the current song's album cover.")
+            return
+        }
+        
+        for color in colors {
+            let rgb = rgbToHue(r: CGFloat(color.r), g: CGFloat(color.g), b: CGFloat(color.b))
+            let hue: CGFloat = rgb.h
+            let saturation: CGFloat = rgb.s
+            if hue > 0 && saturation > 0.2 {
+                currentHues.append((hue * 182) as NSNumber)
             }
+        }
+        
+        if currentHues.isEmpty {
+            alertAndNotify(title: "Notice", body: "The current song's album cover does not have any distinct colors.")
         }
     }
     
@@ -518,7 +642,6 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                 if ViewController.bridge != nil {
                     ViewController.bridge.disconnect()
                     
-                    // TO-DO: stop backgrounding
                     stopBackgrounding()
                     
                     if timer != nil {

@@ -319,7 +319,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     var timer: Timer!
     func start() {
         var currentHueIndex: Int = 0
-        var songAndArtist = getCurrentSongAndArtist()
+        var albumAndArtist = getCurrentAlbumAndArtist()
         let wait = self.colorDuration + self.transitionDuration
         
         getCoverImageAndSetCurrentSongHues()
@@ -365,9 +365,9 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                     self.startBackgrounding()
                 }
                 
-                let currentSongAndArtist = self.getCurrentSongAndArtist()
-                if currentSongAndArtist != songAndArtist {
-                    songAndArtist = currentSongAndArtist
+                let currentAlbumAndArtist = self.getCurrentAlbumAndArtist()
+                if currentAlbumAndArtist != albumAndArtist {
+                    albumAndArtist = currentAlbumAndArtist
                     self.getCoverImageAndSetCurrentSongHues()
                     currentHueIndex = 0
                     
@@ -388,25 +388,27 @@ class ViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
-    func getCurrentSongAndArtist() -> String {
+    func getCurrentAlbumAndArtist() -> String {
         let player = MPMusicPlayerController.systemMusicPlayer
         let nowPlaying: MPMediaItem? = player.nowPlayingItem
-        let songName = nowPlaying?.title
+        let albumName = nowPlaying?.albumTitle
         let artistName = nowPlaying?.artist
         
-        if songName == nil || artistName == nil {
+        if albumName == nil || artistName == nil {
             return "N/A"
         } else {
-            return songName! + artistName!
+            return albumName! + artistName!
         }
     }
     
     func getCoverImageAndSetCurrentSongHues() {
+        currentHues.removeAll()
+        
         let player = MPMusicPlayerController.systemMusicPlayer
         let nowPlaying: MPMediaItem? = player.nowPlayingItem
         let albumArt = nowPlaying?.artwork
         let albumName = nowPlaying?.albumTitle
-        let albumArtistName = nowPlaying?.albumArtist
+        let artistName = (nowPlaying?.albumArtist != nil) ? nowPlaying?.albumArtist : nowPlaying?.artist
         
         if nowPlaying != nil {
             let image = albumArt?.image(at: CGSize(width: 200, height: 200)) ?? nil
@@ -414,8 +416,8 @@ class ViewController: UITableViewController, UITextFieldDelegate {
             if image != nil {
                 setCurrentSongHues(image: image!)
             } else {
-                if albumName != nil && albumArtistName != nil {
-                    self.getCoverFromAPI(albumName: albumName!, albumArtistName: albumArtistName!) { (url) in
+                if albumName != nil && artistName != nil {
+                    self.getCoverFromAPI(albumName: albumName!, artistName: artistName!) { (url) in
                         if url != nil {
                             self.getData(from: URL(string: url!)!) { data, response, error in
                                 if data == nil || error != nil {
@@ -433,7 +435,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                         }
                     }
                 } else {
-                    alertAndNotify(title: "Error", body: "Could not get the current song's album cover. Album name or album artist is nil.")
+                    alertAndNotify(title: "Error", body: "Could not get the current song's album cover. Album name or artist is nil.")
                 }
             }
         } else {
@@ -445,7 +447,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
         URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
     }
     
-    func getCoverFromAPI(albumName: String, albumArtistName: String, completion: @escaping (String?)->()) {
+    func getCoverFromAPI(albumName: String, artistName: String, completion: @escaping (String?)->()) {
         let searchTerm  = albumName.replacingOccurrences(of: " ", with: "+")
         var components = URLComponents()
         components.scheme = "https"
@@ -453,7 +455,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
         components.path = "/v1/catalog/\(countryCode ?? "us")/search"
         components.queryItems = [
             URLQueryItem(name: "term", value: searchTerm),
-            URLQueryItem(name: "limit", value: "25"),
+            URLQueryItem(name: "limit", value: "15"),
             URLQueryItem(name: "types", value: "albums"),
         ]
         let url = components.url!
@@ -483,7 +485,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                                         continue
                                     }
                                     
-                                    if (attributes["name"] as! String == albumName) && (attributes["artistName"] as! String == albumArtistName) {
+                                    if (attributes["name"] as! String == albumName) && (attributes["artistName"] as! String == artistName) {
                                         guard let artwork = attributes["artwork"] as? [String: Any] else {
                                             continue
                                         }
@@ -507,8 +509,6 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     }
     
     func setCurrentSongHues(image: UIImage) {
-        currentHues.removeAll()
-        
         guard let colors = ColorThief.getPalette(from: image, colorCount: 4, quality: 5, ignoreWhite: true) else {
             self.alertAndNotify(title: "Notice", body: "Could not extract colors form the current song's album cover.")
             return

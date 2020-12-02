@@ -8,8 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		B6EE4D5E6C89C5D1D011CD19 /* Pods_CoverFlow.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE561888D47C9248FD364BBD /* Pods_CoverFlow.framework */; };
-		DD3C00112577C7A10080CE82 /* SpotifyiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD3C000F2577C7A10080CE82 /* SpotifyiOS.framework */; };
-		DD3C00122577C7A10080CE82 /* HueSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD3C00102577C7A10080CE82 /* HueSDK.framework */; };
+		DD3C001A2577C8E10080CE82 /* SpotifyiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD3C000F2577C7A10080CE82 /* SpotifyiOS.framework */; };
+		DD3C001E2577C9F30080CE82 /* HueSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD3C00102577C7A10080CE82 /* HueSDK.framework */; };
+		DD3C001F2577C9F30080CE82 /* HueSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DD3C00102577C7A10080CE82 /* HueSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DD42841E254E743500E6E3D1 /* songChange.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DD42841D254E743500E6E3D1 /* songChange.mp3 */; };
 		DD428420254E74FF00E6E3D1 /* audioCheck.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DD42841F254E74FF00E6E3D1 /* audioCheck.mp3 */; };
 		DD439AD125609FDC00082CEF /* AppleMusicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD439AD025609FDC00082CEF /* AppleMusicController.swift */; };
@@ -28,12 +29,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		DDFD8BDB253E308400BBE27A /* Embed Frameworks */ = {
+		DD3C00202577C9F30080CE82 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
+			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				DD3C001F2577C9F30080CE82 /* HueSDK.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -73,9 +75,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD3C00122577C7A10080CE82 /* HueSDK.framework in Frameworks */,
+				DD3C001E2577C9F30080CE82 /* HueSDK.framework in Frameworks */,
+				DD3C001A2577C8E10080CE82 /* SpotifyiOS.framework in Frameworks */,
 				B6EE4D5E6C89C5D1D011CD19 /* Pods_CoverFlow.framework in Frameworks */,
-				DD3C00112577C7A10080CE82 /* SpotifyiOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,7 +159,7 @@
 				DDAEDC91253CF53D002F3175 /* Frameworks */,
 				DDAEDC92253CF53D002F3175 /* Resources */,
 				7ED350797F24C3FBCCB06D1A /* [CP] Embed Pods Frameworks */,
-				DDFD8BDB253E308400BBE27A /* Embed Frameworks */,
+				DD3C00202577C9F30080CE82 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -424,6 +426,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YA924NN5VN;
+				DYLIB_INSTALL_NAME_BASE = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -473,6 +476,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YA924NN5VN;
+				DYLIB_INSTALL_NAME_BASE = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

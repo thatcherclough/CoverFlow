@@ -62,7 +62,7 @@
         <!--CoverFlow-->
         <scene sceneID="oYK-z5-YIr">
             <objects>
-                <tableViewController id="26W-YJ-TRH" customClass="ViewController" customModule="CoverFlow" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="ViewController" id="26W-YJ-TRH" customClass="ViewController" customModule="CoverFlow" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="lC0-e2-IWd">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -94,7 +94,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="eK3-dy-wim" kind="show" id="wCX-hO-imG"/>
+                                            <segue destination="eK3-dy-wim" kind="show" identifier="toBridgeSelection" id="wCX-hO-imG"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="DWy-nS-0qg" detailTextLabel="iS7-NR-vVo" style="IBUITableViewCellStyleValue1" id="grH-IJ-A4Z">
@@ -297,7 +297,7 @@
                         <outlet property="brightnessLabel" destination="azv-GA-aE2" id="eNi-Y2-Tp5"/>
                         <outlet property="brightnessSlider" destination="sqb-Qb-LKX" id="hf6-2a-fMc"/>
                         <outlet property="colorDurationLabel" destination="47Z-hl-ahX" id="MTD-pg-8xd"/>
-                        <outlet property="colorDurationSlider" destination="Rih-MW-qGo" id="7NM-Ln-iMr"/>
+                        <outlet property="colorDurationSlider" destination="Rih-MW-qGo" id="Rkq-Vx-352"/>
                         <outlet property="lightsCell" destination="grH-IJ-A4Z" id="Lyd-xg-lFm"/>
                         <outlet property="startButtonText" destination="Nby-Ie-wGw" id="YPg-45-lKy"/>
                         <outlet property="transitionDurationLabel" destination="oFY-La-c2R" id="g4P-ZB-gBF"/>
@@ -412,6 +412,47 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Pro-Lf-qNr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="692.75362318840587" y="1123.6607142857142"/>
+        </scene>
+        <!--Music Provider View Controller-->
+        <scene sceneID="BHV-ch-Ryc">
+            <objects>
+                <viewController storyboardIdentifier="MusicProviderViewController" id="yaN-h8-gfn" customClass="MusicProviderViewController" customModule="CoverFlow" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="BJe-pC-F6t">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oT6-U1-UkC">
+                                <rect key="frame" x="183" y="390" width="49" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Spotify"/>
+                                <connections>
+                                    <action selector="spotifyButtonAction:" destination="yaN-h8-gfn" eventType="touchUpInside" id="Nen-fG-6vF"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t7P-1i-4OE">
+                                <rect key="frame" x="165" y="496" width="85" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Apple Music"/>
+                                <connections>
+                                    <action selector="appleMusicButtonAction:" destination="yaN-h8-gfn" eventType="touchUpInside" id="edZ-QU-4UL"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mK6-NR-rKT">
+                                <rect key="frame" x="164" y="263" width="87" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Notifications"/>
+                                <connections>
+                                    <action selector="notificationButtonAction:" destination="yaN-h8-gfn" eventType="touchUpInside" id="9dM-1B-glh"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="lPL-xk-JLC"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="JSW-Ib-1sa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-800" y="2121"/>
         </scene>
     </scenes>
     <resources>

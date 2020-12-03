@@ -8,8 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		B6EE4D5E6C89C5D1D011CD19 /* Pods_CoverFlow.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE561888D47C9248FD364BBD /* Pods_CoverFlow.framework */; };
+		DD3C001A2577C8E10080CE82 /* SpotifyiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD3C000F2577C7A10080CE82 /* SpotifyiOS.framework */; };
+		DD3C001E2577C9F30080CE82 /* HueSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD3C00102577C7A10080CE82 /* HueSDK.framework */; };
+		DD3C001F2577C9F30080CE82 /* HueSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DD3C00102577C7A10080CE82 /* HueSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DD42841E254E743500E6E3D1 /* songChange.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DD42841D254E743500E6E3D1 /* songChange.mp3 */; };
 		DD428420254E74FF00E6E3D1 /* audioCheck.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DD42841F254E74FF00E6E3D1 /* audioCheck.mp3 */; };
+		DD439AD125609FDC00082CEF /* AppleMusicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD439AD025609FDC00082CEF /* AppleMusicController.swift */; };
+		DD439AD325609FE700082CEF /* SpotifyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD439AD225609FE700082CEF /* SpotifyController.swift */; };
 		DDAEDC98253CF53D002F3175 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDC97253CF53D002F3175 /* AppDelegate.swift */; };
 		DDAEDC9A253CF53D002F3175 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDC99253CF53D002F3175 /* SceneDelegate.swift */; };
 		DDAEDC9C253CF53D002F3175 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDC9B253CF53D002F3175 /* ViewController.swift */; };
@@ -17,21 +22,20 @@
 		DDAEDCA1253CF541002F3175 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DDAEDCA0253CF541002F3175 /* Assets.xcassets */; };
 		DDAEDCA4253CF541002F3175 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DDAEDCA2253CF541002F3175 /* LaunchScreen.storyboard */; };
 		DDAEDCBD253CFCD7002F3175 /* BridgeDiscoveryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDCBC253CFCD7002F3175 /* BridgeDiscoveryController.swift */; };
-		DDFD8BD9253E308400BBE27A /* HueSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAEDCB1253CF585002F3175 /* HueSDK.framework */; };
-		DDFD8BDA253E308400BBE27A /* HueSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DDAEDCB1253CF585002F3175 /* HueSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		DDF07094256C375100353469 /* MusicProviderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDF07093256C375100353469 /* MusicProviderViewController.swift */; };
 		DDFD8BDF253E323900BBE27A /* BridgeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDFD8BDE253E323900BBE27A /* BridgeInfo.swift */; };
 		DDFD8BE1253E382C00BBE27A /* PushButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDFD8BE0253E382C00BBE27A /* PushButtonViewController.swift */; };
 		DDFD8BE3253E479400BBE27A /* LightSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDFD8BE2253E479400BBE27A /* LightSelectionViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		DDFD8BDB253E308400BBE27A /* Embed Frameworks */ = {
+		DD3C00202577C9F30080CE82 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
+			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				DDFD8BDA253E308400BBE27A /* HueSDK.framework in Embed Frameworks */,
+				DD3C001F2577C9F30080CE82 /* HueSDK.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -43,8 +47,12 @@
 		66953F2EC209EF73DCB309AE /* Pods-TempName.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempName.release.xcconfig"; path = "Target Support Files/Pods-TempName/Pods-TempName.release.xcconfig"; sourceTree = "<group>"; };
 		90BB89A3DAB3B6ABDD25053E /* Pods-TempName.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempName.debug.xcconfig"; path = "Target Support Files/Pods-TempName/Pods-TempName.debug.xcconfig"; sourceTree = "<group>"; };
 		9FB6E60052D5E69CAB8CF1B2 /* Pods-CoverFlow.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoverFlow.debug.xcconfig"; path = "Target Support Files/Pods-CoverFlow/Pods-CoverFlow.debug.xcconfig"; sourceTree = "<group>"; };
+		DD3C000F2577C7A10080CE82 /* SpotifyiOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpotifyiOS.framework; path = Frameworks/SpotifyiOS.framework; sourceTree = "<group>"; };
+		DD3C00102577C7A10080CE82 /* HueSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HueSDK.framework; path = Frameworks/HueSDK.framework; sourceTree = "<group>"; };
 		DD42841D254E743500E6E3D1 /* songChange.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = songChange.mp3; path = CoverFlow/Assets.xcassets/songChange.mp3; sourceTree = "<group>"; };
 		DD42841F254E74FF00E6E3D1 /* audioCheck.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = audioCheck.mp3; path = CoverFlow/Assets.xcassets/audioCheck.mp3; sourceTree = "<group>"; };
+		DD439AD025609FDC00082CEF /* AppleMusicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleMusicController.swift; sourceTree = "<group>"; };
+		DD439AD225609FE700082CEF /* SpotifyController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyController.swift; sourceTree = "<group>"; };
 		DDAEDC94253CF53D002F3175 /* CoverFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoverFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDAEDC97253CF53D002F3175 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DDAEDC99253CF53D002F3175 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -54,8 +62,8 @@
 		DDAEDCA3253CF541002F3175 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DDAEDCA5253CF541002F3175 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DDAEDCAD253CF56F002F3175 /* CoverFlow-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CoverFlow-Bridging-Header.h"; sourceTree = "<group>"; };
-		DDAEDCB1253CF585002F3175 /* HueSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HueSDK.framework; sourceTree = "<group>"; };
 		DDAEDCBC253CFCD7002F3175 /* BridgeDiscoveryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeDiscoveryController.swift; sourceTree = "<group>"; };
+		DDF07093256C375100353469 /* MusicProviderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicProviderViewController.swift; sourceTree = "<group>"; };
 		DDFD8BDE253E323900BBE27A /* BridgeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeInfo.swift; sourceTree = "<group>"; };
 		DDFD8BE0253E382C00BBE27A /* PushButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushButtonViewController.swift; sourceTree = "<group>"; };
 		DDFD8BE2253E479400BBE27A /* LightSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightSelectionViewController.swift; sourceTree = "<group>"; };
@@ -67,7 +75,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDFD8BD9253E308400BBE27A /* HueSDK.framework in Frameworks */,
+				DD3C001E2577C9F30080CE82 /* HueSDK.framework in Frameworks */,
+				DD3C001A2577C8E10080CE82 /* SpotifyiOS.framework in Frameworks */,
 				B6EE4D5E6C89C5D1D011CD19 /* Pods_CoverFlow.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -78,6 +87,8 @@
 		57783310C00EE6ADA2D86FB3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DD3C00102577C7A10080CE82 /* HueSDK.framework */,
+				DD3C000F2577C7A10080CE82 /* SpotifyiOS.framework */,
 				EE561888D47C9248FD364BBD /* Pods_CoverFlow.framework */,
 			);
 			name = Frameworks;
@@ -98,7 +109,6 @@
 			isa = PBXGroup;
 			children = (
 				DDAEDCAD253CF56F002F3175 /* CoverFlow-Bridging-Header.h */,
-				DDAEDCB1253CF585002F3175 /* HueSDK.framework */,
 				DD42841F254E74FF00E6E3D1 /* audioCheck.mp3 */,
 				DD42841D254E743500E6E3D1 /* songChange.mp3 */,
 				DDAEDC96253CF53D002F3175 /* CoverFlow */,
@@ -122,6 +132,8 @@
 				DDAEDC97253CF53D002F3175 /* AppDelegate.swift */,
 				DDAEDC99253CF53D002F3175 /* SceneDelegate.swift */,
 				DDAEDC9B253CF53D002F3175 /* ViewController.swift */,
+				DD439AD225609FE700082CEF /* SpotifyController.swift */,
+				DD439AD025609FDC00082CEF /* AppleMusicController.swift */,
 				DDAEDC9D253CF53D002F3175 /* Main.storyboard */,
 				DDFD8BE0253E382C00BBE27A /* PushButtonViewController.swift */,
 				DDAEDCBC253CFCD7002F3175 /* BridgeDiscoveryController.swift */,
@@ -130,6 +142,7 @@
 				DDAEDCA2253CF541002F3175 /* LaunchScreen.storyboard */,
 				DDAEDCA5253CF541002F3175 /* Info.plist */,
 				DDFD8BE2253E479400BBE27A /* LightSelectionViewController.swift */,
+				DDF07093256C375100353469 /* MusicProviderViewController.swift */,
 			);
 			path = CoverFlow;
 			sourceTree = "<group>";
@@ -146,7 +159,7 @@
 				DDAEDC91253CF53D002F3175 /* Frameworks */,
 				DDAEDC92253CF53D002F3175 /* Resources */,
 				7ED350797F24C3FBCCB06D1A /* [CP] Embed Pods Frameworks */,
-				DDFD8BDB253E308400BBE27A /* Embed Frameworks */,
+				DD3C00202577C9F30080CE82 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -255,10 +268,13 @@
 				DDAEDC9C253CF53D002F3175 /* ViewController.swift in Sources */,
 				DDAEDC98253CF53D002F3175 /* AppDelegate.swift in Sources */,
 				DDFD8BE3253E479400BBE27A /* LightSelectionViewController.swift in Sources */,
+				DD439AD325609FE700082CEF /* SpotifyController.swift in Sources */,
 				DDAEDC9A253CF53D002F3175 /* SceneDelegate.swift in Sources */,
 				DDFD8BDF253E323900BBE27A /* BridgeInfo.swift in Sources */,
 				DDFD8BE1253E382C00BBE27A /* PushButtonViewController.swift in Sources */,
+				DDF07094256C375100353469 /* MusicProviderViewController.swift in Sources */,
 				DDAEDCBD253CFCD7002F3175 /* BridgeDiscoveryController.swift in Sources */,
+				DD439AD125609FDC00082CEF /* AppleMusicController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,19 +424,39 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = YA924NN5VN;
+				DYLIB_INSTALL_NAME_BASE = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = CoverFlow/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.2.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"ColorThiefSwift\"",
+					"-framework",
+					"\"CoreTelephony\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"Keys\"",
+					"-framework",
+					"\"Reachability\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.thatcherclough.CoverFlow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "CoverFlow-Bridging-Header.h";
@@ -438,19 +474,39 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = YA924NN5VN;
+				DYLIB_INSTALL_NAME_BASE = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = CoverFlow/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.2.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"ColorThiefSwift\"",
+					"-framework",
+					"\"CoreTelephony\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"Keys\"",
+					"-framework",
+					"\"Reachability\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.thatcherclough.CoverFlow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "CoverFlow-Bridging-Header.h";

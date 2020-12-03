@@ -50,14 +50,15 @@ public class MusicProviderViewController: UIViewController {
         }
     }
     
-    // MARK: Buttons
-    
-    @IBAction func notificationButtonAction(_ sender: Any) {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
-            granted, error in
-            self.mainViewController.canPushNotifications = granted
+    public override func viewDidAppear(_ animated: Bool) {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if error == nil {
+                self.mainViewController.canPushNotifications = granted
+            }
         }
     }
+    
+    // MARK: Buttons
     
     @IBAction func spotifyButtonAction(_ sender: Any) {
         ViewController.musicProvider = "spotify"
@@ -93,7 +94,7 @@ public class MusicProviderViewController: UIViewController {
             } else {
                 DispatchQueue.main.async {
                     if self.presentedViewController == nil {
-                        let alert = UIAlertController(title: "Notice", message: "CoverFlow will not work on this device because Apple Music access is not enabled. Please enable \"Media and Apple Music\" access in settings.", preferredStyle: UIAlertController.Style.alert)
+                        let alert = UIAlertController(title: "Notice", message: "Apple Music access is not enabled. Please enable \"Media and Apple Music\" access in settings.", preferredStyle: UIAlertController.Style.alert)
                         alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                         self.present(alert, animated: true, completion: nil)
                     }

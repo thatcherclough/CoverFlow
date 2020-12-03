@@ -156,6 +156,12 @@ class ViewController: UITableViewController, UITextFieldDelegate {
         
         if ViewController.musicProvider == nil {
             presentMusicProvider(alert: nil)
+        } else {
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                if error == nil {
+                    self.canPushNotifications = granted
+                }
+            }
         }
     }
     
@@ -168,6 +174,9 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                     let alert = UIAlertController(title: "Error", message: "Apple Music access has been revoked. Try connecting again.", preferredStyle: UIAlertController.Style.alert)
                     alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                     self.presentMusicProvider(alert: alert)
+                    
+                    ViewController.musicProvider = nil
+                    UserDefaults.standard.set(nil, forKey: "musicProvider")
                 } else {
                     self.hueSetup()
                 }
@@ -179,6 +188,9 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                 let alert = UIAlertController(title: "Error", message: "Spotify access has been revoked. Try connecting again.", preferredStyle: UIAlertController.Style.alert)
                 alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                 presentMusicProvider(alert: alert)
+                
+                ViewController.musicProvider = nil
+                UserDefaults.standard.set(nil, forKey: "musicProvider")
             } else {
                 self.hueSetup()
             }
@@ -245,10 +257,6 @@ class ViewController: UITableViewController, UITextFieldDelegate {
             timer.invalidate()
         }
         timer = nil
-        
-        if ViewController.spotifyController != nil && ViewController.spotifyController.task != nil {
-            ViewController.spotifyController.task.suspend()
-        }
         
         DispatchQueue.main.async() {
             self.startButtonText.text = "Start"

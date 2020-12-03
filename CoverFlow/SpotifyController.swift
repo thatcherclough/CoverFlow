@@ -79,8 +79,6 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
     
     // MARK: Web-API Related
     
-    var task: URLSessionDataTask!
-    
     func resetAccessAndRefreshTokens() {
         self.accessToken = "N/A"
         self.refreshToken = "N/A"
@@ -124,7 +122,7 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
         requestBodyComponents.queryItems = [URLQueryItem(name: "client_id", value: clientID), URLQueryItem(name: "grant_type", value: "authorization_code"), URLQueryItem(name: "code", value: accessCode), URLQueryItem(name: "redirect_uri", value: redirectURI.absoluteString), URLQueryItem(name: "code_verifier", value: codeVerifier), URLQueryItem(name: "scope", value: "user-read-currently-playing"),]
         request.httpBody = requestBodyComponents.query?.data(using: .utf8)
         
-        task = URLSession.shared.dataTask(with: request) { data, response, error in
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard error == nil else {
                 return completion(nil, error)
             }
@@ -176,7 +174,7 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
         requestBodyComponents.queryItems = [URLQueryItem(name: "client_id", value: clientID), URLQueryItem(name: "grant_type", value: "refresh_token"), URLQueryItem(name: "refresh_token", value: refreshToken),]
         request.httpBody = requestBodyComponents.query?.data(using: .utf8)
         
-        task = URLSession.shared.dataTask(with: request) { data, response, error in
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard error == nil else {
                 return completion(nil, error)
             }

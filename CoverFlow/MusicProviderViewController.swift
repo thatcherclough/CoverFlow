@@ -16,10 +16,13 @@ public class MusicProviderViewController: UIViewController {
     
     let keys = CoverFlowKeys()
     var mainViewController: ViewController!
+    var localNetworkPermissionService: LocalNetworkPermissionService!
     
     // MARK: View Related
     
     public override func viewDidLoad() {
+        localNetworkPermissionService = LocalNetworkPermissionService()
+        
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(self.applicationEnteredForeground),
@@ -34,7 +37,9 @@ public class MusicProviderViewController: UIViewController {
                 ViewController.spotifyController.getAccessAndRefreshTokens(accessCode: accessCode!)
                 UserDefaults.standard.set("spotify", forKey: "musicProvider")
                 self.dismiss(animated: true, completion: {
-                    let _ = ProcessInfo.processInfo.hostName
+                    if self.localNetworkPermissionService != nil {
+                        self.localNetworkPermissionService.triggerDialog()
+                    }
                     
                     self.mainViewController.hueSetup()
                 })
@@ -60,15 +65,6 @@ public class MusicProviderViewController: UIViewController {
     
     // MARK: Buttons
     
-    @IBAction func spotifyButtonAction(_ sender: Any) {
-        ViewController.musicProvider = "spotify"
-        
-        if ViewController.spotifyController == nil {
-            ViewController.spotifyController = SpotifyController(clientID: keys.spotifyClientID, clientSecret: keys.spotifyClientSecret, redirectURI: URL(string: "coverflow://spotify-login-callback")!)
-        }
-        ViewController.spotifyController.connect()
-    }
-    
     @IBAction func appleMusicButtonAction(_ sender: Any) {
         ViewController.musicProvider = "appleMusic"
         if ViewController.appleMusicController == nil {
@@ -85,7 +81,9 @@ public class MusicProviderViewController: UIViewController {
                     UserDefaults.standard.set("appleMusic", forKey: "musicProvider")
                     if self.presentedViewController == nil {
                         self.dismiss(animated: true, completion: {
-                            let _ = ProcessInfo.processInfo.hostName
+                            if self.localNetworkPermissionService != nil {
+                                self.localNetworkPermissionService.triggerDialog()
+                            }
                             
                             self.mainViewController.hueSetup()
                         })
@@ -101,5 +99,14 @@ public class MusicProviderViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    @IBAction func spotifyButtonAction(_ sender: Any) {
+        ViewController.musicProvider = "spotify"
+        
+        if ViewController.spotifyController == nil {
+            ViewController.spotifyController = SpotifyController(clientID: keys.spotifyClientID, clientSecret: keys.spotifyClientSecret, redirectURI: URL(string: "coverflow://spotify-login-callback")!)
+        }
+        ViewController.spotifyController.connect()
     }
 }

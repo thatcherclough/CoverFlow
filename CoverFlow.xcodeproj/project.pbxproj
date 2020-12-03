@@ -22,6 +22,7 @@
 		DDAEDCA1253CF541002F3175 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DDAEDCA0253CF541002F3175 /* Assets.xcassets */; };
 		DDAEDCA4253CF541002F3175 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DDAEDCA2253CF541002F3175 /* LaunchScreen.storyboard */; };
 		DDAEDCBD253CFCD7002F3175 /* BridgeDiscoveryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDCBC253CFCD7002F3175 /* BridgeDiscoveryController.swift */; };
+		DDB07A7C25799901003EA4AF /* LocalNetworkPermissionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB07A7B25799901003EA4AF /* LocalNetworkPermissionService.swift */; };
 		DDF07094256C375100353469 /* MusicProviderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDF07093256C375100353469 /* MusicProviderViewController.swift */; };
 		DDFD8BDF253E323900BBE27A /* BridgeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDFD8BDE253E323900BBE27A /* BridgeInfo.swift */; };
 		DDFD8BE1253E382C00BBE27A /* PushButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDFD8BE0253E382C00BBE27A /* PushButtonViewController.swift */; };
@@ -63,6 +64,7 @@
 		DDAEDCA5253CF541002F3175 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DDAEDCAD253CF56F002F3175 /* CoverFlow-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CoverFlow-Bridging-Header.h"; sourceTree = "<group>"; };
 		DDAEDCBC253CFCD7002F3175 /* BridgeDiscoveryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeDiscoveryController.swift; sourceTree = "<group>"; };
+		DDB07A7B25799901003EA4AF /* LocalNetworkPermissionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNetworkPermissionService.swift; sourceTree = "<group>"; };
 		DDF07093256C375100353469 /* MusicProviderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicProviderViewController.swift; sourceTree = "<group>"; };
 		DDFD8BDE253E323900BBE27A /* BridgeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeInfo.swift; sourceTree = "<group>"; };
 		DDFD8BE0253E382C00BBE27A /* PushButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushButtonViewController.swift; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 				DDAEDCA5253CF541002F3175 /* Info.plist */,
 				DDFD8BE2253E479400BBE27A /* LightSelectionViewController.swift */,
 				DDF07093256C375100353469 /* MusicProviderViewController.swift */,
+				DDB07A7B25799901003EA4AF /* LocalNetworkPermissionService.swift */,
 			);
 			path = CoverFlow;
 			sourceTree = "<group>";
@@ -271,6 +274,7 @@
 				DD439AD325609FE700082CEF /* SpotifyController.swift in Sources */,
 				DDAEDC9A253CF53D002F3175 /* SceneDelegate.swift in Sources */,
 				DDFD8BDF253E323900BBE27A /* BridgeInfo.swift in Sources */,
+				DDB07A7C25799901003EA4AF /* LocalNetworkPermissionService.swift in Sources */,
 				DDFD8BE1253E382C00BBE27A /* PushButtonViewController.swift in Sources */,
 				DDF07094256C375100353469 /* MusicProviderViewController.swift in Sources */,
 				DDAEDCBD253CFCD7002F3175 /* BridgeDiscoveryController.swift in Sources */,

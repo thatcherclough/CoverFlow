@@ -16,4 +16,5 @@ target 'CoverFlow' do
   
   pod 'ColorThiefSwift', '>= 0.4.1'
   pod 'ReachabilitySwift'
+  pod 'AnimatedGradientView'
 end

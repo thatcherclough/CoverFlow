@@ -1,15 +1,18 @@
 PODS:
+  - AnimatedGradientView (3.0.0)
   - ColorThiefSwift (0.4.1)
   - Keys (1.0.1)
   - ReachabilitySwift (5.0.0)
 
 DEPENDENCIES:
+  - AnimatedGradientView
   - ColorThiefSwift (>= 0.4.1)
   - Keys (from `Pods/CocoaPodsKeys`)
   - ReachabilitySwift
 
 SPEC REPOS:
   trunk:
+    - AnimatedGradientView
     - ColorThiefSwift
     - ReachabilitySwift
 
@@ -18,10 +21,11 @@ EXTERNAL SOURCES:
     :path: Pods/CocoaPodsKeys
 
 SPEC CHECKSUMS:
+  AnimatedGradientView: 372cc08e6fcb25e6044196fd85e87d836439f63e
   ColorThiefSwift: 34455b0c204ab48d1138d6161a048e5225ec3174
   Keys: a576f4c9c1c641ca913a959a9c62ed3f215a8de9
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
 
-PODFILE CHECKSUM: ccfd44d09f1de591627304eb48c6157648360e61
+PODFILE CHECKSUM: 43bac3ebb130075c37f805748bd6173d4ebbbf89
 
 COCOAPODS: 1.9.3

@@ -19,7 +19,7 @@ class BridgeDiscoveryController: UITableViewController {
         
         self.refreshControl = UIRefreshControl()
         refreshControl!.addTarget(self, action: #selector(self.refresh(_:)), for: .valueChanged)
-
+        
         if ViewController.authenticated && ViewController.bridge != nil && ViewController.bridgeInfo != nil {
             bridges.append(ViewController.bridgeInfo)
         } else {
@@ -35,19 +35,23 @@ class BridgeDiscoveryController: UITableViewController {
     }
     
     @objc func refresh(_ sender: AnyObject) {
-       discoverBridges()
+        discoverBridges()
     }
     
     func discoverBridges() {
         PHSBridgeDiscovery().search(.discoveryOptionUPNP) { (result, returnCode) in
-            if returnCode == .success {
+            if returnCode == .success && result != nil {
                 for (_, value) in result! {
-                    let bridgeInfo: BridgeInfo = BridgeInfo(ipAddress: value.ipAddress, uniqueId: value.uniqueId)
-                    
-                    if !self.bridges.contains(where: { (BridgeInfo) -> Bool in
-                        return Bool(BridgeInfo.ipAddress == bridgeInfo.ipAddress && BridgeInfo.uniqueId == BridgeInfo.uniqueId)
-                    }) {
-                        self.bridges.append(bridgeInfo)
+                    if value.ipAddress == nil || value.uniqueId == nil {
+                        continue
+                    } else {
+                        let bridgeInfo: BridgeInfo = BridgeInfo(ipAddress: value.ipAddress, uniqueId: value.uniqueId)
+                        
+                        if !self.bridges.contains(where: { (bridgeInfoIn) -> Bool in
+                            return Bool(bridgeInfoIn.ipAddress == bridgeInfo.ipAddress && bridgeInfoIn.uniqueId == bridgeInfo.uniqueId)
+                        }) {
+                            self.bridges.append(bridgeInfo)
+                        }
                     }
                 }
             } else {
@@ -65,21 +69,30 @@ class BridgeDiscoveryController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return bridges.count
     }
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BridgeCell") as! BridgeCell
         cell.title.text = bridges[indexPath.row].ipAddress
         cell.subtitle.text = bridges[indexPath.row].uniqueId
         return cell
     }
-
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedBridgeInfo = bridges[indexPath.row]
-        if ViewController.authenticated && ViewController.bridgeInfo.ipAddress == selectedBridgeInfo.ipAddress && ViewController.bridgeInfo.uniqueId == selectedBridgeInfo.uniqueId {
-            _ = navigationController?.popToRootViewController(animated: true)
+        if bridges.count > indexPath.row {
+            let selectedBridgeInfo = bridges[indexPath.row]
+            
+            if ViewController.authenticated && ViewController.bridgeInfo != nil && ViewController.bridgeInfo.ipAddress == selectedBridgeInfo.ipAddress && ViewController.bridgeInfo.uniqueId == selectedBridgeInfo.uniqueId {
+                _ = navigationController?.popToRootViewController(animated: true)
+            } else {
+                ViewController.bridgeInfo = selectedBridgeInfo
+                _ = navigationController?.popToRootViewController(animated: true)
+            }
         } else {
-            ViewController.bridgeInfo = bridges[indexPath.row]
-            _ = navigationController?.popToRootViewController(animated: true)
+            DispatchQueue.main.async {
+                let alert = UIAlertController(title: "Error", message: "Index out of bounds. Bridges:\(self.bridges.count). Index:\(indexPath.row).", preferredStyle: UIAlertController.Style.alert)
+                alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            }
         }
     }
 }

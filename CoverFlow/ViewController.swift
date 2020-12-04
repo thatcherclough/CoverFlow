@@ -197,19 +197,6 @@ class ViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
-    func presentMusicProvider(alert: UIAlertController!) {
-        DispatchQueue.main.async {
-            let musicProvider = self.storyboard?.instantiateViewController(withIdentifier: "MusicProviderViewController") as! MusicProviderViewController
-            musicProvider.mainViewController = self
-            musicProvider.isModalInPresentation = true
-            self.present(musicProvider, animated: true) {
-                if alert != nil {
-                    musicProvider.present(alert, animated: true, completion: nil)
-                }
-            }
-        }
-    }
-    
     func hueSetup() {
         setUpLastConnectedBridge()
         
@@ -244,6 +231,19 @@ class ViewController: UITableViewController, UITextFieldDelegate {
             self.present(connectionAlert, animated: true) {
                 ViewController.bridge = self.buildBridge(info: ViewController.bridgeInfo)
                 ViewController.bridge.connect()
+            }
+        }
+    }
+    
+    func presentMusicProvider(alert: UIAlertController!) {
+        DispatchQueue.main.async {
+            let musicProvider = self.storyboard?.instantiateViewController(withIdentifier: "MusicProviderViewController") as! MusicProviderViewController
+            musicProvider.mainViewController = self
+            musicProvider.isModalInPresentation = true
+            self.present(musicProvider, animated: true) {
+                if alert != nil {
+                    musicProvider.present(alert, animated: true, completion: nil)
+                }
             }
         }
     }

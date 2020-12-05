@@ -61,8 +61,37 @@ class BridgeDiscoveryController: UITableViewController {
                     self.present(alert, animated: true, completion: nil)
                 }
             }
-            self.refreshControl!.endRefreshing()
-            self.tableView.reloadData()
+            
+            if self.bridges.isEmpty {
+                PHSBridgeDiscovery().search(.discoveryOptionIPScan) { (result, returnCode) in
+                    if returnCode == .success && result != nil {
+                        for (_, value) in result! {
+                            if value.ipAddress == nil || value.uniqueId == nil {
+                                continue
+                            } else {
+                                let bridgeInfo: BridgeInfo = BridgeInfo(ipAddress: value.ipAddress, uniqueId: value.uniqueId)
+                                
+                                if !self.bridges.contains(where: { (bridgeInfoIn) -> Bool in
+                                    return Bool(bridgeInfoIn.ipAddress == bridgeInfo.ipAddress && bridgeInfoIn.uniqueId == bridgeInfo.uniqueId)
+                                }) {
+                                    self.bridges.append(bridgeInfo)
+                                }
+                            }
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            let alert = UIAlertController(title: "Notice", message: "Could not find bridges.", preferredStyle: UIAlertController.Style.alert)
+                            alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
+                            self.present(alert, animated: true, completion: nil)
+                        }
+                    }
+                    self.refreshControl!.endRefreshing()
+                    self.tableView.reloadData()
+                }
+            } else {
+                self.refreshControl!.endRefreshing()
+                self.tableView.reloadData()
+            }
         }
     }
     

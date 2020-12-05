@@ -53,7 +53,13 @@
                             <outlet property="delegate" destination="eK3-dy-wim" id="z3j-3I-QUW"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Bridge Discovery" largeTitleDisplayMode="never" id="SjY-OW-c2K"/>
+                    <navigationItem key="navigationItem" title="Bridge Discovery" largeTitleDisplayMode="never" id="SjY-OW-c2K">
+                        <barButtonItem key="rightBarButtonItem" title="Enter IP" id="pCL-pN-eXX">
+                            <connections>
+                                <action selector="enterIPAction:" destination="eK3-dy-wim" id="P73-Y6-VA8"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ied-eJ-Ma6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -498,7 +504,7 @@
             <objects>
                 <viewController id="hiu-Ap-TfF" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="cci-ah-6ee">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="433.5"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="433"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="lightbulb" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="laH-dM-q8L">

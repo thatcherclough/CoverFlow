@@ -11,18 +11,33 @@ import AnimatedGradientView
 
 public class MainViewController: UIViewController {
     
+    var animatedGradient: AnimatedGradientView!
+    
     @IBOutlet var startButton: TransparentTextButton!
+    @IBOutlet var settingsButton: TransparentTextButton!
     
     @IBAction func startButtonAction(_ sender: Any) {
-        // change to starting
-        UIView.animate(withDuration: 0.15,animations: {
-            self.startButton.transform = CGAffineTransform.identity
-        })
+//        startButton.setTitle("Starting...", alpha: 0.9)
     }
     
     public override func viewDidLoad() {
-        let animatedGradient = AnimatedGradientView(frame: view.bounds)
-        animatedGradient.direction = .up
+        animatedGradient = AnimatedGradientView(frame: view.bounds)
+        view.addSubview(animatedGradient)
+        view.sendSubviewToBack(animatedGradient)
+        updateBackground()
+        
+        startButton.setTitle("Start", alpha: 0.9)
+        startButton.layer.cornerRadius = 10
+        startButton.titleLabel?.alpha = 0
+        startButton.clipsToBounds = true
+        
+        settingsButton.setTitle("Settings", alpha: 0.9)
+        settingsButton.layer.cornerRadius = 10
+        settingsButton.titleLabel?.alpha = 0
+        settingsButton.clipsToBounds = true
+    }
+    
+    func updateBackground() {
         animatedGradient.animationValues =
             [
                 (colors: ["#833ab4", "#fd1d1d"], .up, .axial),
@@ -34,35 +49,39 @@ public class MainViewController: UIViewController {
                 (colors: ["#833ab4", "#fd1d1d"], .left, .axial),
                 (colors: ["#fd1d1d", "#fcb045"], .upLeft, .axial)
             ]
-        view.addSubview(animatedGradient)
-        view.sendSubviewToBack(animatedGradient)
-        
-        startButton.setTitle("Start", for: .normal)
-        startButton.layer.cornerRadius = 10
-        startButton.clipsToBounds = true
-        startButton.titleLabel?.alpha = 0
-            
-        startButton.addTarget(self, action: #selector(pushDownAnimation(_:)), for: .touchDown)
-        startButton.addTarget(self, action: #selector(pushDownAnimation(_:)), for: .touchDragEnter)
-        startButton.addTarget(self, action: #selector(backUpAnimation(_:)), for: .touchDragExit)
     }
     
-    @objc func pushDownAnimation(_ sender: AnyObject) {
-        UIView.animate(withDuration: 0.15,animations: {
-            self.startButton.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-        })
-    }
-    
-    @objc func backUpAnimation(_ sender: AnyObject) {
-        UIView.animate(withDuration: 0.15,animations: {
-            self.startButton.transform = CGAffineTransform.identity
-        })
-    }
 }
 
 public class TransparentTextButton: UIButton {
     
-    func clearColorForTitle() {
+    public override func draw(_ rect: CGRect) {
+        super.draw(rect)
+        
+        self.addTarget(self, action: #selector(pushDownAnimation(_:)), for: .touchDown)
+        self.addTarget(self, action: #selector(pushDownAnimation(_:)), for: .touchDragEnter)
+        self.addTarget(self, action: #selector(backUpAnimation(_:)), for: .touchDragExit)
+        self.addTarget(self, action: #selector(backUpAnimation(_:)), for: .touchUpInside)
+    }
+    
+    @objc func pushDownAnimation(_ sender: AnyObject) {
+        UIView.animate(withDuration: 0.15, animations: {
+            self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+        })
+    }
+    
+    @objc func backUpAnimation(_ sender: AnyObject) {
+        UIView.animate(withDuration: 0.15, animations: {
+            self.transform = CGAffineTransform.identity
+        })
+    }
+    
+    public func setTitle(_ title: String?, alpha: CGFloat) {
+        super.setTitle(title, for: .normal)
+        clearColorForTitle(alpha: alpha)
+    }
+    
+    func clearColorForTitle(alpha: CGFloat) {
         let buttonSize = bounds.size
         if let font = titleLabel?.font{
             let attribs = [NSAttributedString.Key.font: font]
@@ -71,6 +90,7 @@ public class TransparentTextButton: UIButton {
                 
                 if let ctx = UIGraphicsGetCurrentContext(){
                     ctx.setFillColor(UIColor.white.cgColor)
+                    ctx.setAlpha(alpha)
                     
                     let center = CGPoint(x: buttonSize.width / 2 - textSize.width / 2, y: buttonSize.height / 2 - textSize.height / 2)
                     let path = UIBezierPath(rect: CGRect(x: 0, y: 0, width: buttonSize.width, height: buttonSize.height))
@@ -94,24 +114,9 @@ public class TransparentTextButton: UIButton {
         }
     }
     
-    func adjustPaddingBasedOnText(widthPadding: CGFloat, heightPadding: CGFloat) {
-        if let font = titleLabel?.font {
-            let attribs = [NSAttributedString.Key.font: font]
-            if let textSize = titleLabel?.text?.size(withAttributes: attribs) {
-                let screenWidth = UIScreen.main.bounds.width
-                let screenHeight = UIScreen.main.bounds.height
-                
-                let width = textSize.width + widthPadding
-                let height = textSize.height + heightPadding
-                
-                let newFrame = CGRect(x: (screenWidth / 2) - (width / 2), y: (screenHeight / 2) - (height / 2), width: width, height: height)
-                frame = newFrame
-            }
-        }
-    }
-    
-    public override func setTitle(_ title: String?, for state: UIControl.State) {
-        super.setTitle(title, for: .normal)
-        clearColorForTitle()
+    func changeAlpha(alpha: CGFloat, duration: TimeInterval) {
+        UIView.animate(withDuration: duration, animations: {
+            self.alpha = alpha
+        })
     }
 }

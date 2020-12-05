@@ -39,17 +39,21 @@ class BridgeDiscoveryController: UITableViewController {
     }
     
     func discoverBridges() {
+        NSLog("Getting bridges")
         PHSBridgeDiscovery().search(.discoveryOptionUPNP) { (result, returnCode) in
             if returnCode == .success && result != nil {
+                NSLog("Got array 1")
                 for (_, value) in result! {
                     if value.ipAddress == nil || value.uniqueId == nil {
                         continue
                     } else {
+                        NSLog("Got a bridge")
                         let bridgeInfo: BridgeInfo = BridgeInfo(ipAddress: value.ipAddress, uniqueId: value.uniqueId)
-                        
+                        NSLog("Got bridge info")
                         if !self.bridges.contains(where: { (bridgeInfoIn) -> Bool in
                             return Bool(bridgeInfoIn.ipAddress == bridgeInfo.ipAddress && bridgeInfoIn.uniqueId == bridgeInfo.uniqueId)
                         }) {
+                            NSLog("Adding to array")
                             self.bridges.append(bridgeInfo)
                         }
                     }
@@ -69,11 +73,13 @@ class BridgeDiscoveryController: UITableViewController {
                             if value.ipAddress == nil || value.uniqueId == nil {
                                 continue
                             } else {
+                                NSLog("Got a bridge")
                                 let bridgeInfo: BridgeInfo = BridgeInfo(ipAddress: value.ipAddress, uniqueId: value.uniqueId)
-                                
+                                NSLog("Got bridge info")
                                 if !self.bridges.contains(where: { (bridgeInfoIn) -> Bool in
                                     return Bool(bridgeInfoIn.ipAddress == bridgeInfo.ipAddress && bridgeInfoIn.uniqueId == bridgeInfo.uniqueId)
                                 }) {
+                                    NSLog("Adding to array")
                                     self.bridges.append(bridgeInfo)
                                 }
                             }
@@ -85,10 +91,12 @@ class BridgeDiscoveryController: UITableViewController {
                             self.present(alert, animated: true, completion: nil)
                         }
                     }
+                    NSLog("got bridges 1")
                     self.refreshControl!.endRefreshing()
                     self.tableView.reloadData()
                 }
             } else {
+                NSLog("got bridges 2")
                 self.refreshControl!.endRefreshing()
                 self.tableView.reloadData()
             }
@@ -167,14 +175,18 @@ class BridgeDiscoveryController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        NSLog("tapped bridge")
         if bridges.count > indexPath.row {
             let selectedBridgeInfo = bridges[indexPath.row]
             
             if ViewController.authenticated && ViewController.bridgeInfo != nil && ViewController.bridgeInfo.ipAddress == selectedBridgeInfo.ipAddress && ViewController.bridgeInfo.uniqueId == selectedBridgeInfo.uniqueId {
                 _ = navigationController?.popToRootViewController(animated: true)
             } else {
+                NSLog("will set bridge info")
                 ViewController.bridgeInfo = selectedBridgeInfo
+                NSLog("set bridge info")
                 _ = navigationController?.popToRootViewController(animated: true)
+                NSLog("went back to root")
             }
         } else {
             DispatchQueue.main.async {

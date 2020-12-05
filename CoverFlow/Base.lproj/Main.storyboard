@@ -420,13 +420,31 @@
                     <view key="view" contentMode="scaleToFill" id="hr8-eD-UHN">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q9x-jI-kq4" customClass="TransparentTextButton" customModule="CoverFlow" customModuleProvider="target">
+                                <rect key="frame" x="162" y="429" width="91" height="39"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.80000000000000004" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="37"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" title="Start">
+                                    <color key="titleColor" systemColor="labelColor"/>
+                                </state>
+                                <connections>
+                                    <action selector="startButtonAction:" destination="iDV-Oy-MLF" eventType="touchUpInside" id="Y0F-hs-pB7"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="Jlz-kw-ueo"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
+                    <connections>
+                        <outlet property="startButton" destination="Q9x-jI-kq4" id="oA6-bM-wCc"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kSu-1Y-JNU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1691" y="2120"/>
+            <point key="canvasLocation" x="-1691.304347826087" y="2119.4196428571427"/>
         </scene>
         <!--Music Provider View Controller-->
         <scene sceneID="BHV-ch-Ryc">
@@ -513,7 +531,7 @@
             <objects>
                 <viewController id="hiu-Ap-TfF" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="cci-ah-6ee">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="433"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="433.5"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="lightbulb" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="laH-dM-q8L">
@@ -590,6 +608,9 @@
         <namedColor name="AccentColor">
             <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

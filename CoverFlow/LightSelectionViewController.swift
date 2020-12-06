@@ -16,10 +16,12 @@ class LightSelectionViewController: UITableViewController {
     override func viewDidLoad() {
         allLights.removeAll()
         
-        for device in ViewController.bridge.bridgeState.getDevicesOf(.light) as! [PHSDevice] {
-            allLights.append(device.name!)
+        if MainViewController.bridge != nil {
+            for device in MainViewController.bridge.bridgeState.getDevicesOf(.light) as! [PHSDevice] {
+                allLights.append(device.name!)
+            }
+            selectedLights = MainViewController.lights
         }
-        selectedLights = ViewController.lights
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -43,7 +45,7 @@ class LightSelectionViewController: UITableViewController {
         } else {
             selectedLights.append(allLights[indexPath.row])
         }
-        ViewController.lights = selectedLights
+        MainViewController.lights = selectedLights
         
         UserDefaults.standard.setValue(selectedLights, forKey: "lights")
         

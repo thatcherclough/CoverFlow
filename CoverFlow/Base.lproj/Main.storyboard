@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="iDV-Oy-MLF">
-    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <device id="retina6_1" orientation="portrait" appearance="dark"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
-        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -59,10 +58,10 @@
             </objects>
             <point key="canvasLocation" x="-33" y="1124"/>
         </scene>
-        <!--CoverFlow-->
+        <!--Settings-->
         <scene sceneID="oYK-z5-YIr">
             <objects>
-                <tableViewController storyboardIdentifier="ViewController" id="26W-YJ-TRH" customClass="ViewController" customModule="CoverFlow" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="26W-YJ-TRH" customClass="SettingsViewController" customModule="CoverFlow" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="lC0-e2-IWd">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -253,45 +252,19 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection id="kg4-Xa-Ym9">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="blue" indentationWidth="10" id="nwJ-2o-JbU">
-                                        <rect key="frame" x="0.0" y="475.5" width="414" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nwJ-2o-JbU" id="cba-6I-Yob">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Start" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nby-Ie-wGw">
-                                                    <rect key="frame" x="20" y="11.5" width="374" height="22"/>
-                                                    <accessibility key="accessibilityConfiguration">
-                                                        <accessibilityTraits key="traits" button="YES" allowsDirectInteraction="YES"/>
-                                                    </accessibility>
-                                                    <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="17"/>
-                                                    <color key="textColor" name="AccentColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="trailingMargin" secondItem="Nby-Ie-wGw" secondAttribute="trailing" id="FD4-uD-hFO"/>
-                                                <constraint firstItem="Nby-Ie-wGw" firstAttribute="leading" secondItem="cba-6I-Yob" secondAttribute="leadingMargin" id="Tln-8K-B7O"/>
-                                                <constraint firstItem="Nby-Ie-wGw" firstAttribute="bottom" secondItem="cba-6I-Yob" secondAttribute="bottomMargin" constant="0.5" id="fC2-7s-UPd"/>
-                                                <constraint firstItem="Nby-Ie-wGw" firstAttribute="top" secondItem="cba-6I-Yob" secondAttribute="topMargin" constant="0.5" id="wvf-Y2-2Ke"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <accessibility key="accessibilityConfiguration">
-                                            <accessibilityTraits key="traits" button="YES" allowsDirectInteraction="YES"/>
-                                        </accessibility>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="26W-YJ-TRH" id="nih-Yk-uHU"/>
                             <outlet property="delegate" destination="26W-YJ-TRH" id="usO-mD-fOp"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="CoverFlow" leftItemsSupplementBackButton="YES" largeTitleDisplayMode="always" id="n2f-IH-5RC"/>
+                    <navigationItem key="navigationItem" title="Settings" leftItemsSupplementBackButton="YES" largeTitleDisplayMode="never" id="n2f-IH-5RC">
+                        <barButtonItem key="rightBarButtonItem" title="Done" id="gTr-1R-K5x">
+                            <connections>
+                                <action selector="doneButtonAction:" destination="26W-YJ-TRH" id="CRv-DU-6ZG"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="bridgeCell" destination="GMZ-BU-gyd" id="mRB-bj-xQt"/>
                         <outlet property="brightnessLabel" destination="azv-GA-aE2" id="eNi-Y2-Tp5"/>
@@ -299,7 +272,6 @@
                         <outlet property="colorDurationLabel" destination="47Z-hl-ahX" id="MTD-pg-8xd"/>
                         <outlet property="colorDurationSlider" destination="Rih-MW-qGo" id="Rkq-Vx-352"/>
                         <outlet property="lightsCell" destination="grH-IJ-A4Z" id="Lyd-xg-lFm"/>
-                        <outlet property="startButtonText" destination="Nby-Ie-wGw" id="YPg-45-lKy"/>
                         <outlet property="transitionDurationLabel" destination="oFY-La-c2R" id="g4P-ZB-gBF"/>
                         <outlet property="transitionDurationSlider" destination="0Hk-g3-fVk" id="ndA-Ip-Yjw"/>
                     </connections>
@@ -352,7 +324,7 @@
         <!--Navigation Controller-->
         <scene sceneID="ng9-Kw-FnA">
             <objects>
-                <navigationController id="27w-P4-vzR" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="SettingsViewController" id="27w-P4-vzR" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="0bT-F1-3ZW">
                         <rect key="frame" x="0.0" y="44" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -363,7 +335,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PC8-xA-Dn1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1691" y="1456"/>
+            <point key="canvasLocation" x="-1638" y="1456"/>
         </scene>
         <!--Push Button View Controller-->
         <scene sceneID="ywq-dW-A4s">
@@ -426,7 +398,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="37"/>
                                 <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <state key="normal" title="Starting...">
+                                <state key="normal" title="Start">
                                     <color key="titleColor" systemColor="labelColor"/>
                                 </state>
                                 <connections>
@@ -441,6 +413,9 @@
                                 <state key="normal" title="Settings">
                                     <color key="titleColor" systemColor="labelColor"/>
                                 </state>
+                                <connections>
+                                    <action selector="settingsButtonAction:" destination="iDV-Oy-MLF" eventType="touchUpInside" id="GL4-yZ-WJd"/>
+                                </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Jlz-kw-ueo"/>
@@ -462,7 +437,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kSu-1Y-JNU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1691.304347826087" y="2119.4196428571427"/>
+            <point key="canvasLocation" x="-2539" y="1456"/>
         </scene>
         <!--Music Provider View Controller-->
         <scene sceneID="BHV-ch-Ryc">
@@ -542,7 +517,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JSW-Ib-1sa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-800.00000000000011" y="2120.380434782609"/>
+            <point key="canvasLocation" x="-2539" y="743"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="oCJ-aC-o1T">
@@ -615,7 +590,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SgL-KK-XoP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-35" y="2330"/>
+            <point key="canvasLocation" x="-1641" y="835"/>
         </scene>
     </scenes>
     <resources>
@@ -623,9 +598,6 @@
         <image name="lightbulb" catalog="system" width="113" height="128"/>
         <image name="music.note" catalog="system" width="97" height="128"/>
         <image name="tray.and.arrow.down.fill" catalog="system" width="128" height="114"/>
-        <namedColor name="AccentColor">
-            <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

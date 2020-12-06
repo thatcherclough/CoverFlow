@@ -20,8 +20,8 @@ class BridgeDiscoveryController: UITableViewController {
         self.refreshControl = UIRefreshControl()
         refreshControl!.addTarget(self, action: #selector(self.refresh(_:)), for: .valueChanged)
 
-        if ViewController.authenticated && ViewController.bridge != nil && ViewController.bridgeInfo != nil {
-            bridges.append(ViewController.bridgeInfo)
+        if MainViewController.authenticated && MainViewController.bridge != nil && MainViewController.bridgeInfo != nil {
+            bridges.append(MainViewController.bridgeInfo)
         } else {
             refreshControl!.beginRefreshing()
             discoverBridges()
@@ -75,10 +75,10 @@ class BridgeDiscoveryController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedBridgeInfo = bridges[indexPath.row]
-        if ViewController.authenticated && ViewController.bridgeInfo.ipAddress == selectedBridgeInfo.ipAddress && ViewController.bridgeInfo.uniqueId == selectedBridgeInfo.uniqueId {
+        if MainViewController.authenticated && MainViewController.bridgeInfo.ipAddress == selectedBridgeInfo.ipAddress && MainViewController.bridgeInfo.uniqueId == selectedBridgeInfo.uniqueId {
             _ = navigationController?.popToRootViewController(animated: true)
         } else {
-            ViewController.bridgeInfo = bridges[indexPath.row]
+            SettingsViewController.toConnect = selectedBridgeInfo
             _ = navigationController?.popToRootViewController(animated: true)
         }
     }

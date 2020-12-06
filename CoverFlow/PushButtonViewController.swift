@@ -21,7 +21,7 @@ class PushButtonViewController: UIViewController {
         var timeLeft: Float = 30
         
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (timer) in
-            if ViewController.authenticated {
+            if MainViewController.authenticated {
                 self.dismiss(animated: true, completion: nil)
                 timer.invalidate()
             }
@@ -31,7 +31,7 @@ class PushButtonViewController: UIViewController {
             self.progressBar.progress = progress
             
             if timeLeft == 0 {
-                ViewController.bridge.disconnect()
+                MainViewController.bridge.disconnect()
                 
                 self.dismiss(animated: true, completion: nil)
                 timer.invalidate()

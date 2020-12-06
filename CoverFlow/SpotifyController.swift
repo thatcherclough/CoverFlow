@@ -203,6 +203,7 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
         
         let task = URLSession.shared.dataTask(with: request as URLRequest, completionHandler: { data, response, error in
             guard error == nil else {
+                print("error1")
                 return completion(["error":error?.localizedDescription ?? "An error occurred when fetching data from the Spotify API"])
             }
             guard let data = data else {
@@ -211,6 +212,7 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
             
             do {
                 if let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String: Any] {
+                    
                     if let error = json["error"] as? [String: Any] {
                         if let message = error["message"] as? String {
                             if message == "Invalid access token" && self.refreshToken != nil {
@@ -226,8 +228,9 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
                             }
                         }
                     }
+                } else {
+                    return completion(["error":"An error occurred when fetching data from the Spotify API"])
                 }
-                return completion(["error":"An error occurred when fetching data from the Spotify API"])
             } catch {
                 return completion(["nothing_playing":"Nothing is playing on Spotify. Please play something"])
             }

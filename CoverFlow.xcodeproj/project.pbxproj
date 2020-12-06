@@ -17,7 +17,7 @@
 		DD439AD325609FE700082CEF /* SpotifyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD439AD225609FE700082CEF /* SpotifyController.swift */; };
 		DDAEDC98253CF53D002F3175 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDC97253CF53D002F3175 /* AppDelegate.swift */; };
 		DDAEDC9A253CF53D002F3175 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDC99253CF53D002F3175 /* SceneDelegate.swift */; };
-		DDAEDC9C253CF53D002F3175 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDC9B253CF53D002F3175 /* ViewController.swift */; };
+		DDAEDC9C253CF53D002F3175 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDC9B253CF53D002F3175 /* SettingsViewController.swift */; };
 		DDAEDC9F253CF53D002F3175 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DDAEDC9D253CF53D002F3175 /* Main.storyboard */; };
 		DDAEDCA1253CF541002F3175 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DDAEDCA0253CF541002F3175 /* Assets.xcassets */; };
 		DDAEDCA4253CF541002F3175 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DDAEDCA2253CF541002F3175 /* LaunchScreen.storyboard */; };
@@ -58,7 +58,7 @@
 		DDAEDC94253CF53D002F3175 /* CoverFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoverFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDAEDC97253CF53D002F3175 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DDAEDC99253CF53D002F3175 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		DDAEDC9B253CF53D002F3175 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		DDAEDC9B253CF53D002F3175 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		DDAEDC9E253CF53D002F3175 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		DDAEDCA0253CF541002F3175 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DDAEDCA3253CF541002F3175 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -135,7 +135,7 @@
 			children = (
 				DDAEDC97253CF53D002F3175 /* AppDelegate.swift */,
 				DDAEDC99253CF53D002F3175 /* SceneDelegate.swift */,
-				DDAEDC9B253CF53D002F3175 /* ViewController.swift */,
+				DDAEDC9B253CF53D002F3175 /* SettingsViewController.swift */,
 				DD439AD225609FE700082CEF /* SpotifyController.swift */,
 				DD439AD025609FDC00082CEF /* AppleMusicController.swift */,
 				DDAEDC9D253CF53D002F3175 /* Main.storyboard */,
@@ -271,7 +271,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDAEDC9C253CF53D002F3175 /* ViewController.swift in Sources */,
+				DDAEDC9C253CF53D002F3175 /* SettingsViewController.swift in Sources */,
 				DDAEDC98253CF53D002F3175 /* AppDelegate.swift in Sources */,
 				DDFD8BE3253E479400BBE27A /* LightSelectionViewController.swift in Sources */,
 				DDB07A962579AD5C003EA4AF /* MainViewController.swift in Sources */,
@@ -446,7 +446,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.1;
+				MARKETING_VERSION = 1.3.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -496,7 +496,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.1;
+				MARKETING_VERSION = 1.3.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",

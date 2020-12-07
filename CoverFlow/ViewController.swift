@@ -145,7 +145,6 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        NSLog("View did appear")
         checkPermissionsAndSetupHue()
         
         if ViewController.lights.isEmpty {
@@ -199,8 +198,6 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     }
     
     func hueSetup() {
-        NSLog("hueSetup()")
-        
         setUpLastConnectedBridge()
         
         if ViewController.bridgeInfo != nil && (!ViewController.authenticated || (ViewController.authenticated && ViewController.bridge.bridgeConfiguration.networkConfiguration.ipAddress != ViewController.bridgeInfo.ipAddress)) {
@@ -209,7 +206,6 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     }
     
     func setUpLastConnectedBridge() {
-        NSLog("setUpLastConnectedBridge()")
         var lastConnectedBridge: BridgeInfo! {
             get {
                 if let lastConnectedBridge = PHSKnownBridge.lastConnectedBridge {
@@ -221,27 +217,20 @@ class ViewController: UITableViewController, UITextFieldDelegate {
             }
         }
         
-        NSLog("Got bridge var")
         if lastConnectedBridge != nil {
-            NSLog("setting bridge intfo to last connected brige")
             ViewController.bridgeInfo = lastConnectedBridge
         }
     }
     
     func connectFromBridgeInfo() {
-        NSLog("connectFromBridgeInfo()")
         DispatchQueue.main.async {
             if self.presentedViewController != nil {
-                NSLog("dismissing view controller")
                 self.dismiss(animated: true, completion: nil)
             }
             let connectionAlert = UIAlertController(title: "Connecting to bridge...", message: nil, preferredStyle: UIAlertController.Style.alert)
             self.present(connectionAlert, animated: true) {
-                NSLog("Presenting connecting to bridge")
                 ViewController.bridge = self.buildBridge(info: ViewController.bridgeInfo)
-                NSLog("Built brigde")
                 ViewController.bridge.connect()
-                NSLog("Ran connect")
             }
         }
     }
@@ -828,10 +817,8 @@ class ViewController: UITableViewController, UITextFieldDelegate {
 
 extension ViewController: PHSBridgeConnectionObserver {
     func bridgeConnection(_ bridgeConnection: PHSBridgeConnection!, handle connectionEvent: PHSBridgeConnectionEvent) {
-        NSLog("Bridge connection changed")
         switch connectionEvent {
         case .couldNotConnect:
-            NSLog("Could not connect")
             print("could not connect")
             
             if self.presentedViewController as? UIAlertController != nil {
@@ -839,38 +826,31 @@ extension ViewController: PHSBridgeConnectionObserver {
             }
             alert(title: "Error", body: "Could not connect to the bridge.")
             
-            NSLog("Setting to nils")
             ViewController.bridge = nil
             ViewController.bridgeInfo = nil
             ViewController.authenticated = false
             break
         case .connected:
-            NSLog("Connected")
             print("connected")
             break
         case .connectionLost:
-            NSLog("Connection lost")
             print("connection lost")
             
             alertAndNotify(title: "Notice", body: "Lost connection to the bridge.")
             break
         case .connectionRestored:
-            NSLog("conection restored")
             print("connection restored")
             
             alertAndNotify(title: "Notice", body: "Restored connection to the bridge.")
             break
         case .disconnected:
-            NSLog("Disconnected")
             print("disconnected")
             
-            NSLog("Setting view stuff1")
             bridgeCell.detailTextLabel?.text = "Not connected"
             lightsCell.detailTextLabel?.text = "None selected"
             ViewController.lights.removeAll()
             startButtonText.text = "Start"
             
-            NSLog("Resetting stuffs")
             ViewController.bridgeInfo = nil
             ViewController.bridge = nil
             ViewController.authenticated = false
@@ -882,38 +862,32 @@ extension ViewController: PHSBridgeConnectionObserver {
             }
             break
         case .notAuthenticated:
-            NSLog("not authed")
             print("not authenticated")
             
             ViewController.authenticated = false
             break
         case .linkButtonNotPressed:
-            NSLog("Button not pushed")
             print("button not pressed")
             
             if self.presentedViewController as? UIAlertController != nil {
                 self.dismiss(animated: true, completion: nil)
             }
             if self.presentedViewController == nil {
-                NSLog("Presenting view controller for button push")
                 let pushButton = self.storyboard?.instantiateViewController(withIdentifier: "PushButtonViewController") as! PushButtonViewController
                 pushButton.isModalInPresentation = true
                 self.present(pushButton, animated: true, completion: nil)
             }
             break
         case .authenticated:
-            NSLog("Authenticated")
             print("authenticated")
             
             if self.presentedViewController as? UIAlertController != nil {
-                NSLog("Dismissing1")
                 self.dismiss(animated: true, completion: nil)
             }
             ViewController.authenticated = true
             
             bridgeCell.detailTextLabel?.text = "Connected"
             
-            NSLog("User defults set when auth")
             let defaults = UserDefaults.standard
             let lights = defaults.value(forKey: "lights")
             if  lights == nil {
@@ -942,15 +916,12 @@ extension ViewController: PHSBridgeStateUpdateObserver {
     func bridge(_ bridge: PHSBridge!, handle updateEvent: PHSBridgeStateUpdatedEvent) {
         switch updateEvent {
         case .bridgeConfig:
-            NSLog("bridge config")
             print("bridge config")
             break
         case .fullConfig:
-            NSLog("full congif")
             print("full congif")
             break
         case .initialized:
-            NSLog("good")
             print("good")
             break
         default:
@@ -962,13 +933,10 @@ extension ViewController: PHSBridgeStateUpdateObserver {
 extension PHSKnownBridge {
     class var lastConnectedBridge: PHSKnownBridge? {
         get {
-            NSLog("getting last known bridge")
             let knownBridges: [PHSKnownBridge] = PHSKnownBridges.getAll()
-            NSLog("got all")
             let sortedKnownBridges: [PHSKnownBridge] = knownBridges.sorted { (bridge1, bridge2) -> Bool in
                 return bridge1.lastConnected < bridge2.lastConnected
             }
-            NSLog("sorted & returning")
             return sortedKnownBridges.first
         }
     }

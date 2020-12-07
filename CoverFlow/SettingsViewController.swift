@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  SettingsViewController.swift
 //  CoverFlow
 //
 //  Created by Thatcher Clough on 10/18/20.
@@ -132,7 +132,6 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        print("APPEARED HERE")
         let localNetworkPermissionService = LocalNetworkPermissionService()
         localNetworkPermissionService.triggerDialog()
         
@@ -168,6 +167,16 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
             return true
         }
     }
+    
+    
+    // MARK: Table Related
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath)!
+        cell.setSelected(false, animated: true)
+    }
+    
+    // MARK: Other
     
     func alert(title: String, body: String) {
         DispatchQueue.main.async {

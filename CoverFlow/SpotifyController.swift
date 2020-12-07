@@ -203,7 +203,6 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
         
         let task = URLSession.shared.dataTask(with: request as URLRequest, completionHandler: { data, response, error in
             guard error == nil else {
-                print("error1")
                 return completion(["error":error?.localizedDescription ?? "An error occurred when fetching data from the Spotify API"])
             }
             guard let data = data else {

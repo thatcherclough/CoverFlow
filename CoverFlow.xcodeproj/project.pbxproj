@@ -15,6 +15,7 @@
 		DD428420254E74FF00E6E3D1 /* audioCheck.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DD42841F254E74FF00E6E3D1 /* audioCheck.mp3 */; };
 		DD439AD125609FDC00082CEF /* AppleMusicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD439AD025609FDC00082CEF /* AppleMusicController.swift */; };
 		DD439AD325609FE700082CEF /* SpotifyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD439AD225609FE700082CEF /* SpotifyController.swift */; };
+		DD6EF8B7257DE16B0046654E /* Grota_Sans_Bold_Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD6EF8B6257DE16A0046654E /* Grota_Sans_Bold_Italic.otf */; };
 		DDAEDC98253CF53D002F3175 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDC97253CF53D002F3175 /* AppDelegate.swift */; };
 		DDAEDC9A253CF53D002F3175 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDC99253CF53D002F3175 /* SceneDelegate.swift */; };
 		DDAEDC9C253CF53D002F3175 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDC9B253CF53D002F3175 /* SettingsViewController.swift */; };
@@ -55,6 +56,7 @@
 		DD42841F254E74FF00E6E3D1 /* audioCheck.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = audioCheck.mp3; path = CoverFlow/Assets.xcassets/audioCheck.mp3; sourceTree = "<group>"; };
 		DD439AD025609FDC00082CEF /* AppleMusicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleMusicController.swift; sourceTree = "<group>"; };
 		DD439AD225609FE700082CEF /* SpotifyController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyController.swift; sourceTree = "<group>"; };
+		DD6EF8B6257DE16A0046654E /* Grota_Sans_Bold_Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Grota_Sans_Bold_Italic.otf; sourceTree = "<group>"; };
 		DDAEDC94253CF53D002F3175 /* CoverFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoverFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDAEDC97253CF53D002F3175 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DDAEDC99253CF53D002F3175 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				DDAEDCAD253CF56F002F3175 /* CoverFlow-Bridging-Header.h */,
 				DD42841F254E74FF00E6E3D1 /* audioCheck.mp3 */,
 				DD42841D254E743500E6E3D1 /* songChange.mp3 */,
+				DD6EF8B6257DE16A0046654E /* Grota_Sans_Bold_Italic.otf */,
 				DDAEDC96253CF53D002F3175 /* CoverFlow */,
 				DDAEDC95253CF53D002F3175 /* Products */,
 				8CDE867E1AF6CD0C9F350EFD /* Pods */,
@@ -215,6 +218,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DDAEDCA4253CF541002F3175 /* LaunchScreen.storyboard in Resources */,
+				DD6EF8B7257DE16B0046654E /* Grota_Sans_Bold_Italic.otf in Resources */,
 				DD42841E254E743500E6E3D1 /* songChange.mp3 in Resources */,
 				DD428420254E74FF00E6E3D1 /* audioCheck.mp3 in Resources */,
 				DDAEDCA1253CF541002F3175 /* Assets.xcassets in Resources */,

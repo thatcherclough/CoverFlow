@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="retina6_1" orientation="portrait" appearance="dark"/>
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
@@ -18,16 +18,18 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="JustIcon" translatesAutoresizingMaskIntoConstraints="NO" id="1Yl-9s-7sB">
-                                <rect key="frame" x="150" y="147.5" width="114" height="601"/>
+                                <rect key="frame" x="144.5" y="339" width="125" height="218"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="1Yl-9s-7sB" secondAttribute="height" multiplier="344:601" id="Mnf-hj-2Md"/>
+                                    <constraint firstAttribute="width" constant="125" id="YNB-hn-ADw"/>
+                                </constraints>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="1Yl-9s-7sB" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="4Xg-FI-nfd"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="1Yl-9s-7sB" secondAttribute="trailing" constant="150" id="FI2-rL-t7A"/>
                             <constraint firstItem="1Yl-9s-7sB" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="NvX-4Y-smz"/>
-                            <constraint firstItem="1Yl-9s-7sB" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="150" id="oes-uY-BB3"/>
                         </constraints>
                     </view>
                 </viewController>

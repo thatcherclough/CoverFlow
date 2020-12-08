@@ -35,7 +35,9 @@ class MainViewController: UIViewController {
     var settingsNav: UINavigationController!
     var animatedGradient: AnimatedGradientView!
     var hexes: [String] = []
-    let defaultHexes: [String] = ["12c2e9", "c471ed", "f64f59"]
+    let defaultHexes: [String] = ["f64f59", "c471ed", "12c2e9"]
+    
+    @IBOutlet var label: UILabel!
     
     @IBOutlet var startButton: TransparentTextButton!
     @IBAction func startButtonAction(_ sender: Any) {
@@ -49,9 +51,9 @@ class MainViewController: UIViewController {
                 startButton.setTitle("Starting...", alpha: 0.9)
                 
                 DispatchQueue.global(qos: .background).async {
-                    self.startBackgrounding()
                     self.getCurrentLightsStates()
                     self.start()
+                    self.startBackgrounding()
                 }
             } else {
                 stop()
@@ -70,9 +72,14 @@ class MainViewController: UIViewController {
             if self.startButton.titleLabel?.text == "Stop" {
                 self.alert(title: "Notice", body: "You must stop CoverFlow before accessing settings.")
             } else {
+                self.settingsNav.isModalInPresentation = true
                 self.present(self.settingsNav, animated: true, completion: nil)
             }
         }
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        .lightContent
     }
     
     // MARK: View Related
@@ -80,7 +87,9 @@ class MainViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        observeReachability()
+        if view.bounds.width < 370 {
+            label.font = label.font.withSize(60)
+        }
         
         settingsNav = self.storyboard?.instantiateViewController(withIdentifier: "SettingsViewController") as? UINavigationController
         settings = settingsNav.viewControllers.first as? SettingsViewController
@@ -98,6 +107,10 @@ class MainViewController: UIViewController {
         settingsButton.layer.cornerRadius = 10
         settingsButton.titleLabel?.alpha = 0
         settingsButton.clipsToBounds = true
+        
+        observeReachability()
+        
+        NotificationCenter.default.addObserver(self, selector:#selector(appMovedToForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
         
         if MainViewController.musicProvider == "appleMusic" && MainViewController.appleMusicController == nil {
             MainViewController.appleMusicController = AppleMusicController(apiKey: keys.appleMusicAPIKey1)
@@ -129,6 +142,7 @@ class MainViewController: UIViewController {
             }
             self.animatedGradient = AnimatedGradientView(frame: self.view.bounds)
             self.animatedGradient.animationDuration = 3
+            self.animatedGradient.autoRepeat = true
             self.animatedGradient.colorStrings = [self.defaultHexes]
             self.view.addSubview(self.animatedGradient)
             self.view.sendSubviewToBack(self.animatedGradient)
@@ -136,8 +150,8 @@ class MainViewController: UIViewController {
     }
     
     func updateBackground() {
-        if !hexes.isEmpty {
-            DispatchQueue.main.async() {
+        if !hexes.isEmpty && self.animatedGradient != nil {
+            DispatchQueue.main.async {
                 self.animatedGradient.animationValues =
                     [
                         (colors: [self.hexes[self.nextHexIndex()], self.hexes[self.nextHexIndex()]], .upRight, .axial),
@@ -263,7 +277,11 @@ class MainViewController: UIViewController {
         }
     }
     
-    
+    @objc func appMovedToForeground() {
+        if !hexes.isEmpty && animatedGradient != nil && startButton.titleLabel?.text == "Stop" {
+            animatedGradient.startAnimating()
+        }
+    }
     
     // MARK: Bridge Related
     
@@ -305,7 +323,9 @@ class MainViewController: UIViewController {
                                 errorText += " " + error.errorDescription + "."
                             }
                         }
-                        self.alertAndNotify(title: "Error", body: errorText)
+                        if !errorText.contains("Device is set to off") {
+                            self.alertAndNotify(title: "Error", body: errorText)
+                        }
                     }
                 }
             }
@@ -536,14 +556,10 @@ class MainViewController: UIViewController {
                 }
                 
             }
-            
         }
     }
     
     func getCoverImageAndSetCurrentSongHues() {
-        currentHues.removeAll()
-        hexes.removeAll()
-        
         if MainViewController.musicProvider == "appleMusic" {
             let player = MPMusicPlayerController.systemMusicPlayer
             let nowPlaying: MPMediaItem? = player.nowPlayingItem
@@ -566,7 +582,7 @@ class MainViewController: UIViewController {
                                         return
                                     }
                                     
-                                    DispatchQueue.main.async() {
+                                    DispatchQueue.main.async {
                                         let image = UIImage(data: data!)
                                         self.setCurrentSongHues(image: image!)
                                         return
@@ -594,7 +610,7 @@ class MainViewController: UIViewController {
                                     return
                                 }
                                 
-                                DispatchQueue.main.async() {
+                                DispatchQueue.main.async {
                                     let image = UIImage(data: data!)
                                     self.setCurrentSongHues(image: image!)
                                     return
@@ -617,33 +633,37 @@ class MainViewController: UIViewController {
         URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
     }
     
-
     func setCurrentSongHues(image: UIImage) {
         guard let colors = ColorThief.getPalette(from: image, colorCount: 4, quality: 5, ignoreWhite: true) else {
             self.alertAndNotify(title: "Notice", body: "Could not extract colors form the current song's album cover.")
             return
         }
         
+        var newHues: [NSNumber] = []
+        var newHexes: [String] = []
         for color in colors {
             let uiColor = UIColor(red: CGFloat(color.r), green: CGFloat(color.g), blue: CGFloat(color.b), alpha: 1)
             let hue = uiColor.hsba.h
             let saturation = uiColor.hsba.s
             if hue > 0 && saturation > 0.2 {
-                currentHues.append((hue * 360 * 182) as NSNumber)
+                newHues.append((hue * 360 * 182) as NSNumber)
                 
                 let uiColorFullSaturation = UIColor(hue: hue, saturation: 0.8, brightness: 0.7, alpha: 1)
                 if let hex = uiColorFullSaturation.hexa {
-                    hexes.append(hex)
+                    newHexes.append(hex)
                 }
             }
         }
         
-        if !hexes.isEmpty {
-            updateBackground()
+        if newHues.isEmpty {
+            alertAndNotify(title: "Notice", body: "The current song's album cover does not have any distinct colors.")
+        } else {
+            currentHues = newHues
         }
         
-        if currentHues.isEmpty {
-            alertAndNotify(title: "Notice", body: "The current song's album cover does not have any distinct colors.")
+        if !newHexes.isEmpty {
+            hexes = newHexes
+            updateBackground()
         }
     }
     
@@ -653,7 +673,7 @@ class MainViewController: UIViewController {
         }
         timer = nil
         
-        DispatchQueue.main.async() {
+        DispatchQueue.main.async {
             self.startButton.setTitle("Start", alpha: 0.9)
             self.startButton.isEnabled = true
             
@@ -669,7 +689,7 @@ class MainViewController: UIViewController {
         do {
             let audioFile = URL(fileURLWithPath: Bundle.main.path(forResource: fileName, ofType: fileExtension)!)
             audioPlayer = try AVAudioPlayer(contentsOf: audioFile)
-            audioPlayer!.volume = 0.05
+            audioPlayer!.volume = 0.025
             audioPlayer!.prepareToPlay()
             audioPlayer!.play()
         } catch {
@@ -682,9 +702,14 @@ class MainViewController: UIViewController {
         do {
             let audioCheck = URL(fileURLWithPath: Bundle.main.path(forResource: "audioCheck", ofType: "mp3")!)
             backgroundPlayer = try AVAudioPlayer(contentsOf: audioCheck)
-            backgroundPlayer!.numberOfLoops = -1
-            backgroundPlayer!.prepareToPlay()
-            backgroundPlayer!.play()
+            if backgroundPlayer != nil {
+                backgroundPlayer!.numberOfLoops = -1
+                backgroundPlayer!.volume = 0.0
+                backgroundPlayer!.prepareToPlay()
+                backgroundPlayer!.play()
+            } else {
+                throw "Error"
+            }
         } catch {
             alert(title: "Notice", body: "Could not initialize background mode.")
         }
@@ -822,12 +847,6 @@ public class TransparentTextButton: UIButton {
             }
         }
     }
-    
-    func changeAlpha(alpha: CGFloat, duration: TimeInterval) {
-        UIView.animate(withDuration: duration, animations: {
-            self.alpha = alpha
-        })
-    }
 }
 
 extension MainViewController: PHSBridgeConnectionObserver {
@@ -836,7 +855,7 @@ extension MainViewController: PHSBridgeConnectionObserver {
         case .couldNotConnect:
             print("could not connect")
             
-            if self.presentedViewController as? UIAlertController != nil {
+            if self.presentedViewController != nil {
                 self.dismiss(animated: true) {
                     self.alert(title: "Error", body: "Could not connect to the bridge.")
                 }
@@ -885,7 +904,6 @@ extension MainViewController: PHSBridgeConnectionObserver {
             print("not authenticated")
             
             MainViewController.authenticated = false
-            SettingsViewController.toConnect = nil
             break
         case .linkButtonNotPressed:
             print("button not pressed")
@@ -894,7 +912,7 @@ extension MainViewController: PHSBridgeConnectionObserver {
                 settings.dismiss(animated: true, completion: nil)
             }
             
-            if settings.presentedViewController == nil {
+            if settings.presentedViewController as? PushButtonViewController == nil {
                 let pushButton = self.storyboard?.instantiateViewController(withIdentifier: "PushButtonViewController") as! PushButtonViewController
                 pushButton.isModalInPresentation = true
                 settings.present(pushButton, animated: true, completion: nil)
@@ -903,11 +921,15 @@ extension MainViewController: PHSBridgeConnectionObserver {
         case .authenticated:
             print("authenticated")
             
-            if self.presentedViewController as? UIAlertController != nil {
+            if self.presentedViewController != nil {
                 self.dismiss(animated: true, completion: nil)
             }
+            
             MainViewController.authenticated = true
             
+            if MainViewController.bridgeInfo == nil {
+                MainViewController.bridgeInfo = SettingsViewController.toConnect
+            }
             SettingsViewController.toConnect = nil
             settings.bridgeCell.detailTextLabel?.text = "Connected"
             
@@ -990,3 +1012,5 @@ extension UInt8 {
         return (self < 16 ? "0": "") + value
     }
 }
+
+extension String: Error {}

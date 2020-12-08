@@ -22,7 +22,6 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     
     @IBOutlet var bridgeCell: UITableViewCell!
     @IBOutlet var lightsCell: UITableViewCell!
-    @IBOutlet var startButtonText: UILabel!
     
     var colorDuration: Double = 0.0
     @IBOutlet var colorDurationLabel: UILabel!
@@ -32,16 +31,12 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         if rounded == 0 && transitionDuration == 0 {
             rounded = 1
         }
+        colorDuration = Double(rounded) * 0.25
         colorDurationSlider.value = Float(rounded)
+        colorDurationLabel.text = "\(colorDuration) sec"
         
-        let newColorDuration = Double(rounded) * 0.25
-        if newColorDuration != colorDuration {
-            colorDuration = newColorDuration
-            
-            colorDurationLabel.text = "\(colorDuration) sec"
-            DispatchQueue.global(qos: .background).async {
-                UserDefaults.standard.setValue(rounded, forKey: "colorDuration")
-            }
+        DispatchQueue.global(qos: .background).async {
+            UserDefaults.standard.setValue(rounded, forKey: "colorDuration")
         }
     }
     
@@ -50,18 +45,15 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet var transitionDurationSlider: UISlider!
     @IBAction func transitionDurationChanged(_ sender: UISlider?) {
         var rounded: Int = Int(transitionDurationSlider.value)
-        if rounded == 0 && colorDuration == 0{
+        if rounded == 0 && colorDuration == 0 {
             rounded = 1
         }
+        transitionDuration = Double(rounded) * 0.25
         transitionDurationSlider.value = Float(rounded)
+        transitionDurationLabel.text = "\(transitionDuration) sec"
         
-        let newTransitionDuration = Double(rounded) * 0.25
-        if newTransitionDuration != transitionDuration {
-            transitionDuration = newTransitionDuration
-            transitionDurationLabel.text = "\(transitionDuration) sec"
-            DispatchQueue.global(qos: .background).async {
-                UserDefaults.standard.setValue(rounded, forKey: "transitionDuration")
-            }
+        DispatchQueue.global(qos: .background).async {
+            UserDefaults.standard.setValue(rounded, forKey: "transitionDuration")
         }
     }
     
@@ -70,15 +62,12 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet var brightnessSlider: UISlider!
     @IBAction func brightnessChanged(_ sender: UISlider?) {
         let rounded: Int = Int(brightnessSlider.value)
+        brightness = Double(rounded) * 2.54
         brightnessSlider.value = Float(rounded)
+        brightnessLabel.text = "\(rounded)%"
         
-        let newBrightness = Double(rounded) * 2.54
-        if newBrightness != brightness {
-            brightness = newBrightness
-            brightnessLabel.text = "\(rounded)%"
-            DispatchQueue.global(qos: .background).async {
-                UserDefaults.standard.setValue(rounded, forKey: "brightness")
-            }
+        DispatchQueue.global(qos: .background).async {
+            UserDefaults.standard.setValue(rounded, forKey: "brightness")
         }
     }
     
@@ -128,6 +117,11 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         transitionDurationChanged(nil)
         brightnessChanged(nil)
         
+        if MainViewController.lights.isEmpty {
+            lightsCell.detailTextLabel?.text = "None selected"
+        } else {
+            lightsCell.detailTextLabel?.text = "\(MainViewController.lights.count) selected"
+        }
         self.tableView.reloadData()
     }
     
@@ -140,6 +134,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         } else {
             lightsCell.detailTextLabel?.text = "\(MainViewController.lights.count) selected"
         }
+        self.tableView.reloadData()
         
         if SettingsViewController.toConnect != nil && (!MainViewController.authenticated || (MainViewController.authenticated && MainViewController.bridge != nil &&  MainViewController.bridge.bridgeConfiguration.networkConfiguration.ipAddress != SettingsViewController.toConnect.ipAddress)) {
             connectFromBridgeInfo()

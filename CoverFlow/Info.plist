@@ -39,6 +39,10 @@
 	<string>CoverFlow uses uses Apple Music to get the current playing song's album cover.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>CoverFlow uses the local network to connect to Phillips Hue lights.</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Grota_Sans_Bold_Italic.otf</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -72,6 +76,8 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleDefault</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

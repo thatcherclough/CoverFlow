@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="iDV-Oy-MLF">
-    <device id="ipad9_7" orientation="portrait" layout="fullscreen" appearance="dark"/>
+    <device id="ipad9_7" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
@@ -8,6 +8,11 @@
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="Grota_Sans_Bold_Italic.otf">
+            <string>GrotaSansBoldItalic_96372</string>
+        </array>
+    </customFonts>
     <scenes>
         <!--Bridge Discovery-->
         <scene sceneID="Zlk-za-IrD">
@@ -52,7 +57,13 @@
                             <outlet property="delegate" destination="eK3-dy-wim" id="z3j-3I-QUW"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Bridge Discovery" largeTitleDisplayMode="never" id="SjY-OW-c2K"/>
+                    <navigationItem key="navigationItem" title="Bridge Discovery" largeTitleDisplayMode="never" id="SjY-OW-c2K">
+                        <barButtonItem key="rightBarButtonItem" title="Enter IP" id="wDm-Fi-OzR">
+                            <connections>
+                                <action selector="enterIPAction:" destination="eK3-dy-wim" id="0dj-T8-43M"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ied-eJ-Ma6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -355,9 +366,10 @@
                                 <rect key="frame" x="20" y="1000" width="728" height="4"/>
                             </progressView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BridgeBlack" translatesAutoresizingMaskIntoConstraints="NO" id="lSu-aJ-uXH">
-                                <rect key="frame" x="70" y="198" width="628" height="628"/>
+                                <rect key="frame" x="184" y="312" width="400" height="400"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="lSu-aJ-uXH" secondAttribute="height" multiplier="1:1" id="3lf-MS-mh7"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="400" id="vIh-uo-mlH"/>
                                 </constraints>
                             </imageView>
                         </subviews>
@@ -365,12 +377,12 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="Jnx-81-Jif" secondAttribute="trailing" constant="20" id="EM2-xh-RPf"/>
-                            <constraint firstItem="lSu-aJ-uXH" firstAttribute="leading" secondItem="8jd-CQ-5CW" secondAttribute="leading" constant="70" id="GJD-GZ-8an"/>
+                            <constraint firstItem="lSu-aJ-uXH" firstAttribute="leading" secondItem="8jd-CQ-5CW" secondAttribute="leading" priority="950" constant="70" id="GJD-GZ-8an"/>
                             <constraint firstItem="dSv-ZG-CPS" firstAttribute="bottom" secondItem="8jd-CQ-5CW" secondAttribute="bottom" constant="-20" id="P73-xd-i5T"/>
                             <constraint firstItem="lSu-aJ-uXH" firstAttribute="centerY" secondItem="976-ys-aXD" secondAttribute="centerY" id="RVK-vp-Mgh"/>
                             <constraint firstItem="Jnx-81-Jif" firstAttribute="leading" secondItem="976-ys-aXD" secondAttribute="leadingMargin" constant="20" id="Zi4-jI-Bjv"/>
                             <constraint firstItem="Jnx-81-Jif" firstAttribute="top" secondItem="8jd-CQ-5CW" secondAttribute="top" constant="30" id="aZk-MG-hiY"/>
-                            <constraint firstItem="8jd-CQ-5CW" firstAttribute="trailing" secondItem="lSu-aJ-uXH" secondAttribute="trailing" constant="70" id="dql-g0-HKT"/>
+                            <constraint firstItem="8jd-CQ-5CW" firstAttribute="trailing" secondItem="lSu-aJ-uXH" secondAttribute="trailing" priority="950" constant="70" id="dql-g0-HKT"/>
                             <constraint firstItem="lSu-aJ-uXH" firstAttribute="centerX" secondItem="976-ys-aXD" secondAttribute="centerX" id="eTn-4S-fuk"/>
                             <constraint firstItem="8jd-CQ-5CW" firstAttribute="trailing" secondItem="dSv-ZG-CPS" secondAttribute="trailing" constant="20" id="kiJ-LR-J1d"/>
                             <constraint firstItem="dSv-ZG-CPS" firstAttribute="leading" secondItem="8jd-CQ-5CW" secondAttribute="leading" constant="20" id="wuT-XN-xSH"/>
@@ -417,20 +429,30 @@
                                     <action selector="settingsButtonAction:" destination="iDV-Oy-MLF" eventType="touchUpInside" id="GL4-yZ-WJd"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CoverFlow" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZrP-5t-ziP">
+                                <rect key="frame" x="20" y="193.5" width="728" height="82"/>
+                                <fontDescription key="fontDescription" name="GrotaSansBoldItalic_96372" family="Grota Sans" pointSize="70"/>
+                                <color key="textColor" white="1" alpha="0.90000000000000002" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Jlz-kw-ueo"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="Q9x-jI-kq4" firstAttribute="top" secondItem="Jlz-kw-ueo" secondAttribute="centerY" constant="-30" id="AG8-eU-zMc"/>
+                            <constraint firstItem="Jlz-kw-ueo" firstAttribute="trailing" secondItem="ZrP-5t-ziP" secondAttribute="trailing" constant="20" id="BNz-29-OFh"/>
                             <constraint firstItem="Jlz-kw-ueo" firstAttribute="centerY" secondItem="Q9x-jI-kq4" secondAttribute="bottom" constant="-30" id="D5W-v9-t1t"/>
                             <constraint firstItem="Vel-Et-vs9" firstAttribute="leading" secondItem="Q9x-jI-kq4" secondAttribute="leading" constant="45" id="Fir-sv-ysY"/>
                             <constraint firstItem="Q9x-jI-kq4" firstAttribute="trailing" secondItem="Vel-Et-vs9" secondAttribute="trailing" constant="45" id="Kmj-WW-noz"/>
                             <constraint firstItem="Vel-Et-vs9" firstAttribute="top" secondItem="Q9x-jI-kq4" secondAttribute="bottom" constant="35" id="abw-pb-R2g"/>
                             <constraint firstItem="Jlz-kw-ueo" firstAttribute="centerX" secondItem="Q9x-jI-kq4" secondAttribute="trailing" constant="-100" id="fx2-f6-HDb"/>
+                            <constraint firstItem="Q9x-jI-kq4" firstAttribute="top" secondItem="ZrP-5t-ziP" secondAttribute="bottom" multiplier="1.75" id="nEe-Mh-ZIW"/>
+                            <constraint firstItem="ZrP-5t-ziP" firstAttribute="leading" secondItem="Jlz-kw-ueo" secondAttribute="leading" constant="20" id="t9g-lq-sqf"/>
                             <constraint firstItem="Q9x-jI-kq4" firstAttribute="leading" secondItem="Jlz-kw-ueo" secondAttribute="centerX" constant="-100" id="uf3-Zm-fuZ"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="label" destination="ZrP-5t-ziP" id="Bg6-Yi-Rrg"/>
                         <outlet property="settingsButton" destination="Vel-Et-vs9" id="yS2-BD-Ofe"/>
                         <outlet property="startButton" destination="Q9x-jI-kq4" id="oA6-bM-wCc"/>
                     </connections>
@@ -466,7 +488,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welcome to CoverFlow!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Of4-4c-oGD">
-                                <rect key="frame" x="65" y="60" width="638" height="42"/>
+                                <rect key="frame" x="55" y="60" width="658" height="42"/>
                                 <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="35"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -503,10 +525,10 @@
                             <constraint firstItem="Of4-4c-oGD" firstAttribute="top" secondItem="lPL-xk-JLC" secondAttribute="top" constant="60" id="PDW-Pc-sDm"/>
                             <constraint firstItem="lPL-xk-JLC" firstAttribute="trailing" secondItem="oT6-U1-UkC" secondAttribute="trailing" constant="20" id="Quh-FY-JEI"/>
                             <constraint firstItem="t7P-1i-4OE" firstAttribute="leading" secondItem="lPL-xk-JLC" secondAttribute="leading" constant="20" id="RM8-zI-gQD"/>
-                            <constraint firstItem="lPL-xk-JLC" firstAttribute="trailing" secondItem="Of4-4c-oGD" secondAttribute="trailing" constant="65" id="YbI-MI-gpp"/>
+                            <constraint firstItem="lPL-xk-JLC" firstAttribute="trailing" secondItem="Of4-4c-oGD" secondAttribute="trailing" constant="55" id="YbI-MI-gpp"/>
                             <constraint firstItem="t7P-1i-4OE" firstAttribute="top" secondItem="jxJ-o1-oC9" secondAttribute="bottom" constant="30" id="bKU-t5-53n"/>
                             <constraint firstItem="oT6-U1-UkC" firstAttribute="leading" secondItem="lPL-xk-JLC" secondAttribute="leading" constant="20" id="d72-5V-qBy"/>
-                            <constraint firstItem="Of4-4c-oGD" firstAttribute="leading" secondItem="lPL-xk-JLC" secondAttribute="leading" constant="65" id="erG-uw-wGg"/>
+                            <constraint firstItem="Of4-4c-oGD" firstAttribute="leading" secondItem="lPL-xk-JLC" secondAttribute="leading" constant="55" id="erG-uw-wGg"/>
                             <constraint firstItem="lPL-xk-JLC" firstAttribute="trailing" secondItem="oT6-U1-UkC" secondAttribute="trailing" constant="20" id="et7-dx-IDG"/>
                             <constraint firstItem="jxJ-o1-oC9" firstAttribute="trailing" secondItem="lPL-xk-JLC" secondAttribute="trailing" id="k09-M7-lKU"/>
                             <constraint firstItem="oT6-U1-UkC" firstAttribute="top" secondItem="t7P-1i-4OE" secondAttribute="bottom" constant="30" id="pgh-CX-qGu"/>
@@ -534,9 +556,9 @@
                                 </constraints>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="music.note" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="3zS-qI-J9D">
-                                <rect key="frame" x="30" y="227.5" width="132" height="130"/>
+                                <rect key="frame" x="30" y="226.5" width="132" height="131"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="3zS-qI-J9D" secondAttribute="height" multiplier="1:1" constant="1" id="PTL-Sn-1id"/>
+                                    <constraint firstAttribute="width" secondItem="3zS-qI-J9D" secondAttribute="height" multiplier="1:1" id="kza-d5-bpn"/>
                                 </constraints>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="tray.and.arrow.down.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="ua0-vl-bCx">
@@ -546,20 +568,20 @@
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CoverFlow is compatible with both Apple Music and Spotify." lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GJn-bs-Tki">
-                                <rect key="frame" x="192" y="283.5" width="546" height="18"/>
-                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
+                                <rect key="frame" x="192" y="282" width="546" height="20.5"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CoverFlow changes Phillips Hue lights based on the album cover of the current playing song." lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IXI-m9-gkP">
-                                <rect key="frame" x="192" y="108" width="546" height="36"/>
-                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
+                                <rect key="frame" x="192" y="104.5" width="546" height="42.5"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enable notifications to be notified about errors." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3to-tA-axO">
-                                <rect key="frame" x="192" y="455" width="546" height="18"/>
-                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
+                                <rect key="frame" x="192" y="453.5" width="546" height="20.5"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>

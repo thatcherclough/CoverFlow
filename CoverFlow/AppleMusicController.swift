@@ -111,7 +111,6 @@ class AppleMusicController {
                         }
                     }
                 }
-                return completion(nil)
             } catch {
                 return completion(nil)
             }

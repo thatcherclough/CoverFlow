@@ -20,6 +20,10 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     static var toConnect: BridgeInfo! = nil
     var mainViewController: MainViewController!
     
+    @IBAction func doneButtonAction(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     @IBOutlet var bridgeCell: UITableViewCell!
     @IBOutlet var lightsCell: UITableViewCell!
     
@@ -71,14 +75,33 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
-    @IBAction func doneButtonAction(_ sender: Any) {
-        self.dismiss(animated: true, completion: nil)
+    @IBOutlet var randomizeColorSwitch: UISwitch!
+    
+    @IBOutlet var musicProviderLabel: UILabel!
+    @IBAction func signOutButtonAction(_ sender: Any) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Sign out", message: "Are you sure you want to sign out?", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { alertAction in
+                self.mainViewController.dismiss(animated: true) {
+                    self.mainViewController.presentMusicProvider(alert: nil)
+                    
+                    MainViewController.musicProvider = nil
+                    UserDefaults.standard.set(nil, forKey: "musicProvider")
+                    
+                    MainViewController.bridge.disconnect()
+                }
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
     }
     
     // MARK: View Related
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        tableView.delaysContentTouches = false
         
         colorDurationSlider.minimumValue = 0
         colorDurationSlider.maximumValue = 40
@@ -122,6 +145,12 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         } else {
             lightsCell.detailTextLabel?.text = "\(MainViewController.lights.count) selected"
         }
+        
+        if MainViewController.musicProvider != nil && MainViewController.musicProvider == "appleMusic" {
+            musicProviderLabel.text = "Music provider: Apple Music"
+        } else if MainViewController.musicProvider != nil && MainViewController.musicProvider == "spotify" {
+            musicProviderLabel.text = "Music provider: Spotify"
+        }
         self.tableView.reloadData()
     }
     
@@ -133,6 +162,12 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
             lightsCell.detailTextLabel?.text = "None selected"
         } else {
             lightsCell.detailTextLabel?.text = "\(MainViewController.lights.count) selected"
+        }
+        
+        if MainViewController.musicProvider != nil && MainViewController.musicProvider == "appleMusic" {
+            musicProviderLabel.text = "Music provider: Apple Music"
+        } else if MainViewController.musicProvider != nil && MainViewController.musicProvider == "spotify" {
+            musicProviderLabel.text = "Music provider: Spotify"
         }
         self.tableView.reloadData()
         

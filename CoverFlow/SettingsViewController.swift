@@ -96,6 +96,8 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
+    @IBOutlet var twitterCell: UITableViewCell!
+    
     // MARK: View Related
     
     override func viewDidLoad() {
@@ -151,6 +153,13 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         } else if MainViewController.musicProvider != nil && MainViewController.musicProvider == "spotify" {
             musicProviderLabel.text = "Music provider: Spotify"
         }
+        
+        let image = UIImageView(image: UIImage(named: "Twitter"))
+        image.setImageColor(color: .systemGray2)
+        
+        let cellHeight = twitterCell.bounds.height
+        twitterCell.accessoryView = image
+        twitterCell.accessoryView?.frame = CGRect(x: 0, y: 0, width: cellHeight / 3.5, height: cellHeight / 3.5)
         self.tableView.reloadData()
     }
     
@@ -204,6 +213,19 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)!
         cell.setSelected(false, animated: true)
+        
+        if cell.textLabel?.text == "Thatcher Clough" {
+            let screenName =  "thatcherclough"
+            let appURL = NSURL(string: "twitter://user?screen_name=\(screenName)")!
+            let webURL = NSURL(string: "https://twitter.com/\(screenName)")!
+            
+            let application = UIApplication.shared
+            if application.canOpenURL(appURL as URL) {
+                application.open(appURL as URL)
+            } else {
+                application.open(webURL as URL)
+            }
+        }
     }
     
     // MARK: Other
@@ -217,4 +239,12 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
             }
         }
     }
+}
+
+extension UIImageView {
+  func setImageColor(color: UIColor) {
+    let templateImage = self.image?.withRenderingMode(.alwaysTemplate)
+    self.image = templateImage
+    self.tintColor = color
+  }
 }

@@ -339,6 +339,34 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
+                            <tableViewSection headerTitle="CONTACT" id="n3Q-wX-iAH">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="bD7-SX-SPZ" detailTextLabel="73V-om-TVs" rowHeight="65" style="IBUITableViewCellStyleSubtitle" id="vtk-qh-zJR">
+                                        <rect key="frame" x="0.0" y="639.5" width="414" height="65"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vtk-qh-zJR" id="nKd-qg-MxC">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="65"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Thatcher Clough" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="bD7-SX-SPZ">
+                                                    <rect key="frame" x="20" y="12" width="127.5" height="20.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" systemColor="linkColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="@thatcherclough" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="73V-om-TVs">
+                                                    <rect key="frame" x="20" y="35.5" width="97" height="14.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="26W-YJ-TRH" id="nih-Yk-uHU"/>
@@ -363,6 +391,7 @@
                         <outlet property="randomizeColorSwitch" destination="a4c-lg-gPQ" id="ft5-1z-Daz"/>
                         <outlet property="transitionDurationLabel" destination="oFY-La-c2R" id="g4P-ZB-gBF"/>
                         <outlet property="transitionDurationSlider" destination="0Hk-g3-fVk" id="ndA-Ip-Yjw"/>
+                        <outlet property="twitterCell" destination="vtk-qh-zJR" id="SeH-iW-Hnj"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Gof-8e-ABE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -624,7 +653,7 @@
             <objects>
                 <viewController id="hiu-Ap-TfF" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="cci-ah-6ee">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="433"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="433.5"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="lightbulb" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="laH-dM-q8L">
@@ -703,6 +732,9 @@
         <image name="tray.and.arrow.down.fill" catalog="system" width="128" height="114"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="linkColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

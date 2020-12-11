@@ -76,6 +76,11 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     }
     
     @IBOutlet var randomizeColorSwitch: UISwitch!
+    @IBAction func randomizeColorSwitchAction(_ sender: UISwitch?) {
+        DispatchQueue.main.async {
+            UserDefaults.standard.setValue(self.randomizeColorSwitch.isOn, forKey: "randomizeColorOrder")
+        }
+    }
     
     @IBOutlet var musicProviderLabel: UILabel!
     @IBAction func signOutButtonAction(_ sender: Any) {
@@ -139,10 +144,18 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         } else {
             brightnessSlider.value = brightnessDefaults as! Float
         }
+        let randomizeColorOrder = defaults.value(forKey: "randomizeColorOrder")
+        if randomizeColorOrder == nil {
+            defaults.setValue(false, forKey: "randomizeColorOrder")
+            randomizeColorSwitch.isOn = false
+        } else {
+            randomizeColorSwitch.isOn = randomizeColorOrder as! Bool
+        }
         
         colorDurationChanged(nil)
         transitionDurationChanged(nil)
         brightnessChanged(nil)
+        randomizeColorSwitchAction(nil)
         
         if MainViewController.lights.isEmpty {
             lightsCell.detailTextLabel?.text = "None selected"

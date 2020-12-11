@@ -276,6 +276,9 @@
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a4c-lg-gPQ">
                                                     <rect key="frame" x="345" y="6.5" width="51" height="31"/>
+                                                    <connections>
+                                                        <action selector="randomizeColorSwitchAction:" destination="26W-YJ-TRH" eventType="valueChanged" id="gEY-7V-cS3"/>
+                                                    </connections>
                                                 </switch>
                                             </subviews>
                                             <constraints>

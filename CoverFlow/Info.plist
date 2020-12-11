@@ -31,7 +31,7 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-        <string>spotify</string>
+		<string>spotify</string>
 		<string>twitter</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>

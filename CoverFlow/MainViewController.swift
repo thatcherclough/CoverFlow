@@ -15,7 +15,7 @@ import ColorThiefSwift
 
 class MainViewController: UIViewController {
     
-    // MARK: Variables and buttons
+    // MARK: Variables, IBOutlets, and IBActions
     
     let keys = CoverFlowKeys()
     var canPushNotifications: Bool = false
@@ -58,6 +58,8 @@ class MainViewController: UIViewController {
             } else {
                 stop()
                 setCurrentLightsStates()
+                currentHues.removeAll()
+                hexes.removeAll()
                 
                 DispatchQueue.main.async {
                     self.startButton.isEnabled = true

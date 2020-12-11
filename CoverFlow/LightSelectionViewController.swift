@@ -10,8 +10,12 @@ import UIKit
 
 class LightSelectionViewController: UITableViewController {
     
+    // MARK: Variables
+    
     var allLights: [String]! = []
     var selectedLights: [String]! = []
+    
+    // MARK: View Related
     
     override func viewDidLoad() {
         allLights.removeAll()
@@ -23,6 +27,8 @@ class LightSelectionViewController: UITableViewController {
             selectedLights = MainViewController.lights
         }
     }
+    
+    // MARK: Table Related
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return allLights.count

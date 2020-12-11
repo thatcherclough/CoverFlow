@@ -12,51 +12,13 @@ import MediaPlayer
 
 public class MusicProviderViewController: UIViewController {
     
-    // MARK: Variables
+    // MARK: Variables, IBOutlets, and IBActions
     
     let keys = CoverFlowKeys()
     var mainViewController: MainViewController!
     
-    // MARK: View Related
-    
-    public override func viewDidLoad() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(self.applicationEnteredForeground),
-            name: UIApplication.willEnterForegroundNotification,
-            object: nil)
-    }
-    
-    @objc func applicationEnteredForeground(notification: NSNotification) {
-        if MainViewController.musicProvider == "spotify" && MainViewController.spotifyController != nil {
-            let accessCode = MainViewController.spotifyController.getAccessCodeFromReturnedURL()
-            if accessCode != nil {
-                MainViewController.spotifyController.getAccessAndRefreshTokens(accessCode: accessCode!)
-                UserDefaults.standard.set("spotify", forKey: "musicProvider")
-                self.dismiss(animated: true, completion: {
-                    self.mainViewController.hueSetup()
-                })
-            } else {
-                DispatchQueue.main.async {
-                    if self.presentedViewController == nil {
-                        let alert = UIAlertController(title: "Error", message: "Could not connect to Spotify. Try connecting again.", preferredStyle: UIAlertController.Style.alert)
-                        alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
-                        self.present(alert, animated: true, completion: nil)
-                    }
-                }
-            }
-        }
-    }
-    
-    public override func viewDidAppear(_ animated: Bool) {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if error == nil {
-                self.mainViewController.canPushNotifications = granted
-            }
-        }
-    }
-    
-    // MARK: Buttons
+    @IBOutlet var header: UILabel!
+    @IBOutlet var headerConstraint: NSLayoutConstraint!
     
     @IBAction func appleMusicButtonAction(_ sender: Any) {
         MainViewController.musicProvider = "appleMusic"
@@ -97,5 +59,49 @@ public class MusicProviderViewController: UIViewController {
             MainViewController.spotifyController = SpotifyController(clientID: keys.spotifyClientID, clientSecret: keys.spotifyClientSecret, redirectURI: URL(string: "coverflow://spotify-login-callback")!)
         }
         MainViewController.spotifyController.connect()
+    }
+    
+    // MARK: View Related
+    
+    public override func viewDidLoad() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.applicationEnteredForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil)
+        
+        if view.bounds.width < 370 {
+            header.font = header.font.withSize(30)
+            headerConstraint.constant = 40
+        }
+    }
+    
+    @objc func applicationEnteredForeground(notification: NSNotification) {
+        if MainViewController.musicProvider == "spotify" && MainViewController.spotifyController != nil {
+            let accessCode = MainViewController.spotifyController.getAccessCodeFromReturnedURL()
+            if accessCode != nil {
+                MainViewController.spotifyController.getAccessAndRefreshTokens(accessCode: accessCode!)
+                UserDefaults.standard.set("spotify", forKey: "musicProvider")
+                self.dismiss(animated: true, completion: {
+                    self.mainViewController.hueSetup()
+                })
+            } else {
+                DispatchQueue.main.async {
+                    if self.presentedViewController == nil {
+                        let alert = UIAlertController(title: "Error", message: "Could not connect to Spotify. Try connecting again.", preferredStyle: UIAlertController.Style.alert)
+                        alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                }
+            }
+        }
+    }
+    
+    public override func viewDidAppear(_ animated: Bool) {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if error == nil {
+                self.mainViewController.canPushNotifications = granted
+            }
+        }
     }
 }

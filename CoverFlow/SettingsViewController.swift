@@ -15,7 +15,7 @@ import Keys
 
 class SettingsViewController: UITableViewController, UITextFieldDelegate {
     
-    // MARK: Cells, slider, and variables
+    // MARK: Variables, IBOutlets, and IBActions
     
     static var toConnect: BridgeInfo! = nil
     var mainViewController: MainViewController!
@@ -88,7 +88,9 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
                     MainViewController.musicProvider = nil
                     UserDefaults.standard.set(nil, forKey: "musicProvider")
                     
-                    MainViewController.bridge.disconnect()
+                    if MainViewController.bridge != nil {
+                        MainViewController.bridge.disconnect()
+                    }
                 }
             }))
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -242,9 +244,9 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
 }
 
 extension UIImageView {
-  func setImageColor(color: UIColor) {
-    let templateImage = self.image?.withRenderingMode(.alwaysTemplate)
-    self.image = templateImage
-    self.tintColor = color
-  }
+    func setImageColor(color: UIColor) {
+        let templateImage = self.image?.withRenderingMode(.alwaysTemplate)
+        self.image = templateImage
+        self.tintColor = color
+    }
 }

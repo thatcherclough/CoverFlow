@@ -399,7 +399,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Gof-8e-ABE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2539" y="2291"/>
+            <point key="canvasLocation" x="-2539.130434782609" y="2290.8482142857142"/>
         </scene>
         <!--Light Selection-->
         <scene sceneID="Z6d-IZ-5oZ">

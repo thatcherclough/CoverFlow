@@ -24,7 +24,7 @@ class MainViewController: UIViewController {
     static var appleMusicController: AppleMusicController!
     static var spotifyController: SpotifyController!
     
-    var currentHues: [NSNumber] = []
+    var currentColors: [UIColor] = []
     var currentLightsStates: [String: PHSLightState] = [:]
     static var bridge: PHSBridge! = nil
     static var bridgeInfo: BridgeInfo! = nil
@@ -34,7 +34,6 @@ class MainViewController: UIViewController {
     var settings: SettingsViewController!
     var settingsNav: UINavigationController!
     var animatedGradient: AnimatedGradientView!
-    var hexes: [String] = []
     let defaultHexes: [String] = ["f64f59", "c471ed", "12c2e9"]
     
     @IBOutlet var label: UILabel!
@@ -58,8 +57,7 @@ class MainViewController: UIViewController {
             } else {
                 stop()
                 setCurrentLightsStates()
-                currentHues.removeAll()
-                hexes.removeAll()
+                currentColors.removeAll()
                 
                 DispatchQueue.main.async {
                     self.startButton.isEnabled = true
@@ -152,14 +150,14 @@ class MainViewController: UIViewController {
     }
     
     func updateBackground() {
-        if !hexes.isEmpty && self.animatedGradient != nil {
+        if !currentColors.isEmpty && self.animatedGradient != nil {
             DispatchQueue.main.async {
                 self.animatedGradient.animationValues =
                     [
-                        (colors: [self.hexes[self.nextHexIndex()], self.hexes[self.nextHexIndex()]], .upRight, .axial),
-                        (colors: [self.hexes[self.nextHexIndex()], self.hexes[self.nextHexIndex()]], .downRight, .axial),
-                        (colors: [self.hexes[self.nextHexIndex()], self.hexes[self.nextHexIndex()]], .downLeft, .axial),
-                        (colors: [self.hexes[self.nextHexIndex()], self.hexes[self.nextHexIndex()]], .upLeft, .axial)
+                        (colors: [self.nextHex(), self.nextHex()], .upRight, .axial),
+                        (colors: [self.nextHex(), self.nextHex()], .downRight, .axial),
+                        (colors: [self.nextHex(), self.nextHex()], .downLeft, .axial),
+                        (colors: [self.nextHex(), self.nextHex()], .upLeft, .axial)
                     ]
                 self.animatedGradient.startAnimating()
             }
@@ -167,12 +165,14 @@ class MainViewController: UIViewController {
     }
     
     var hexIndex: Int = 0
-    func nextHexIndex() -> Int {
-        hexIndex += 1
-        if hexIndex >= hexes.count {
-            hexIndex = 0
+    func nextHex() -> String {
+        hexIndex = hexIndex >= currentColors.count ? 0 : hexIndex + 1
+        
+        if hexIndex < currentColors.count, let hex = currentColors[hexIndex].hexa {
+            return hex
+        } else {
+            return "nil"
         }
-        return hexIndex
     }
     
     func checkPermissions() {
@@ -280,7 +280,7 @@ class MainViewController: UIViewController {
     }
     
     @objc func appMovedToForeground() {
-        if !hexes.isEmpty && animatedGradient != nil && startButton.titleLabel?.text == "Stop" {
+        if !currentColors.isEmpty && animatedGradient != nil && startButton.titleLabel?.text == "Stop" {
             animatedGradient.startAnimating()
         }
     }
@@ -338,7 +338,7 @@ class MainViewController: UIViewController {
     var notifyAboutNothingPlaying: Bool = true
     func start() {
         if MainViewController.musicProvider == "appleMusic" {
-            var currentHueIndex: Int = 0
+            var currentColorIndex: Int = 0
             var albumAndArtist = MainViewController.appleMusicController.getCurrentAlbumName() + MainViewController.appleMusicController.getCurrentArtistName()
             let wait = self.settings.colorDuration + self.settings.transitionDuration
             
@@ -351,19 +351,19 @@ class MainViewController: UIViewController {
                         self.start()
                     }
                     
-                    if !self.currentHues.isEmpty && self.currentHues.count > currentHueIndex {
+                    if !self.currentColors.isEmpty && self.currentColors.count > currentColorIndex {
                         for light in MainViewController.bridge.bridgeState.getDevicesOf(.light) {
                             if MainViewController.lights.contains((light as! PHSDevice).name) {
                                 if let lightPoint: PHSLightPoint = light as? PHSLightPoint {
                                     let lightState = PHSLightState()
                                     
-                                    let index = self.settings.randomizeColorSwitch.isOn ? Int.random(in: 0..<self.currentHues.count) : currentHueIndex
+                                    let index = self.settings.randomizeColorSwitch.isOn ? Int.random(in: 0..<self.currentColors.count) : currentColorIndex
                                     if self.settings.brightness == 0 {
                                         lightState.on = false
                                     } else {
                                         lightState.on = true
-                                        lightState.hue = self.currentHues[index]
-                                        lightState.saturation = 254
+                                        lightState.hue = self.currentColors[index].hsba.h * 360 * 182 as NSNumber
+                                        lightState.saturation = self.currentColors[index].hsba.s * 254 as NSNumber
                                         lightState.brightness = NSNumber(value: self.settings.brightness)
                                         lightState.transitionTime = NSNumber(value: self.settings.transitionDuration * 10)
                                     }
@@ -391,13 +391,13 @@ class MainViewController: UIViewController {
                     if currentAlbumAndArtist != albumAndArtist {
                         albumAndArtist = currentAlbumAndArtist
                         self.getCoverImageAndSetCurrentSongHues()
-                        currentHueIndex = 0
+                        currentColorIndex = 0
                         
                         self.playAudio(fileName: "songChange", fileExtension: "mp3")
                     } else {
-                        currentHueIndex += 1
-                        if currentHueIndex >= self.currentHues.count {
-                            currentHueIndex = 0
+                        currentColorIndex += 1
+                        if currentColorIndex >= self.currentColors.count {
+                            currentColorIndex = 0
                         }
                     }
                 }
@@ -409,7 +409,7 @@ class MainViewController: UIViewController {
                 }
             }
         } else if MainViewController.musicProvider == "spotify" {
-            var currentHueIndex: Int = 0
+            var currentColorIndex: Int = 0
             var albumAndArtist = ""
             let wait = self.settings.colorDuration + self.settings.transitionDuration
             
@@ -464,19 +464,19 @@ class MainViewController: UIViewController {
                             self.start()
                         }
                         
-                        if !self.currentHues.isEmpty && self.currentHues.count > currentHueIndex {
+                        if !self.currentColors.isEmpty && self.currentColors.count > currentColorIndex {
                             for light in MainViewController.bridge.bridgeState.getDevicesOf(.light) {
                                 if MainViewController.lights.contains((light as! PHSDevice).name) {
                                     if let lightPoint: PHSLightPoint = light as? PHSLightPoint {
                                         let lightState = PHSLightState()
                                         
-                                        let index = self.settings.randomizeColorSwitch.isOn ? Int.random(in: 0..<self.currentHues.count) : currentHueIndex
+                                        let index = self.settings.randomizeColorSwitch.isOn ? Int.random(in: 0..<self.currentColors.count) : currentColorIndex
                                         if self.settings.brightness == 0 {
                                             lightState.on = false
                                         } else {
                                             lightState.on = true
-                                            lightState.hue = self.currentHues[index]
-                                            lightState.saturation = 254
+                                            lightState.hue = self.currentColors[index].hsba.h * 360 * 182 as NSNumber
+                                            lightState.saturation = self.currentColors[index].hsba.s * 254 as NSNumber
                                             lightState.brightness = NSNumber(value: self.settings.brightness)
                                             lightState.transitionTime = NSNumber(value: self.settings.transitionDuration * 10)
                                         }
@@ -540,13 +540,13 @@ class MainViewController: UIViewController {
                                 if currentAlbumAndArtist != albumAndArtist {
                                     albumAndArtist = currentAlbumAndArtist
                                     self.getCoverImageAndSetCurrentSongHues()
-                                    currentHueIndex = 0
+                                    currentColorIndex = 0
                                     
                                     self.playAudio(fileName: "songChange", fileExtension: "mp3")
                                 } else {
-                                    currentHueIndex += 1
-                                    if currentHueIndex >= self.currentHues.count {
-                                        currentHueIndex = 0
+                                    currentColorIndex += 1
+                                    if currentColorIndex >= self.currentColors.count {
+                                        currentColorIndex = 0
                                     }
                                 }
                             }
@@ -645,30 +645,22 @@ class MainViewController: UIViewController {
             return
         }
         
-        var newHues: [NSNumber] = []
-        var newHexes: [String] = []
+        var newColors: [UIColor] = []
         for color in colors {
             let uiColor = UIColor(red: CGFloat(color.r), green: CGFloat(color.g), blue: CGFloat(color.b), alpha: 1)
             let hue = uiColor.hsba.h
             let saturation = uiColor.hsba.s
-            if hue > 0 && saturation > 0.2 {
-                newHues.append((hue * 360 * 182) as NSNumber)
-                
-                let uiColorFullSaturation = UIColor(hue: hue, saturation: 0.8, brightness: 0.7, alpha: 1)
-                if let hex = uiColorFullSaturation.hexa {
-                    newHexes.append(hex)
-                }
+            if hue > 0 && saturation > 0.05 {
+                let newSaturation: CGFloat = saturation > 0.2 ? 1.0 : 0.7
+                let newUIColor = UIColor(hue: hue, saturation: newSaturation, brightness: 0.7, alpha: 1)
+                newColors.append(newUIColor)
             }
         }
         
-        if newHues.isEmpty {
+        if newColors.isEmpty {
             alertAndNotify(title: "Notice", body: "The current song's album cover does not have any distinct colors.")
         } else {
-            currentHues = newHues
-        }
-        
-        if !newHexes.isEmpty {
-            hexes = newHexes
+            currentColors = newColors
             updateBackground()
         }
     }

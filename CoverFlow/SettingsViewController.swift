@@ -15,10 +15,14 @@ import Keys
 
 class SettingsViewController: UITableViewController, UITextFieldDelegate {
     
-    // MARK: Cells, slider, and variables
+    // MARK: Variables, IBOutlets, and IBActions
     
     static var toConnect: BridgeInfo! = nil
     var mainViewController: MainViewController!
+    
+    @IBAction func doneButtonAction(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
     
     @IBOutlet var bridgeCell: UITableViewCell!
     @IBOutlet var lightsCell: UITableViewCell!
@@ -71,14 +75,42 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
-    @IBAction func doneButtonAction(_ sender: Any) {
-        self.dismiss(animated: true, completion: nil)
+    @IBOutlet var randomizeColorSwitch: UISwitch!
+    @IBAction func randomizeColorSwitchAction(_ sender: UISwitch?) {
+        DispatchQueue.main.async {
+            UserDefaults.standard.setValue(self.randomizeColorSwitch.isOn, forKey: "randomizeColorOrder")
+        }
     }
+    
+    @IBOutlet var musicProviderLabel: UILabel!
+    @IBAction func signOutButtonAction(_ sender: Any) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Sign out", message: "Are you sure you want to sign out?", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { alertAction in
+                self.mainViewController.dismiss(animated: true) {
+                    self.mainViewController.presentMusicProvider(alert: nil)
+                    
+                    MainViewController.musicProvider = nil
+                    UserDefaults.standard.set(nil, forKey: "musicProvider")
+                    
+                    if MainViewController.bridge != nil {
+                        MainViewController.bridge.disconnect()
+                    }
+                }
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    @IBOutlet var twitterCell: UITableViewCell!
     
     // MARK: View Related
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        tableView.delaysContentTouches = false
         
         colorDurationSlider.minimumValue = 0
         colorDurationSlider.maximumValue = 40
@@ -112,16 +144,37 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         } else {
             brightnessSlider.value = brightnessDefaults as! Float
         }
+        let randomizeColorOrder = defaults.value(forKey: "randomizeColorOrder")
+        if randomizeColorOrder == nil {
+            defaults.setValue(false, forKey: "randomizeColorOrder")
+            randomizeColorSwitch.isOn = false
+        } else {
+            randomizeColorSwitch.isOn = randomizeColorOrder as! Bool
+        }
         
         colorDurationChanged(nil)
         transitionDurationChanged(nil)
         brightnessChanged(nil)
+        randomizeColorSwitchAction(nil)
         
         if MainViewController.lights.isEmpty {
             lightsCell.detailTextLabel?.text = "None selected"
         } else {
             lightsCell.detailTextLabel?.text = "\(MainViewController.lights.count) selected"
         }
+        
+        if MainViewController.musicProvider != nil && MainViewController.musicProvider == "appleMusic" {
+            musicProviderLabel.text = "Music provider: Apple Music"
+        } else if MainViewController.musicProvider != nil && MainViewController.musicProvider == "spotify" {
+            musicProviderLabel.text = "Music provider: Spotify"
+        }
+        
+        let image = UIImageView(image: UIImage(named: "Twitter"))
+        image.setImageColor(color: .systemGray2)
+        
+        let cellHeight = twitterCell.bounds.height
+        twitterCell.accessoryView = image
+        twitterCell.accessoryView?.frame = CGRect(x: 0, y: 0, width: cellHeight / 3.5, height: cellHeight / 3.5)
         self.tableView.reloadData()
     }
     
@@ -133,6 +186,12 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
             lightsCell.detailTextLabel?.text = "None selected"
         } else {
             lightsCell.detailTextLabel?.text = "\(MainViewController.lights.count) selected"
+        }
+        
+        if MainViewController.musicProvider != nil && MainViewController.musicProvider == "appleMusic" {
+            musicProviderLabel.text = "Music provider: Apple Music"
+        } else if MainViewController.musicProvider != nil && MainViewController.musicProvider == "spotify" {
+            musicProviderLabel.text = "Music provider: Spotify"
         }
         self.tableView.reloadData()
         
@@ -169,6 +228,19 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)!
         cell.setSelected(false, animated: true)
+        
+        if cell.textLabel?.text == "Thatcher Clough" {
+            let screenName =  "thatcherclough"
+            let appURL = NSURL(string: "twitter://user?screen_name=\(screenName)")!
+            let webURL = NSURL(string: "https://twitter.com/\(screenName)")!
+            
+            let application = UIApplication.shared
+            if application.canOpenURL(appURL as URL) {
+                application.open(appURL as URL)
+            } else {
+                application.open(webURL as URL)
+            }
+        }
     }
     
     // MARK: Other
@@ -181,5 +253,13 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
                 self.present(alert, animated: true, completion: nil)
             }
         }
+    }
+}
+
+extension UIImageView {
+    func setImageColor(color: UIColor) {
+        let templateImage = self.image?.withRenderingMode(.alwaysTemplate)
+        self.image = templateImage
+        self.tintColor = color
     }
 }

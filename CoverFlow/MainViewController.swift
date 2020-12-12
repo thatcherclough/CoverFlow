@@ -15,7 +15,7 @@ import ColorThiefSwift
 
 class MainViewController: UIViewController {
     
-    // MARK: Variables and buttons
+    // MARK: Variables, IBOutlets, and IBActions
     
     let keys = CoverFlowKeys()
     var canPushNotifications: Bool = false
@@ -58,6 +58,8 @@ class MainViewController: UIViewController {
             } else {
                 stop()
                 setCurrentLightsStates()
+                currentHues.removeAll()
+                hexes.removeAll()
                 
                 DispatchQueue.main.async {
                     self.startButton.isEnabled = true
@@ -354,11 +356,13 @@ class MainViewController: UIViewController {
                             if MainViewController.lights.contains((light as! PHSDevice).name) {
                                 if let lightPoint: PHSLightPoint = light as? PHSLightPoint {
                                     let lightState = PHSLightState()
+                                    
+                                    let index = self.settings.randomizeColorSwitch.isOn ? Int.random(in: 0..<self.currentHues.count) : currentHueIndex
                                     if self.settings.brightness == 0 {
                                         lightState.on = false
                                     } else {
                                         lightState.on = true
-                                        lightState.hue = self.currentHues[currentHueIndex]
+                                        lightState.hue = self.currentHues[index]
                                         lightState.saturation = 254
                                         lightState.brightness = NSNumber(value: self.settings.brightness)
                                         lightState.transitionTime = NSNumber(value: self.settings.transitionDuration * 10)
@@ -465,11 +469,13 @@ class MainViewController: UIViewController {
                                 if MainViewController.lights.contains((light as! PHSDevice).name) {
                                     if let lightPoint: PHSLightPoint = light as? PHSLightPoint {
                                         let lightState = PHSLightState()
+                                        
+                                        let index = self.settings.randomizeColorSwitch.isOn ? Int.random(in: 0..<self.currentHues.count) : currentHueIndex
                                         if self.settings.brightness == 0 {
                                             lightState.on = false
                                         } else {
                                             lightState.on = true
-                                            lightState.hue = self.currentHues[currentHueIndex]
+                                            lightState.hue = self.currentHues[index]
                                             lightState.saturation = 254
                                             lightState.brightness = NSNumber(value: self.settings.brightness)
                                             lightState.transitionTime = NSNumber(value: self.settings.transitionDuration * 10)

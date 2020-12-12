@@ -10,8 +10,12 @@ import UIKit
 
 class PushButtonViewController: UIViewController {
     
+    // MARK: IBOutlets
+    
     @IBOutlet var bridgeImage: UIImageView!
     @IBOutlet var progressBar: UIProgressView!
+    
+    // MARK: View Related
     
     override func viewDidAppear(_ animated: Bool) {
         self.countdown()

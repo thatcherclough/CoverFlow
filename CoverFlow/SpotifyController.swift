@@ -50,7 +50,7 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
             initSessionManager()
         }
         
-        if (self.refreshToken == nil || self.refreshToken == "N/A") && sessionManager != nil {
+        if sessionManager != nil {
             let scope: SPTScope = [.userReadCurrentlyPlaying]
             sessionManager.initiateSession(with: scope, options: .clientOnly)
         }

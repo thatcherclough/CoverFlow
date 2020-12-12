@@ -10,7 +10,68 @@ import UIKit
 
 class BridgeDiscoveryController: UITableViewController {
     
+    // MARK: Variables and IBActions
+    
     var bridges: [BridgeInfo] = []
+    
+    @IBAction func enterIPAction(_ sender: Any) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Manually connect", message: "Enter the IP address of your bridge to manually connect to it:", preferredStyle: UIAlertController.Style.alert)
+            alert.addTextField { (textField) in
+                textField.placeholder = "IP address"
+                textField.autocorrectionType = .no
+            }
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { alertAction in
+                let searchingAlert = UIAlertController(title: "Finding bridge...", message: nil, preferredStyle: UIAlertController.Style.alert)
+                alert.dismiss(animated: true) {
+                    self.present(searchingAlert, animated: true, completion: {
+                        if let textFields = alert.textFields {
+                            if let ip = (textFields[0] as UITextField).text {
+                                let bridge = PHSSDK.getBridgeInformation(ip)
+                                if bridge != nil {
+                                    if let uniqueId = bridge?.uniqueId {
+                                        let bridgeInfo = BridgeInfo(ipAddress: ip, uniqueId: uniqueId)
+                                        SettingsViewController.toConnect = bridgeInfo
+                                        searchingAlert.dismiss(animated: true, completion: {
+                                            _ = self.navigationController?.popToRootViewController(animated: true)
+                                        })
+                                    } else {
+                                        searchingAlert.dismiss(animated: true, completion: {
+                                            let alert = UIAlertController(title: "Error", message: "Could not obtain unique ID.", preferredStyle: UIAlertController.Style.alert)
+                                            alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
+                                            self.present(alert, animated: true, completion: nil)
+                                        })
+                                    }
+                                } else {
+                                    searchingAlert.dismiss(animated: true, completion: {
+                                        let alert = UIAlertController(title: "Error", message: "Could not find bridge.", preferredStyle: UIAlertController.Style.alert)
+                                        alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
+                                        self.present(alert, animated: true, completion: nil)
+                                    })
+                                }
+                            } else {
+                                searchingAlert.dismiss(animated: true, completion: {
+                                    let alert = UIAlertController(title: "Error", message: "Could not get text.", preferredStyle: UIAlertController.Style.alert)
+                                    alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
+                                    self.present(alert, animated: true, completion: nil)
+                                })
+                            }
+                        } else {
+                            searchingAlert.dismiss(animated: true, completion: {
+                                let alert = UIAlertController(title: "Error", message: "Could not get text field.", preferredStyle: UIAlertController.Style.alert)
+                                alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
+                                self.present(alert, animated: true, completion: nil)
+                            })
+                        }
+                    })
+                }
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    // MARK: View Related
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,62 +154,7 @@ class BridgeDiscoveryController: UITableViewController {
         }
     }
     
-    @IBAction func enterIPAction(_ sender: Any) {
-        DispatchQueue.main.async {
-            let alert = UIAlertController(title: "Manually connect", message: "Enter the IP address of your bridge to manually connect to it:", preferredStyle: UIAlertController.Style.alert)
-            alert.addTextField { (textField) in
-                textField.placeholder = "IP address"
-                textField.autocorrectionType = .no
-            }
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { alertAction in
-                let searchingAlert = UIAlertController(title: "Finding bridge...", message: nil, preferredStyle: UIAlertController.Style.alert)
-                alert.dismiss(animated: true) {
-                    self.present(searchingAlert, animated: true, completion: {
-                        if let textFields = alert.textFields {
-                            if let ip = (textFields[0] as UITextField).text {
-                                let bridge = PHSSDK.getBridgeInformation(ip)
-                                if bridge != nil {
-                                    if let uniqueId = bridge?.uniqueId {
-                                        let bridgeInfo = BridgeInfo(ipAddress: ip, uniqueId: uniqueId)
-                                        SettingsViewController.toConnect = bridgeInfo
-                                        searchingAlert.dismiss(animated: true, completion: {
-                                            _ = self.navigationController?.popToRootViewController(animated: true)
-                                        })
-                                    } else {
-                                        searchingAlert.dismiss(animated: true, completion: {
-                                            let alert = UIAlertController(title: "Error", message: "Could not obtain unique ID.", preferredStyle: UIAlertController.Style.alert)
-                                            alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
-                                            self.present(alert, animated: true, completion: nil)
-                                        })
-                                    }
-                                } else {
-                                    searchingAlert.dismiss(animated: true, completion: {
-                                        let alert = UIAlertController(title: "Error", message: "Could not find bridge.", preferredStyle: UIAlertController.Style.alert)
-                                        alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
-                                        self.present(alert, animated: true, completion: nil)
-                                    })
-                                }
-                            } else {
-                                searchingAlert.dismiss(animated: true, completion: {
-                                    let alert = UIAlertController(title: "Error", message: "Could not get text.", preferredStyle: UIAlertController.Style.alert)
-                                    alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
-                                    self.present(alert, animated: true, completion: nil)
-                                })
-                            }
-                        } else {
-                            searchingAlert.dismiss(animated: true, completion: {
-                                let alert = UIAlertController(title: "Error", message: "Could not get text field.", preferredStyle: UIAlertController.Style.alert)
-                                alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
-                                self.present(alert, animated: true, completion: nil)
-                            })
-                        }
-                    })
-                }
-            }))
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-        }
-    }
+    // MARK: Table Related
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return bridges.count

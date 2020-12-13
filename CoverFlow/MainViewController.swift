@@ -166,7 +166,10 @@ class MainViewController: UIViewController {
     
     var hexIndex: Int = 0
     func nextHex() -> String {
-        hexIndex = hexIndex >= currentColors.count ? 0 : hexIndex + 1
+        hexIndex += 1
+        if hexIndex >= currentColors.count {
+            hexIndex = 0
+        }
         
         if hexIndex < currentColors.count, let hex = currentColors[hexIndex].hexa {
             return hex
@@ -660,6 +663,9 @@ class MainViewController: UIViewController {
         if newColors.isEmpty {
             alertAndNotify(title: "Notice", body: "The current song's album cover does not have any distinct colors.")
         } else {
+            if newColors.count >= settings.maximumColors {
+                newColors = Array(newColors[0..<Int(settings.maximumColors)])
+            }
             currentColors = newColors
             updateBackground()
         }

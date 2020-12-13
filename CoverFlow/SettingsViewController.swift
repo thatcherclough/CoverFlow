@@ -82,6 +82,21 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
+    var maximumColors: Int = 0
+    @IBOutlet var maximumColorsLabel: UILabel!
+    @IBOutlet var maximumColorsStepper: UIStepper!
+    @IBAction func maximumColorsStepperAction(_ sender: UIStepper?) {
+        let maximumColors = self.maximumColorsStepper.value > 4 ? 4.0 : (self.maximumColorsStepper.value < 1 ? 1.0 : self.maximumColorsStepper.value)
+        let maximumColorsInt = Int(maximumColors)
+        self.maximumColors = maximumColorsInt
+        maximumColorsStepper.value = maximumColors
+        maximumColorsLabel.text = maximumColors == 4.0 ? "Maximum colors: All" : "Maximum colors: \(maximumColorsInt)"
+        
+        DispatchQueue.global(qos: .background).async {
+            UserDefaults.standard.setValue(maximumColors, forKey: "maximumColors")
+        }
+    }
+    
     @IBOutlet var musicProviderLabel: UILabel!
     @IBAction func signOutButtonAction(_ sender: Any) {
         DispatchQueue.main.async {
@@ -151,11 +166,19 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         } else {
             randomizeColorSwitch.isOn = randomizeColorOrder as! Bool
         }
+        let maximumColors = defaults.value(forKey: "maximumColors")
+        if maximumColors == nil {
+            defaults.setValue(4.0, forKey: "maximumColors")
+            maximumColorsStepper.value = 4
+        } else {
+            maximumColorsStepper.value = maximumColors as! Double
+        }
         
         colorDurationChanged(nil)
         transitionDurationChanged(nil)
         brightnessChanged(nil)
         randomizeColorSwitchAction(nil)
+        maximumColorsStepperAction(nil)
         
         if MainViewController.lights.isEmpty {
             lightsCell.detailTextLabel?.text = "None selected"
@@ -229,16 +252,22 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         let cell = tableView.cellForRow(at: indexPath)!
         cell.setSelected(false, animated: true)
         
-        if cell.textLabel?.text == "Thatcher Clough" {
-            let screenName =  "thatcherclough"
-            let appURL = NSURL(string: "twitter://user?screen_name=\(screenName)")!
-            let webURL = NSURL(string: "https://twitter.com/\(screenName)")!
-            
-            let application = UIApplication.shared
-            if application.canOpenURL(appURL as URL) {
-                application.open(appURL as URL)
-            } else {
-                application.open(webURL as URL)
+        if let label = cell.textLabel?.text {
+            if label == "Thatcher Clough" {
+                let screenName =  "thatcherclough"
+                let appURL = NSURL(string: "twitter://user?screen_name=\(screenName)")!
+                let webURL = NSURL(string: "https://twitter.com/\(screenName)")!
+                
+                let application = UIApplication.shared
+                if application.canOpenURL(appURL as URL) {
+                    application.open(appURL as URL)
+                } else {
+                    application.open(webURL as URL)
+                }
+            } else if label == "Buy me a coffee! ☕️" {
+                let screenName =  "thatchercloughdev"
+                let webURL = NSURL(string: "https://paypal.me/\(screenName)")!
+                UIApplication.shared.open(webURL as URL)
             }
         }
     }

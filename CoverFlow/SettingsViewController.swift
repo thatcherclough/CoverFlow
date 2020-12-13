@@ -264,10 +264,6 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
                 } else {
                     application.open(webURL as URL)
                 }
-            } else if label == "Buy me a coffee! ☕️" {
-                let screenName =  "thatchercloughdev"
-                let webURL = NSURL(string: "https://paypal.me/\(screenName)")!
-                UIApplication.shared.open(webURL as URL)
             }
         }
     }

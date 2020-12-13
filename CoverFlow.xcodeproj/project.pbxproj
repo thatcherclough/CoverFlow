@@ -136,17 +136,16 @@
 		DDAEDC96253CF53D002F3175 /* CoverFlow */ = {
 			isa = PBXGroup;
 			children = (
+				DDDF442725866D380013CCC4 /* Storyboards */,
 				DDAEDC97253CF53D002F3175 /* AppDelegate.swift */,
 				DDAEDC99253CF53D002F3175 /* SceneDelegate.swift */,
 				DDAEDC9B253CF53D002F3175 /* SettingsViewController.swift */,
 				DD439AD225609FE700082CEF /* SpotifyController.swift */,
 				DD439AD025609FDC00082CEF /* AppleMusicController.swift */,
-				DDAEDC9D253CF53D002F3175 /* Main.storyboard */,
 				DDFD8BE0253E382C00BBE27A /* PushButtonViewController.swift */,
 				DDAEDCBC253CFCD7002F3175 /* BridgeDiscoveryController.swift */,
 				DDFD8BDE253E323900BBE27A /* BridgeInfo.swift */,
 				DDAEDCA0253CF541002F3175 /* Assets.xcassets */,
-				DDAEDCA2253CF541002F3175 /* LaunchScreen.storyboard */,
 				DDAEDCA5253CF541002F3175 /* Info.plist */,
 				DDFD8BE2253E479400BBE27A /* LightSelectionViewController.swift */,
 				DDF07093256C375100353469 /* MusicProviderViewController.swift */,
@@ -154,6 +153,15 @@
 				DDB07A952579AD5C003EA4AF /* MainViewController.swift */,
 			);
 			path = CoverFlow;
+			sourceTree = "<group>";
+		};
+		DDDF442725866D380013CCC4 /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				DDAEDC9D253CF53D002F3175 /* Main.storyboard */,
+				DDAEDCA2253CF541002F3175 /* LaunchScreen.storyboard */,
+			);
+			path = Storyboards;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -436,7 +444,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = YA924NN5VN;
 				DYLIB_INSTALL_NAME_BASE = "";
 				ENABLE_BITCODE = NO;
@@ -486,7 +494,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = YA924NN5VN;
 				DYLIB_INSTALL_NAME_BASE = "";
 				ENABLE_BITCODE = NO;

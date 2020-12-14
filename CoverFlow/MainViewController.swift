@@ -69,7 +69,7 @@ class MainViewController: UIViewController {
     @IBOutlet var settingsButton: TransparentTextButton!
     @IBAction func settingsButtonAction(_ sender: Any) {
         DispatchQueue.main.async {
-            if self.startButton.titleLabel?.text == "Stop" {
+            if self.startButton.titleLabel?.text != "Start" {
                 self.alert(title: "Notice", body: "You must stop CoverFlow before accessing settings.")
             } else {
                 self.settingsNav.isModalInPresentation = true

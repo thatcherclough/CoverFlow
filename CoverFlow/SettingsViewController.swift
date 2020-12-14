@@ -32,7 +32,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet var colorDurationSlider: UISlider!
     @IBAction func colorDurationChanged(_ sender: UISlider?) {
         var rounded: Int = Int(colorDurationSlider.value)
-        if rounded == 0 && transitionDuration == 0 {
+        if sender != nil && rounded == 0 && transitionDuration == 0 {
             rounded = 1
         }
         colorDuration = Double(rounded) * 0.25
@@ -49,7 +49,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet var transitionDurationSlider: UISlider!
     @IBAction func transitionDurationChanged(_ sender: UISlider?) {
         var rounded: Int = Int(transitionDurationSlider.value)
-        if rounded == 0 && colorDuration == 0 {
+        if sender != nil && rounded == 0 && colorDuration == 0 {
             rounded = 1
         }
         transitionDuration = Double(rounded) * 0.25

@@ -10,35 +10,17 @@ import UIKit
 
 class LightSelectionViewController: UITableViewController {
     
-    // MARK: Variables
-    
-    var allLights: [String]! = []
-    var selectedLights: [String]! = []
-    
-    // MARK: View Related
-    
-    override func viewDidLoad() {
-        allLights.removeAll()
-        
-        if MainViewController.bridge != nil {
-            for device in MainViewController.bridge.bridgeState.getDevicesOf(.light) as! [PHSDevice] {
-                allLights.append(device.name!)
-            }
-            selectedLights = MainViewController.lights
-        }
-    }
-    
     // MARK: Table Related
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return allLights.count
+        return MainViewController.allLights.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "LightsCell") as! LightsCell
-        let light = allLights[indexPath.row]
+        let light = MainViewController.allLights[indexPath.row]
         cell.title.text = light
-        if selectedLights.contains(light) {
+        if MainViewController.selectedLights.contains(light) {
             cell.accessoryType = .checkmark
         } else {
             cell.accessoryType = .none
@@ -47,15 +29,13 @@ class LightSelectionViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if selectedLights.contains(allLights[indexPath.row]) {
-            selectedLights.remove(at: selectedLights.firstIndex(of: allLights[indexPath.row])!)
+        if MainViewController.selectedLights.contains(MainViewController.allLights[indexPath.row]) {
+            MainViewController.selectedLights.remove(at: MainViewController.selectedLights.firstIndex(of: MainViewController.allLights[indexPath.row])!)
         } else {
-            selectedLights.append(allLights[indexPath.row])
+            MainViewController.selectedLights.append(MainViewController.allLights[indexPath.row])
         }
         
-        MainViewController.lights = selectedLights
-        
-        UserDefaults.standard.setValue(selectedLights, forKey: "lights")
+        UserDefaults.standard.setValue(MainViewController.selectedLights, forKey: "lights")
         tableView.reloadData()
     }
 }

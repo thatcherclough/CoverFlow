@@ -8,11 +8,16 @@
 import Foundation
 import UIKit
 
+protocol BridgeDiscoveryControllerDelegate {
+    func didSetBridgeInfo()
+}
+
 class BridgeDiscoveryController: UITableViewController {
     
     // MARK: Variables and IBActions
     
     var bridges: [BridgeInfo] = []
+    var delegate: BridgeDiscoveryControllerDelegate?
     
     @IBAction func enterIPAction(_ sender: Any) {
         DispatchQueue.main.async {
@@ -31,8 +36,9 @@ class BridgeDiscoveryController: UITableViewController {
                                 if bridge != nil {
                                     if let uniqueId = bridge?.uniqueId {
                                         let bridgeInfo = BridgeInfo(ipAddress: ip, uniqueId: uniqueId)
-                                        SettingsViewController.toConnect = bridgeInfo
                                         searchingAlert.dismiss(animated: true, completion: {
+                                            MainViewController.bridgeInfo = bridgeInfo
+                                            self.delegate?.didSetBridgeInfo()
                                             _ = self.navigationController?.popToRootViewController(animated: true)
                                         })
                                     } else {
@@ -81,7 +87,7 @@ class BridgeDiscoveryController: UITableViewController {
         self.refreshControl = UIRefreshControl()
         refreshControl!.addTarget(self, action: #selector(self.refresh(_:)), for: .valueChanged)
         
-        if MainViewController.authenticated && MainViewController.bridge != nil && MainViewController.bridgeInfo != nil {
+        if MainViewController.authenticated && MainViewController.bridgeInfo != nil {
             bridges.append(MainViewController.bridgeInfo)
         } else {
             refreshControl!.beginRefreshing()
@@ -171,12 +177,9 @@ class BridgeDiscoveryController: UITableViewController {
         if bridges.count > indexPath.row {
             let selectedBridgeInfo = bridges[indexPath.row]
             
-            if MainViewController.authenticated && MainViewController.bridgeInfo != nil && MainViewController.bridgeInfo.ipAddress == selectedBridgeInfo.ipAddress && MainViewController.bridgeInfo.uniqueId == selectedBridgeInfo.uniqueId {
-                _ = navigationController?.popToRootViewController(animated: true)
-            } else {
-                SettingsViewController.toConnect = selectedBridgeInfo
-                _ = navigationController?.popToRootViewController(animated: true)
-            }
+            MainViewController.bridgeInfo = selectedBridgeInfo
+            self.delegate?.didSetBridgeInfo()
+            _ = self.navigationController?.popToRootViewController(animated: true)
         } else {
             DispatchQueue.main.async {
                 let alert = UIAlertController(title: "Error", message: "Index out of bounds. Bridges:\(self.bridges.count). Index:\(indexPath.row).", preferredStyle: UIAlertController.Style.alert)

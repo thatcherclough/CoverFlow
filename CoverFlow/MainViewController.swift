@@ -20,21 +20,23 @@ class MainViewController: UIViewController {
     let keys = CoverFlowKeys()
     var canPushNotifications: Bool = false
     
-    static var musicProvider: String! = UserDefaults.standard.string(forKey: "musicProvider")
-    static var appleMusicController: AppleMusicController!
-    static var spotifyController: SpotifyController!
+    var appleMusicController: AppleMusicController!
+    var spotifyController: SpotifyController!
     
     var currentColors: [UIColor] = []
     var currentLightsStates: [String: PHSLightState] = [:]
-    static var bridge: PHSBridge! = nil
+    var bridge: PHSBridge! = nil
     static var bridgeInfo: BridgeInfo! = nil
-    static var authenticated: Bool = false
-    static var lights: [String]! = []
     
     var settings: SettingsViewController!
     var settingsNav: UINavigationController!
     var animatedGradient: AnimatedGradientView!
     let defaultHexes: [String] = ["f64f59", "c471ed", "12c2e9"]
+    
+    static var musicProvider: String! = UserDefaults.standard.string(forKey: "musicProvider")
+    static var authenticated: Bool = false
+    static var allLights: [String] = []
+    static var selectedLights: [String] = []
     
     @IBOutlet var label: UILabel!
     
@@ -73,6 +75,7 @@ class MainViewController: UIViewController {
                 self.alert(title: "Notice", body: "You must stop CoverFlow before accessing settings.")
             } else {
                 self.settingsNav.isModalInPresentation = true
+                self.settings.delegate = self
                 self.present(self.settingsNav, animated: true, completion: nil)
             }
         }
@@ -93,7 +96,6 @@ class MainViewController: UIViewController {
         
         settingsNav = self.storyboard?.instantiateViewController(withIdentifier: "SettingsViewController") as? UINavigationController
         settings = settingsNav.viewControllers.first as? SettingsViewController
-        settings.mainViewController = self
         settings.loadViewIfNeeded()
         
         resetBackground()
@@ -112,10 +114,10 @@ class MainViewController: UIViewController {
         
         NotificationCenter.default.addObserver(self, selector:#selector(appMovedToForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
         
-        if MainViewController.musicProvider == "appleMusic" && MainViewController.appleMusicController == nil {
-            MainViewController.appleMusicController = AppleMusicController(apiKey: keys.appleMusicAPIKey1)
-        } else if MainViewController.musicProvider == "spotify" && MainViewController.spotifyController == nil{
-            MainViewController.spotifyController = SpotifyController(clientID: keys.spotifyClientID, clientSecret: keys.spotifyClientSecret, redirectURI: URL(string: "coverflow://spotify-login-callback")!)
+        if MainViewController.musicProvider == "appleMusic" && appleMusicController == nil {
+            appleMusicController = AppleMusicController(apiKey: keys.appleMusicAPIKey1)
+        } else if MainViewController.musicProvider == "spotify" && spotifyController == nil {
+            spotifyController = SpotifyController(clientID: keys.spotifyClientID, clientSecret: keys.spotifyClientSecret, redirectURI: URL(string: "coverflow://spotify-login-callback")!)
         }
         
         checkPermissionsAndSetupHue()
@@ -189,11 +191,12 @@ class MainViewController: UIViewController {
                     self.presentMusicProvider(alert: alert)
                     
                     MainViewController.musicProvider = nil
+                    self.appleMusicController = nil
                     UserDefaults.standard.set(nil, forKey: "musicProvider")
                 }
             }
         } else if MainViewController.musicProvider == "spotify" {
-            if MainViewController.spotifyController != nil && MainViewController.spotifyController.refreshToken == "N/A" && self.presentedViewController as? MusicProviderViewController == nil {
+            if (spotifyController == nil || (spotifyController != nil && spotifyController.refreshToken == "N/A")) && self.presentedViewController as? MusicProviderViewController == nil {
                 self.stop()
                 
                 let alert = UIAlertController(title: "Error", message: "Spotify access has been revoked. Try connecting again.", preferredStyle: UIAlertController.Style.alert)
@@ -201,6 +204,7 @@ class MainViewController: UIViewController {
                 presentMusicProvider(alert: alert)
                 
                 MainViewController.musicProvider = nil
+                self.spotifyController = nil
                 UserDefaults.standard.set(nil, forKey: "musicProvider")
             }
         }
@@ -217,13 +221,14 @@ class MainViewController: UIViewController {
                     self.presentMusicProvider(alert: alert)
                     
                     MainViewController.musicProvider = nil
+                    self.appleMusicController = nil
                     UserDefaults.standard.set(nil, forKey: "musicProvider")
                 } else {
                     self.hueSetup()
                 }
             }
         } else if MainViewController.musicProvider == "spotify" {
-            if MainViewController.spotifyController != nil && MainViewController.spotifyController.refreshToken == "N/A" && self.presentedViewController as? MusicProviderViewController == nil {
+            if (spotifyController == nil || (spotifyController != nil && spotifyController.refreshToken == "N/A")) && self.presentedViewController as? MusicProviderViewController == nil {
                 self.stop()
                 
                 let alert = UIAlertController(title: "Error", message: "Spotify access has been revoked. Try connecting again.", preferredStyle: UIAlertController.Style.alert)
@@ -231,6 +236,7 @@ class MainViewController: UIViewController {
                 presentMusicProvider(alert: alert)
                 
                 MainViewController.musicProvider = nil
+                self.spotifyController = nil
                 UserDefaults.standard.set(nil, forKey: "musicProvider")
             } else {
                 self.hueSetup()
@@ -241,7 +247,7 @@ class MainViewController: UIViewController {
     func presentMusicProvider(alert: UIAlertController!) {
         DispatchQueue.main.async {
             let musicProvider = self.storyboard?.instantiateViewController(withIdentifier: "MusicProviderViewController") as! MusicProviderViewController
-            musicProvider.mainViewController = self
+            musicProvider.delegate = self
             musicProvider.isModalInPresentation = true
             self.present(musicProvider, animated: true) {
                 if alert != nil {
@@ -271,13 +277,19 @@ class MainViewController: UIViewController {
     
     func connectFromBridgeInfo() {
         DispatchQueue.main.async {
-            if self.presentedViewController != nil {
-                self.dismiss(animated: true, completion: nil)
-            }
             let connectionAlert = UIAlertController(title: "Connecting to bridge...", message: nil, preferredStyle: UIAlertController.Style.alert)
-            self.present(connectionAlert, animated: true) {
-                MainViewController.bridge = self.buildBridge(info: MainViewController.bridgeInfo)
-                MainViewController.bridge.connect()
+            if self.presentedViewController != nil {
+                self.dismiss(animated: true) {
+                    self.present(connectionAlert, animated: true) {
+                        self.bridge = self.buildBridge(info: MainViewController.bridgeInfo)
+                        self.bridge.connect()
+                    }
+                }
+            } else {
+                self.present(connectionAlert, animated: true) {
+                    self.bridge = self.buildBridge(info: MainViewController.bridgeInfo)
+                    self.bridge.connect()
+                }
             }
         }
     }
@@ -304,20 +316,20 @@ class MainViewController: UIViewController {
     func getCurrentLightsStates() {
         currentLightsStates.removeAll()
         
-        for light in MainViewController.bridge.bridgeState.getDevicesOf(.light) {
+        for light in bridge.bridgeState.getDevicesOf(.light) {
             let lightName = (light as! PHSDevice).name!
             
-            if MainViewController.lights.contains(lightName) {
+            if MainViewController.selectedLights.contains(lightName) {
                 currentLightsStates[lightName] = (light as! PHSLightPoint).lightState
             }
         }
     }
     
     func setCurrentLightsStates() {
-        for light in MainViewController.bridge.bridgeState.getDevicesOf(.light) {
+        for light in bridge.bridgeState.getDevicesOf(.light) {
             let lightName = (light as! PHSDevice).name!
             
-            if MainViewController.lights.contains(lightName) && currentLightsStates.keys.contains(lightName) {
+            if MainViewController.selectedLights.contains(lightName) && currentLightsStates.keys.contains(lightName) {
                 let lightPoint = light as! PHSLightPoint
                 
                 lightPoint.update(currentLightsStates[lightName], allowedConnectionTypes: .local) { (responses, errors, returnCode) in
@@ -342,7 +354,7 @@ class MainViewController: UIViewController {
     func start() {
         if MainViewController.musicProvider == "appleMusic" {
             var currentColorIndex: Int = 0
-            var albumAndArtist = MainViewController.appleMusicController.getCurrentAlbumName() + MainViewController.appleMusicController.getCurrentArtistName()
+            var albumAndArtist = appleMusicController.getCurrentAlbumName() + appleMusicController.getCurrentArtistName()
             let wait = self.settings.colorDuration + self.settings.transitionDuration
             
             getCoverImageAndSetCurrentSongHues()
@@ -355,8 +367,8 @@ class MainViewController: UIViewController {
                     }
                     
                     if !self.currentColors.isEmpty && self.currentColors.count > currentColorIndex {
-                        for light in MainViewController.bridge.bridgeState.getDevicesOf(.light) {
-                            if MainViewController.lights.contains((light as! PHSDevice).name) {
+                        for light in self.bridge.bridgeState.getDevicesOf(.light) {
+                            if MainViewController.selectedLights.contains((light as! PHSDevice).name) {
                                 if let lightPoint: PHSLightPoint = light as? PHSLightPoint {
                                     let lightState = PHSLightState()
                                     
@@ -390,7 +402,7 @@ class MainViewController: UIViewController {
                         self.startBackgrounding()
                     }
                     
-                    let currentAlbumAndArtist = MainViewController.appleMusicController.getCurrentAlbumName() + MainViewController.appleMusicController.getCurrentArtistName()
+                    let currentAlbumAndArtist = self.appleMusicController.getCurrentAlbumName() + self.appleMusicController.getCurrentArtistName()
                     if currentAlbumAndArtist != albumAndArtist {
                         albumAndArtist = currentAlbumAndArtist
                         self.getCoverImageAndSetCurrentSongHues()
@@ -416,7 +428,7 @@ class MainViewController: UIViewController {
             var albumAndArtist = ""
             let wait = self.settings.colorDuration + self.settings.transitionDuration
             
-            MainViewController.spotifyController.getCurrentAlbum { (album) in
+            spotifyController.getCurrentAlbum { (album) in
                 if let _ = album["retry"] as? String {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                         self.start()
@@ -468,8 +480,8 @@ class MainViewController: UIViewController {
                         }
                         
                         if !self.currentColors.isEmpty && self.currentColors.count > currentColorIndex {
-                            for light in MainViewController.bridge.bridgeState.getDevicesOf(.light) {
-                                if MainViewController.lights.contains((light as! PHSDevice).name) {
+                            for light in self.bridge.bridgeState.getDevicesOf(.light) {
+                                if MainViewController.selectedLights.contains((light as! PHSDevice).name) {
                                     if let lightPoint: PHSLightPoint = light as? PHSLightPoint {
                                         let lightState = PHSLightState()
                                         
@@ -503,7 +515,7 @@ class MainViewController: UIViewController {
                             self.startBackgrounding()
                         }
                         
-                        MainViewController.spotifyController.getCurrentAlbum { (album) in
+                        self.spotifyController.getCurrentAlbum { (album) in
                             if let _ = album["retry"] as? String {
                                 self.timer.invalidate()
                                 self.start()
@@ -583,7 +595,7 @@ class MainViewController: UIViewController {
                     setCurrentSongHues(image: image!)
                 } else {
                     if albumName != nil && artistName != nil {
-                        MainViewController.appleMusicController.getCoverFromAPI(albumName: albumName!, artistName: artistName!) { (url) in
+                        appleMusicController.getCoverFromAPI(albumName: albumName!, artistName: artistName!) { (url) in
                             if url != nil {
                                 self.getData(from: URL(string: url!)!) { data, response, error in
                                     if data == nil || error != nil {
@@ -609,7 +621,7 @@ class MainViewController: UIViewController {
                 alertAndNotify(title: "Error", body: "Could not get the current song's album cover. Now playing item is nil.")
             }
         } else if MainViewController.musicProvider == "spotify" {
-            MainViewController.spotifyController.getCurrentAlbum() { (album) in
+            spotifyController.getCurrentAlbum() { (album) in
                 if let images = album["images"] as? NSArray {
                     if let image = images[0] as? [String: Any] {
                         if let url = image["url"] {
@@ -653,7 +665,7 @@ class MainViewController: UIViewController {
             let uiColor = UIColor(red: CGFloat(color.r), green: CGFloat(color.g), blue: CGFloat(color.b), alpha: 1)
             let hue = uiColor.hsba.h
             let saturation = uiColor.hsba.s
-            if hue > 0 && saturation > 0.05 {
+            if hue > 0 && saturation > 0.07 {
                 let newSaturation: CGFloat = saturation > 0.2 ? 1.0 : 0.7
                 let newUIColor = UIColor(hue: hue, saturation: newSaturation, brightness: 0.7, alpha: 1)
                 newColors.append(newUIColor)
@@ -779,8 +791,8 @@ class MainViewController: UIViewController {
             let connection = reachability.connection
             
             if connection == .cellular || connection == .unavailable || connection == .unavailable {
-                if MainViewController.bridge != nil {
-                    MainViewController.bridge.disconnect()
+                if bridge != nil {
+                    bridge.disconnect()
                     
                     stop()
                 }
@@ -867,9 +879,8 @@ extension MainViewController: PHSBridgeConnectionObserver {
                 alert(title: "Error", body: "Could not connect to the bridge.")
             }
             
-            MainViewController.bridge = nil
+            bridge = nil
             MainViewController.bridgeInfo = nil
-            SettingsViewController.toConnect = nil
             MainViewController.authenticated = false
             break
         case .connected:
@@ -894,12 +905,12 @@ extension MainViewController: PHSBridgeConnectionObserver {
             
             settings.bridgeCell.detailTextLabel?.text = "Not connected"
             settings.lightsCell.detailTextLabel?.text = "None selected"
-            MainViewController.lights.removeAll()
+            MainViewController.selectedLights.removeAll()
+            MainViewController.allLights.removeAll()
             startButton.setTitle("Start", alpha: 0.9)
             
             MainViewController.bridgeInfo = nil
-            SettingsViewController.toConnect = nil
-            MainViewController.bridge = nil
+            bridge = nil
             MainViewController.authenticated = false
             
             settings.tableView.reloadData()
@@ -912,46 +923,19 @@ extension MainViewController: PHSBridgeConnectionObserver {
         case .linkButtonNotPressed:
             print("button not pressed")
             
-            if settings.presentedViewController as? UIAlertController != nil {
-                settings.dismiss(animated: true, completion: nil)
+            if self.presentedViewController as? UIAlertController != nil {
+                self.dismiss(animated: true, completion: nil)
             }
             
-            if settings.presentedViewController as? PushButtonViewController == nil {
+            if self.presentedViewController as? PushButtonViewController == nil {
                 let pushButton = self.storyboard?.instantiateViewController(withIdentifier: "PushButtonViewController") as! PushButtonViewController
                 pushButton.isModalInPresentation = true
-                settings.present(pushButton, animated: true, completion: nil)
+                pushButton.delegate = self
+                self.present(pushButton, animated: true, completion: nil)
             }
             break
         case .authenticated:
             print("authenticated")
-            
-            if self.presentedViewController != nil {
-                self.dismiss(animated: true, completion: nil)
-            }
-            
-            MainViewController.authenticated = true
-            
-            if MainViewController.bridgeInfo == nil {
-                MainViewController.bridgeInfo = SettingsViewController.toConnect
-            }
-            SettingsViewController.toConnect = nil
-            settings.bridgeCell.detailTextLabel?.text = "Connected"
-            
-            let defaults = UserDefaults.standard
-            let lights = defaults.value(forKey: "lights")
-            if  lights == nil {
-                defaults.setValue([], forKey: "lights")
-            } else {
-                MainViewController.lights = defaults.value(forKey: "lights") as? [String]
-            }
-            
-            if MainViewController.lights.isEmpty {
-                settings.lightsCell.detailTextLabel?.text = "None selected"
-            } else {
-                settings.lightsCell.detailTextLabel?.text = "\(MainViewController.lights.count) selected"
-            }
-            
-            settings.tableView.reloadData()
             break
         default:
             return
@@ -972,10 +956,90 @@ extension MainViewController: PHSBridgeStateUpdateObserver {
             break
         case .initialized:
             print("good")
+            
+            if self.presentedViewController != nil {
+                self.dismiss(animated: true, completion: nil)
+            }
+            
+            if bridge != nil {
+                for device in bridge.bridgeState.getDevicesOf(.light) as! [PHSDevice] {
+                    MainViewController.allLights.append(device.name!)
+                }
+            }
+            
+            MainViewController.authenticated = true
+            
+            settings.bridgeCell.detailTextLabel?.text = "Connected"
+            
+            let defaults = UserDefaults.standard
+            let lights = defaults.value(forKey: "lights")
+            if  lights == nil {
+                defaults.setValue([], forKey: "lights")
+            } else if let defaultLights = defaults.value(forKey: "lights") as? [String] {
+                MainViewController.selectedLights = defaultLights
+            }
+            if MainViewController.selectedLights.isEmpty {
+                settings.lightsCell.detailTextLabel?.text = "None selected"
+            } else {
+                settings.lightsCell.detailTextLabel?.text = "\(MainViewController.selectedLights.count) selected"
+            }
+            settings.tableView.reloadData()
             break
         default:
             return
         }
+    }
+}
+
+extension MainViewController: MusicProviderViewControllerDelegate {
+    func didGetNotificationsSettings(canPushNotifications: Bool) {
+        self.canPushNotifications = canPushNotifications
+    }
+    
+    func didGetAppleMusicController(appleMusicController: AppleMusicController) {
+        UserDefaults.standard.set("appleMusic", forKey: "musicProvider")
+        MainViewController.musicProvider = "appleMusic"
+        self.appleMusicController = appleMusicController
+        self.dismiss(animated: true, completion: {
+            self.hueSetup()
+        })
+    }
+    
+    func didGetSpotifyController(spotifyController: SpotifyController) {
+        UserDefaults.standard.set("spotify", forKey: "musicProvider")
+        MainViewController.musicProvider = "spotify"
+        self.spotifyController = spotifyController
+        self.dismiss(animated: true, completion: {
+            self.hueSetup()
+        })
+    }
+}
+
+extension MainViewController: SettingsViewControllerDelegate {
+    func didSignOut() {
+        dismiss(animated: true) {
+            self.presentMusicProvider(alert: nil)
+            
+            MainViewController.musicProvider = nil
+            UserDefaults.standard.set(nil, forKey: "musicProvider")
+            
+            if self.bridge != nil {
+                self.bridge.disconnect()
+            }
+        }
+    }
+    
+    func didSetBridgeInfo() {
+        if !MainViewController.authenticated || (MainViewController.authenticated && bridge != nil && bridge.bridgeConfiguration.networkConfiguration.ipAddress != MainViewController.bridgeInfo.ipAddress) {
+            connectFromBridgeInfo()
+        }
+    }
+}
+
+extension MainViewController: PushButtonViewControllerDelegate {
+    func timerDidInvalidate() {
+        bridge.disconnect()
+        self.dismiss(animated: true, completion: nil)
     }
 }
 

@@ -13,12 +13,17 @@ import Reachability
 import AVFoundation
 import Keys
 
+protocol SettingsViewControllerDelegate {
+    func didSignOut()
+    func didSetBridgeInfo()
+}
+
 class SettingsViewController: UITableViewController, UITextFieldDelegate {
     
     // MARK: Variables, IBOutlets, and IBActions
     
-    static var toConnect: BridgeInfo! = nil
-    var mainViewController: MainViewController!
+    var delegate: SettingsViewControllerDelegate?
+    var connectToNewBridge: Bool = false
     
     @IBAction func doneButtonAction(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
@@ -102,16 +107,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: "Sign out", message: "Are you sure you want to sign out?", preferredStyle: UIAlertController.Style.alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { alertAction in
-                self.mainViewController.dismiss(animated: true) {
-                    self.mainViewController.presentMusicProvider(alert: nil)
-                    
-                    MainViewController.musicProvider = nil
-                    UserDefaults.standard.set(nil, forKey: "musicProvider")
-                    
-                    if MainViewController.bridge != nil {
-                        MainViewController.bridge.disconnect()
-                    }
-                }
+                self.delegate?.didSignOut()
             }))
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             self.present(alert, animated: true, completion: nil)
@@ -180,10 +176,18 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         randomizeColorSwitchAction(nil)
         maximumColorsStepperAction(nil)
         
-        if MainViewController.lights.isEmpty {
+        let cellHeight = twitterCell.bounds.height
+        let image = UIImageView(image: UIImage(named: "Twitter"))
+        image.setImageColor(color: .systemGray2)
+        twitterCell.accessoryView = image
+        twitterCell.accessoryView?.frame = CGRect(x: 0, y: 0, width: cellHeight / 3.5, height: cellHeight / 3.5)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if MainViewController.selectedLights.isEmpty {
             lightsCell.detailTextLabel?.text = "None selected"
         } else {
-            lightsCell.detailTextLabel?.text = "\(MainViewController.lights.count) selected"
+            lightsCell.detailTextLabel?.text = "\(MainViewController.selectedLights.count) selected"
         }
         
         if MainViewController.musicProvider != nil && MainViewController.musicProvider == "appleMusic" {
@@ -191,13 +195,6 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         } else if MainViewController.musicProvider != nil && MainViewController.musicProvider == "spotify" {
             musicProviderLabel.text = "Music provider: Spotify"
         }
-        
-        let image = UIImageView(image: UIImage(named: "Twitter"))
-        image.setImageColor(color: .systemGray2)
-        
-        let cellHeight = twitterCell.bounds.height
-        twitterCell.accessoryView = image
-        twitterCell.accessoryView?.frame = CGRect(x: 0, y: 0, width: cellHeight / 3.5, height: cellHeight / 3.5)
         self.tableView.reloadData()
     }
     
@@ -205,34 +202,9 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         let localNetworkPermissionService = LocalNetworkPermissionService()
         localNetworkPermissionService.triggerDialog()
         
-        if MainViewController.lights.isEmpty {
-            lightsCell.detailTextLabel?.text = "None selected"
-        } else {
-            lightsCell.detailTextLabel?.text = "\(MainViewController.lights.count) selected"
-        }
-        
-        if MainViewController.musicProvider != nil && MainViewController.musicProvider == "appleMusic" {
-            musicProviderLabel.text = "Music provider: Apple Music"
-        } else if MainViewController.musicProvider != nil && MainViewController.musicProvider == "spotify" {
-            musicProviderLabel.text = "Music provider: Spotify"
-        }
-        self.tableView.reloadData()
-        
-        if SettingsViewController.toConnect != nil && (!MainViewController.authenticated || (MainViewController.authenticated && MainViewController.bridge != nil &&  MainViewController.bridge.bridgeConfiguration.networkConfiguration.ipAddress != SettingsViewController.toConnect.ipAddress)) {
-            connectFromBridgeInfo()
-        }
-    }
-    
-    func connectFromBridgeInfo() {
-        DispatchQueue.main.async {
-            if self.presentedViewController != nil {
-                self.dismiss(animated: true, completion: nil)
-            }
-            let connectionAlert = UIAlertController(title: "Connecting to bridge...", message: nil, preferredStyle: UIAlertController.Style.alert)
-            self.present(connectionAlert, animated: true) {
-                MainViewController.bridge = self.mainViewController.buildBridge(info: SettingsViewController.toConnect)
-                MainViewController.bridge.connect()
-            }
+        if connectToNewBridge {
+            delegate?.didSetBridgeInfo()
+            connectToNewBridge = false
         }
     }
     
@@ -245,6 +217,13 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toBridgeSelection" {
+            if let destination = segue.destination as? BridgeDiscoveryController {
+                destination.delegate = self
+            }
+        }
+    }
     
     // MARK: Table Related
     
@@ -278,6 +257,12 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
                 self.present(alert, animated: true, completion: nil)
             }
         }
+    }
+}
+
+extension SettingsViewController: BridgeDiscoveryControllerDelegate {
+    func didSetBridgeInfo() {
+        connectToNewBridge = true
     }
 }
 

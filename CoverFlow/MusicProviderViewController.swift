@@ -10,20 +10,29 @@ import UIKit
 import Keys
 import MediaPlayer
 
+protocol MusicProviderViewControllerDelegate {
+    func didGetNotificationsSettings(canPushNotifications: Bool)
+    func didGetAppleMusicController(appleMusicController: AppleMusicController)
+    func didGetSpotifyController(spotifyController: SpotifyController)
+}
+
 public class MusicProviderViewController: UIViewController {
     
     // MARK: Variables, IBOutlets, and IBActions
     
     let keys = CoverFlowKeys()
-    var mainViewController: MainViewController!
+    
+    var delegate: MusicProviderViewControllerDelegate?
+    
+    var appleMusicController: AppleMusicController!
+    var spotifyController: SpotifyController!
     
     @IBOutlet var header: UILabel!
     @IBOutlet var headerConstraint: NSLayoutConstraint!
     
     @IBAction func appleMusicButtonAction(_ sender: Any) {
-        MainViewController.musicProvider = "appleMusic"
-        if MainViewController.appleMusicController == nil {
-            MainViewController.appleMusicController = AppleMusicController(apiKey: keys.appleMusicAPIKey1)
+        if appleMusicController == nil {
+            appleMusicController = AppleMusicController(apiKey: keys.appleMusicAPIKey1)
         }
         
         requestLibraryAccess()
@@ -33,11 +42,8 @@ public class MusicProviderViewController: UIViewController {
         MPMediaLibrary.requestAuthorization { authorizationStatus in
             if authorizationStatus == .authorized {
                 DispatchQueue.main.async {
-                    UserDefaults.standard.set("appleMusic", forKey: "musicProvider")
-                    if self.presentedViewController == nil {
-                        self.dismiss(animated: true, completion: {
-                            self.mainViewController.hueSetup()
-                        })
+                    if self.appleMusicController != nil {
+                        self.delegate?.didGetAppleMusicController(appleMusicController: self.appleMusicController)
                     }
                 }
             } else {
@@ -53,12 +59,11 @@ public class MusicProviderViewController: UIViewController {
     }
     
     @IBAction func spotifyButtonAction(_ sender: Any) {
-        MainViewController.musicProvider = "spotify"
-        
-        if MainViewController.spotifyController == nil {
-            MainViewController.spotifyController = SpotifyController(clientID: keys.spotifyClientID, clientSecret: keys.spotifyClientSecret, redirectURI: URL(string: "coverflow://spotify-login-callback")!)
+        if spotifyController == nil {
+            spotifyController = SpotifyController(clientID: keys.spotifyClientID, clientSecret: keys.spotifyClientSecret, redirectURI: URL(string: "coverflow://spotify-login-callback")!)
         }
-        MainViewController.spotifyController.connect()
+        
+        spotifyController.connect()
     }
     
     // MARK: View Related
@@ -77,14 +82,11 @@ public class MusicProviderViewController: UIViewController {
     }
     
     @objc func applicationEnteredForeground(notification: NSNotification) {
-        if MainViewController.musicProvider == "spotify" && MainViewController.spotifyController != nil {
-            let accessCode = MainViewController.spotifyController.getAccessCodeFromReturnedURL()
+        if spotifyController != nil {
+            let accessCode = spotifyController.getAccessCodeFromReturnedURL()
             if accessCode != nil {
-                MainViewController.spotifyController.getAccessAndRefreshTokens(accessCode: accessCode!)
-                UserDefaults.standard.set("spotify", forKey: "musicProvider")
-                self.dismiss(animated: true, completion: {
-                    self.mainViewController.hueSetup()
-                })
+                spotifyController.getAccessAndRefreshTokens(accessCode: accessCode!)
+                self.delegate?.didGetSpotifyController(spotifyController: self.spotifyController)
             } else {
                 DispatchQueue.main.async {
                     if self.presentedViewController == nil {
@@ -100,7 +102,7 @@ public class MusicProviderViewController: UIViewController {
     public override func viewDidAppear(_ animated: Bool) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if error == nil {
-                self.mainViewController.canPushNotifications = granted
+                self.delegate?.didGetNotificationsSettings(canPushNotifications: granted)
             }
         }
     }

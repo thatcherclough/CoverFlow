@@ -8,9 +8,15 @@
 import Foundation
 import UIKit
 
+protocol PushButtonViewControllerDelegate {
+    func timerDidInvalidate()
+}
+
 class PushButtonViewController: UIViewController {
     
-    // MARK: IBOutlets
+    // MARK: Variables and IBOutlets
+    
+    var delegate: PushButtonViewControllerDelegate?
     
     @IBOutlet var bridgeImage: UIImageView!
     @IBOutlet var progressBar: UIProgressView!
@@ -35,9 +41,7 @@ class PushButtonViewController: UIViewController {
             self.progressBar.progress = progress
             
             if timeLeft == 0 {
-                MainViewController.bridge.disconnect()
-                
-                self.dismiss(animated: true, completion: nil)
+                self.delegate?.timerDidInvalidate()
                 timer.invalidate()
             }
         }

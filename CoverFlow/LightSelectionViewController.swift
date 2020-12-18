@@ -10,6 +10,12 @@ import UIKit
 
 class LightSelectionViewController: UITableViewController {
     
+    // MARK: View Related
+    
+    override func viewDidAppear(_ animated: Bool) {
+        tableView.reloadData()
+    }
+    
     // MARK: Table Related
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -18,6 +24,7 @@ class LightSelectionViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "LightsCell") as! LightsCell
+        
         let light = MainViewController.allLights[indexPath.row]
         cell.title.text = light
         if MainViewController.selectedLights.contains(light) {
@@ -25,18 +32,24 @@ class LightSelectionViewController: UITableViewController {
         } else {
             cell.accessoryType = .none
         }
+        tableView.deselectRow(at: indexPath, animated: false)
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if MainViewController.selectedLights.contains(MainViewController.allLights[indexPath.row]) {
-            MainViewController.selectedLights.remove(at: MainViewController.selectedLights.firstIndex(of: MainViewController.allLights[indexPath.row])!)
+        let cell = tableView.cellForRow(at: indexPath) as! LightsCell
+        cell.setSelected(false, animated: true)
+        
+        let light = MainViewController.allLights[indexPath.row]
+        if MainViewController.selectedLights.contains(light) {
+            MainViewController.selectedLights.remove(at: MainViewController.selectedLights.firstIndex(of: light)!)
+            cell.accessoryType = .none
         } else {
-            MainViewController.selectedLights.append(MainViewController.allLights[indexPath.row])
+            MainViewController.selectedLights.append(light)
+            cell.accessoryType = .checkmark
         }
         
         UserDefaults.standard.setValue(MainViewController.selectedLights, forKey: "lights")
-        tableView.reloadData()
     }
 }
 

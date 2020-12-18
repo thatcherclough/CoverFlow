@@ -14,7 +14,7 @@ struct BridgeInfo {
 
 typealias BridgeInfoDiscoveryResult = BridgeInfo
 extension BridgeInfoDiscoveryResult {
-    init(withDiscoveryResult discoveryResult:PHSBridgeDiscoveryResult) {
+    init(withDiscoveryResult discoveryResult: PHSBridgeDiscoveryResult) {
         self.ipAddress = discoveryResult.ipAddress
         self.uniqueId = discoveryResult.uniqueId
     }

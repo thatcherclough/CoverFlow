@@ -21,7 +21,7 @@
 		DDAEDC9F253CF53D002F3175 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DDAEDC9D253CF53D002F3175 /* Main.storyboard */; };
 		DDAEDCA1253CF541002F3175 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DDAEDCA0253CF541002F3175 /* Assets.xcassets */; };
 		DDAEDCA4253CF541002F3175 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DDAEDCA2253CF541002F3175 /* LaunchScreen.storyboard */; };
-		DDAEDCBD253CFCD7002F3175 /* BridgeDiscoveryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDCBC253CFCD7002F3175 /* BridgeDiscoveryController.swift */; };
+		DDAEDCBD253CFCD7002F3175 /* BridgeDiscoveryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAEDCBC253CFCD7002F3175 /* BridgeDiscoveryViewController.swift */; };
 		DDB07A7C25799901003EA4AF /* LocalNetworkPermissionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB07A7B25799901003EA4AF /* LocalNetworkPermissionService.swift */; };
 		DDB07A962579AD5C003EA4AF /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB07A952579AD5C003EA4AF /* MainViewController.swift */; };
 		DDB639D02583EC3D00029360 /* Grota_Sans_Bold_Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = DDB639CF2583EC3A00029360 /* Grota_Sans_Bold_Italic.otf */; };
@@ -65,7 +65,7 @@
 		DDAEDCA3253CF541002F3175 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DDAEDCA5253CF541002F3175 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DDAEDCAD253CF56F002F3175 /* CoverFlow-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CoverFlow-Bridging-Header.h"; sourceTree = "<group>"; };
-		DDAEDCBC253CFCD7002F3175 /* BridgeDiscoveryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeDiscoveryController.swift; sourceTree = "<group>"; };
+		DDAEDCBC253CFCD7002F3175 /* BridgeDiscoveryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeDiscoveryViewController.swift; sourceTree = "<group>"; };
 		DDB07A7B25799901003EA4AF /* LocalNetworkPermissionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNetworkPermissionService.swift; sourceTree = "<group>"; };
 		DDB07A952579AD5C003EA4AF /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		DDB639CF2583EC3A00029360 /* Grota_Sans_Bold_Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Grota_Sans_Bold_Italic.otf; path = CoverFlow/Assets.xcassets/Grota_Sans_Bold_Italic.otf; sourceTree = "<group>"; };
@@ -143,7 +143,7 @@
 				DD439AD225609FE700082CEF /* SpotifyController.swift */,
 				DD439AD025609FDC00082CEF /* AppleMusicController.swift */,
 				DDFD8BE0253E382C00BBE27A /* PushButtonViewController.swift */,
-				DDAEDCBC253CFCD7002F3175 /* BridgeDiscoveryController.swift */,
+				DDAEDCBC253CFCD7002F3175 /* BridgeDiscoveryViewController.swift */,
 				DDFD8BDE253E323900BBE27A /* BridgeInfo.swift */,
 				DDAEDCA0253CF541002F3175 /* Assets.xcassets */,
 				DDAEDCA5253CF541002F3175 /* Info.plist */,
@@ -293,7 +293,7 @@
 				DDB07A7C25799901003EA4AF /* LocalNetworkPermissionService.swift in Sources */,
 				DDFD8BE1253E382C00BBE27A /* PushButtonViewController.swift in Sources */,
 				DDF07094256C375100353469 /* MusicProviderViewController.swift in Sources */,
-				DDAEDCBD253CFCD7002F3175 /* BridgeDiscoveryController.swift in Sources */,
+				DDAEDCBD253CFCD7002F3175 /* BridgeDiscoveryViewController.swift in Sources */,
 				DD439AD125609FDC00082CEF /* AppleMusicController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,5 +1,5 @@
 //
-//  BridgeDiscoveryController.swift
+//  BridgeDiscoveryViewController.swift
 //  CoverFlow
 //
 //  Created by Thatcher Clough on 10/18/20.
@@ -8,16 +8,18 @@
 import Foundation
 import UIKit
 
-protocol BridgeDiscoveryControllerDelegate {
+protocol BridgeDiscoveryViewControllerDelegate {
     func didSetBridgeInfo()
 }
 
-class BridgeDiscoveryController: UITableViewController {
+class BridgeDiscoveryViewController: UITableViewController {
     
     // MARK: Variables and IBActions
     
+    lazy var bridgeDiscovery: PHSBridgeDiscovery = PHSBridgeDiscovery()
+    
     var bridges: [BridgeInfo] = []
-    var delegate: BridgeDiscoveryControllerDelegate?
+    var delegate: BridgeDiscoveryViewControllerDelegate?
     
     @IBAction func enterIPAction(_ sender: Any) {
         DispatchQueue.main.async {
@@ -25,6 +27,7 @@ class BridgeDiscoveryController: UITableViewController {
             alert.addTextField { (textField) in
                 textField.placeholder = "IP address"
                 textField.autocorrectionType = .no
+                textField.keyboardType = .decimalPad
             }
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { alertAction in
                 let searchingAlert = UIAlertController(title: "Finding bridge...", message: nil, preferredStyle: UIAlertController.Style.alert)
@@ -106,57 +109,24 @@ class BridgeDiscoveryController: UITableViewController {
     }
     
     func discoverBridges() {
-        PHSBridgeDiscovery().search(.discoveryOptionUPNP) { (result, returnCode) in
-            if returnCode == .success && result != nil {
-                for (_, value) in result! {
-                    if value.ipAddress == nil || value.uniqueId == nil {
-                        continue
-                    } else {
-                        let bridgeInfo: BridgeInfo = BridgeInfo(ipAddress: value.ipAddress, uniqueId: value.uniqueId)
-                        if !self.bridges.contains(where: { (bridgeInfoIn) -> Bool in
-                            return Bool(bridgeInfoIn.ipAddress == bridgeInfo.ipAddress && bridgeInfoIn.uniqueId == bridgeInfo.uniqueId)
-                        }) {
-                            self.bridges.append(bridgeInfo)
-                        }
-                    }
-                }
+        bridgeDiscovery.search(.discoveryOptionUPNP) { [weak self] (results, returnCode) in
+            guard let strongSelf = self else {
+                return
+            }
+            
+            if let results = results {
+                let foundBridges:[BridgeInfo] = results.map({ (key, value) in BridgeInfo(withDiscoveryResult: value) })
+                strongSelf.bridges = foundBridges
             } else {
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "Notice", message: "Could not find bridges.", preferredStyle: UIAlertController.Style.alert)
                     alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
-                    self.present(alert, animated: true, completion: nil)
+                    strongSelf.present(alert, animated: true, completion: nil)
                 }
             }
             
-            if self.bridges.isEmpty {
-                PHSBridgeDiscovery().search(.discoveryOptionIPScan) { (result, returnCode) in
-                    if returnCode == .success && result != nil {
-                        for (_, value) in result! {
-                            if value.ipAddress == nil || value.uniqueId == nil {
-                                continue
-                            } else {
-                                let bridgeInfo: BridgeInfo = BridgeInfo(ipAddress: value.ipAddress, uniqueId: value.uniqueId)
-                                if !self.bridges.contains(where: { (bridgeInfoIn) -> Bool in
-                                    return Bool(bridgeInfoIn.ipAddress == bridgeInfo.ipAddress && bridgeInfoIn.uniqueId == bridgeInfo.uniqueId)
-                                }) {
-                                    self.bridges.append(bridgeInfo)
-                                }
-                            }
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            let alert = UIAlertController(title: "Notice", message: "Could not find bridges.", preferredStyle: UIAlertController.Style.alert)
-                            alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
-                            self.present(alert, animated: true, completion: nil)
-                        }
-                    }
-                    self.refreshControl!.endRefreshing()
-                    self.tableView.reloadData()
-                }
-            } else {
-                self.refreshControl!.endRefreshing()
-                self.tableView.reloadData()
-            }
+            strongSelf.refreshControl!.endRefreshing()
+            strongSelf.tableView.reloadData()
         }
     }
     

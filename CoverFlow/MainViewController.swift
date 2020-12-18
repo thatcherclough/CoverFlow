@@ -962,6 +962,7 @@ extension MainViewController: PHSBridgeStateUpdateObserver {
             }
             
             if bridge != nil {
+                MainViewController.allLights.removeAll()
                 for device in bridge.bridgeState.getDevicesOf(.light) as! [PHSDevice] {
                     MainViewController.allLights.append(device.name!)
                 }
@@ -974,7 +975,8 @@ extension MainViewController: PHSBridgeStateUpdateObserver {
             let defaults = UserDefaults.standard
             let lights = defaults.value(forKey: "lights")
             if  lights == nil {
-                defaults.setValue([], forKey: "lights")
+                MainViewController.selectedLights = MainViewController.allLights
+                defaults.setValue(MainViewController.selectedLights, forKey: "lights")
             } else if let defaultLights = defaults.value(forKey: "lights") as? [String] {
                 MainViewController.selectedLights = defaultLights
             }

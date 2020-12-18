@@ -219,7 +219,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toBridgeSelection" {
-            if let destination = segue.destination as? BridgeDiscoveryController {
+            if let destination = segue.destination as? BridgeDiscoveryViewController {
                 destination.delegate = self
             }
         }
@@ -260,7 +260,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     }
 }
 
-extension SettingsViewController: BridgeDiscoveryControllerDelegate {
+extension SettingsViewController: BridgeDiscoveryViewControllerDelegate {
     func didSetBridgeInfo() {
         connectToNewBridge = true
     }

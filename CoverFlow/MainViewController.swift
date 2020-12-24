@@ -19,7 +19,6 @@ class MainViewController: UIViewController {
     
     let keys = CoverFlowKeys()
     var canPushNotifications: Bool = false
-    
     var appleMusicController: AppleMusicController!
     var spotifyController: SpotifyController!
     
@@ -74,8 +73,8 @@ class MainViewController: UIViewController {
             if self.startButton.titleLabel?.text != "Start" {
                 self.alert(title: "Notice", body: "You must stop CoverFlow before accessing settings.")
             } else {
-                self.settingsNav.isModalInPresentation = true
                 self.settings.delegate = self
+                self.settingsNav.isModalInPresentation = true
                 self.present(self.settingsNav, animated: true, completion: nil)
             }
         }
@@ -88,13 +87,11 @@ class MainViewController: UIViewController {
     // MARK: View Related
     
     public override func viewDidLoad() {
-        super.viewDidLoad()
-        
         if view.bounds.width < 370 {
             label.font = label.font.withSize(60)
         }
         
-        settingsNav = self.storyboard?.instantiateViewController(withIdentifier: "SettingsViewController") as? UINavigationController
+        settingsNav = storyboard?.instantiateViewController(withIdentifier: "SettingsViewController") as? UINavigationController
         settings = settingsNav.viewControllers.first as? SettingsViewController
         settings.loadViewIfNeeded()
         
@@ -102,12 +99,10 @@ class MainViewController: UIViewController {
         
         startButton.setTitle("Start", alpha: 0.9)
         startButton.layer.cornerRadius = 10
-        startButton.titleLabel?.alpha = 0
         startButton.clipsToBounds = true
         
         settingsButton.setTitle("Settings", alpha: 0.9)
         settingsButton.layer.cornerRadius = 10
-        settingsButton.titleLabel?.alpha = 0
         settingsButton.clipsToBounds = true
         
         observeReachability()
@@ -152,7 +147,7 @@ class MainViewController: UIViewController {
     }
     
     func updateBackground() {
-        if !currentColors.isEmpty && self.animatedGradient != nil {
+        if !currentColors.isEmpty && animatedGradient != nil {
             DispatchQueue.main.async {
                 self.animatedGradient.animationValues =
                     [
@@ -173,7 +168,7 @@ class MainViewController: UIViewController {
             hexIndex = 0
         }
         
-        if hexIndex < currentColors.count, let hex = currentColors[hexIndex].hexa {
+        if let hex = currentColors[hexIndex].hexa {
             return hex
         } else {
             return "nil"
@@ -186,27 +181,32 @@ class MainViewController: UIViewController {
                 if authorizationStatus != .authorized && self.presentedViewController as? MusicProviderViewController == nil {
                     self.stop()
                     
-                    let alert = UIAlertController(title: "Error", message: "Apple Music access has been revoked. Try connecting again.", preferredStyle: UIAlertController.Style.alert)
+                    let alert = UIAlertController(title: "Error", message: "Apple Music access has been revoked. Try connecting again.", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                     self.presentMusicProvider(alert: alert)
                     
-                    MainViewController.musicProvider = nil
                     self.appleMusicController = nil
+                    MainViewController.musicProvider = nil
                     UserDefaults.standard.set(nil, forKey: "musicProvider")
                 }
             }
-        } else if MainViewController.musicProvider == "spotify" {
-            if (spotifyController == nil || (spotifyController != nil && spotifyController.refreshToken == "N/A")) && self.presentedViewController as? MusicProviderViewController == nil {
-                self.stop()
-                
-                let alert = UIAlertController(title: "Error", message: "Spotify access has been revoked. Try connecting again.", preferredStyle: UIAlertController.Style.alert)
-                alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
-                presentMusicProvider(alert: alert)
-                
-                MainViewController.musicProvider = nil
-                self.spotifyController = nil
-                UserDefaults.standard.set(nil, forKey: "musicProvider")
-            }
+        } else if MainViewController.musicProvider == "spotify" && ((spotifyController == nil || (spotifyController != nil && spotifyController.refreshToken == "N/A")) && presentedViewController as? MusicProviderViewController == nil) {
+            self.stop()
+            
+            let alert = UIAlertController(title: "Error", message: "Spotify access has been revoked. Try connecting again.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
+            presentMusicProvider(alert: alert)
+            
+            self.spotifyController = nil
+            MainViewController.musicProvider = nil
+            UserDefaults.standard.set(nil, forKey: "musicProvider")
+        } else if MainViewController.musicProvider == nil && presentedViewController as? MusicProviderViewController == nil {
+            presentMusicProvider(alert: nil)
+            
+            appleMusicController = nil
+            spotifyController = nil
+            MainViewController.musicProvider = nil
+            UserDefaults.standard.set(nil, forKey: "musicProvider")
         }
     }
     
@@ -216,42 +216,49 @@ class MainViewController: UIViewController {
                 if authorizationStatus != .authorized && self.presentedViewController as? MusicProviderViewController == nil {
                     self.stop()
                     
-                    let alert = UIAlertController(title: "Error", message: "Apple Music access has been revoked. Try connecting again.", preferredStyle: UIAlertController.Style.alert)
+                    let alert = UIAlertController(title: "Error", message: "Apple Music access has been revoked. Try connecting again.", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                     self.presentMusicProvider(alert: alert)
                     
-                    MainViewController.musicProvider = nil
                     self.appleMusicController = nil
+                    MainViewController.musicProvider = nil
                     UserDefaults.standard.set(nil, forKey: "musicProvider")
                 } else {
                     self.hueSetup()
                 }
             }
-        } else if MainViewController.musicProvider == "spotify" {
-            if (spotifyController == nil || (spotifyController != nil && spotifyController.refreshToken == "N/A")) && self.presentedViewController as? MusicProviderViewController == nil {
-                self.stop()
-                
-                let alert = UIAlertController(title: "Error", message: "Spotify access has been revoked. Try connecting again.", preferredStyle: UIAlertController.Style.alert)
-                alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
-                presentMusicProvider(alert: alert)
-                
-                MainViewController.musicProvider = nil
-                self.spotifyController = nil
-                UserDefaults.standard.set(nil, forKey: "musicProvider")
-            } else {
-                self.hueSetup()
-            }
+        } else if MainViewController.musicProvider == "spotify" && ((spotifyController == nil || (spotifyController != nil && spotifyController.refreshToken == "N/A")) && presentedViewController as? MusicProviderViewController == nil) {
+            self.stop()
+            
+            let alert = UIAlertController(title: "Error", message: "Spotify access has been revoked. Try connecting again.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
+            presentMusicProvider(alert: alert)
+            
+            self.spotifyController = nil
+            MainViewController.musicProvider = nil
+            UserDefaults.standard.set(nil, forKey: "musicProvider")
+        } else if MainViewController.musicProvider == nil && presentedViewController as? MusicProviderViewController == nil {
+            presentMusicProvider(alert: nil)
+            
+            appleMusicController = nil
+            spotifyController = nil
+            MainViewController.musicProvider = nil
+            UserDefaults.standard.set(nil, forKey: "musicProvider")
+        } else {
+            hueSetup()
         }
     }
     
     func presentMusicProvider(alert: UIAlertController!) {
         DispatchQueue.main.async {
-            let musicProvider = self.storyboard?.instantiateViewController(withIdentifier: "MusicProviderViewController") as! MusicProviderViewController
-            musicProvider.delegate = self
-            musicProvider.isModalInPresentation = true
-            self.present(musicProvider, animated: true) {
-                if alert != nil {
-                    musicProvider.present(alert, animated: true, completion: nil)
+            if self.presentedViewController as? MusicProviderViewController == nil {
+                let musicProvider = self.storyboard?.instantiateViewController(withIdentifier: "MusicProviderViewController") as! MusicProviderViewController
+                musicProvider.delegate = self
+                musicProvider.isModalInPresentation = true
+                self.present(musicProvider, animated: true) {
+                    if alert != nil {
+                        musicProvider.present(alert, animated: true, completion: nil)
+                    }
                 }
             }
         }
@@ -277,7 +284,7 @@ class MainViewController: UIViewController {
     
     func connectFromBridgeInfo() {
         DispatchQueue.main.async {
-            let connectionAlert = UIAlertController(title: "Connecting to bridge...", message: nil, preferredStyle: UIAlertController.Style.alert)
+            let connectionAlert = UIAlertController(title: "Connecting to bridge...", message: nil, preferredStyle: .alert)
             if self.presentedViewController != nil {
                 self.dismiss(animated: true) {
                     self.present(connectionAlert, animated: true) {
@@ -306,7 +313,7 @@ class MainViewController: UIViewController {
         return PHSBridge.init(block: { (builder) in
             builder?.connectionTypes = .local
             builder?.ipAddress = info.ipAddress
-            builder?.bridgeID  = info.uniqueId
+            builder?.bridgeID = info.uniqueId
             
             builder?.bridgeConnectionObserver = self
             builder?.add(self)
@@ -329,7 +336,7 @@ class MainViewController: UIViewController {
         for light in bridge.bridgeState.getDevicesOf(.light) {
             let lightName = (light as! PHSDevice).name!
             
-            if MainViewController.selectedLights.contains(lightName) && currentLightsStates.keys.contains(lightName) {
+            if currentLightsStates.keys.contains(lightName) {
                 let lightPoint = light as! PHSLightPoint
                 
                 lightPoint.update(currentLightsStates[lightName], allowedConnectionTypes: .local) { (responses, errors, returnCode) in
@@ -355,17 +362,12 @@ class MainViewController: UIViewController {
         if MainViewController.musicProvider == "appleMusic" {
             var currentColorIndex: Int = 0
             var albumAndArtist = appleMusicController.getCurrentAlbumName() + appleMusicController.getCurrentArtistName()
-            let wait = self.settings.colorDuration + self.settings.transitionDuration
+            let wait = settings.colorDuration + settings.transitionDuration
             
             getCoverImageAndSetCurrentSongHues()
             
             DispatchQueue.main.async {
                 self.timer = Timer.scheduledTimer(withTimeInterval: wait, repeats: true) { (timer) in
-                    if wait != (self.settings.colorDuration + self.settings.transitionDuration) {
-                        timer.invalidate()
-                        self.start()
-                    }
-                    
                     if !self.currentColors.isEmpty && self.currentColors.count > currentColorIndex {
                         for light in self.bridge.bridgeState.getDevicesOf(.light) {
                             if MainViewController.selectedLights.contains((light as! PHSDevice).name) {
@@ -398,10 +400,6 @@ class MainViewController: UIViewController {
                         }
                     }
                     
-                    if self.backgroundPlayer != nil && !self.backgroundPlayer!.isPlaying {
-                        self.startBackgrounding()
-                    }
-                    
                     let currentAlbumAndArtist = self.appleMusicController.getCurrentAlbumName() + self.appleMusicController.getCurrentArtistName()
                     if currentAlbumAndArtist != albumAndArtist {
                         albumAndArtist = currentAlbumAndArtist
@@ -409,6 +407,12 @@ class MainViewController: UIViewController {
                         currentColorIndex = 0
                         
                         self.playAudio(fileName: "songChange", fileExtension: "mp3")
+                        
+                        if let alert = self.presentedViewController as? UIAlertController {
+                            if alert.message! == "The current song\'s album cover does not have any distinct colors." {
+                                alert.dismiss(animated: true, completion: nil)
+                            }
+                        }
                     } else {
                         currentColorIndex += 1
                         if currentColorIndex >= self.currentColors.count {
@@ -426,7 +430,7 @@ class MainViewController: UIViewController {
         } else if MainViewController.musicProvider == "spotify" {
             var currentColorIndex: Int = 0
             var albumAndArtist = ""
-            let wait = self.settings.colorDuration + self.settings.transitionDuration
+            let wait = settings.colorDuration + settings.transitionDuration
             
             spotifyController.getCurrentAlbum { (album) in
                 if let _ = album["retry"] as? String {
@@ -440,7 +444,7 @@ class MainViewController: UIViewController {
                     self.stop()
                     
                     if error == "Invalid access token" {
-                        let alert = UIAlertController(title: "Error", message: "Spotify access has been revoked. Try connecting again.", preferredStyle: UIAlertController.Style.alert)
+                        let alert = UIAlertController(title: "Error", message: "Spotify access has been revoked. Try connecting again.", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                         self.presentMusicProvider(alert: alert)
                     } else {
@@ -474,11 +478,6 @@ class MainViewController: UIViewController {
                 }
                 DispatchQueue.main.async {
                     self.timer = Timer.scheduledTimer(withTimeInterval: wait, repeats: true) { (timer) in
-                        if wait != (self.settings.colorDuration + self.settings.transitionDuration) {
-                            timer.invalidate()
-                            self.start()
-                        }
-                        
                         if !self.currentColors.isEmpty && self.currentColors.count > currentColorIndex {
                             for light in self.bridge.bridgeState.getDevicesOf(.light) {
                                 if MainViewController.selectedLights.contains((light as! PHSDevice).name) {
@@ -511,10 +510,6 @@ class MainViewController: UIViewController {
                             }
                         }
                         
-                        if self.backgroundPlayer != nil && !self.backgroundPlayer!.isPlaying {
-                            self.startBackgrounding()
-                        }
-                        
                         self.spotifyController.getCurrentAlbum { (album) in
                             if let _ = album["retry"] as? String {
                                 self.timer.invalidate()
@@ -526,7 +521,7 @@ class MainViewController: UIViewController {
                                 self.stop()
                                 
                                 if error == "Invalid access token" {
-                                    let alert = UIAlertController(title: "Error", message: "Spotify access has been revoked. Try connecting again.", preferredStyle: UIAlertController.Style.alert)
+                                    let alert = UIAlertController(title: "Error", message: "Spotify access has been revoked. Try connecting again.", preferredStyle: .alert)
                                     alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                                     self.presentMusicProvider(alert: alert)
                                 } else {
@@ -558,6 +553,14 @@ class MainViewController: UIViewController {
                                     currentColorIndex = 0
                                     
                                     self.playAudio(fileName: "songChange", fileExtension: "mp3")
+                                    
+                                    DispatchQueue.main.async {
+                                        if let alert = self.presentedViewController as? UIAlertController {
+                                            if alert.message! == "The current song\'s album cover does not have any distinct colors." {
+                                                alert.dismiss(animated: true, completion: nil)
+                                            }
+                                        }
+                                    }
                                 } else {
                                     currentColorIndex += 1
                                     if currentColorIndex >= self.currentColors.count {
@@ -575,7 +578,6 @@ class MainViewController: UIViewController {
                         self.startButton.isEnabled = true
                     }
                 }
-                
             }
         }
     }
@@ -589,10 +591,8 @@ class MainViewController: UIViewController {
             let artistName = (nowPlaying?.albumArtist != nil) ? nowPlaying?.albumArtist : nowPlaying?.artist
             
             if nowPlaying != nil {
-                let image = albumArt?.image(at: CGSize(width: 200, height: 200)) ?? nil
-                
-                if image != nil {
-                    setCurrentSongHues(image: image!)
+                if let image = albumArt?.image(at: CGSize(width: 200, height: 200)) {
+                    setCurrentSongHues(image: image)
                 } else {
                     if albumName != nil && artistName != nil {
                         appleMusicController.getCoverFromAPI(albumName: albumName!, artistName: artistName!) { (url) in
@@ -675,7 +675,7 @@ class MainViewController: UIViewController {
         if newColors.isEmpty {
             alertAndNotify(title: "Notice", body: "The current song's album cover does not have any distinct colors.")
         } else {
-            if newColors.count >= settings.maximumColors {
+            if newColors.count > settings.maximumColors {
                 newColors = Array(newColors[0..<Int(settings.maximumColors)])
             }
             currentColors = newColors
@@ -703,11 +703,14 @@ class MainViewController: UIViewController {
     var audioPlayer: AVAudioPlayer?
     func playAudio(fileName: String, fileExtension: String) {
         do {
-            let audioFile = URL(fileURLWithPath: Bundle.main.path(forResource: fileName, ofType: fileExtension)!)
-            audioPlayer = try AVAudioPlayer(contentsOf: audioFile)
-            audioPlayer!.volume = 0.025
-            audioPlayer!.prepareToPlay()
-            audioPlayer!.play()
+            audioPlayer = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: fileName, ofType: fileExtension)!))
+            if audioPlayer != nil {
+                audioPlayer!.volume = 0.025
+                audioPlayer!.prepareToPlay()
+                audioPlayer!.play()
+            } else {
+                throw "Error"
+            }
         } catch {
             alert(title: "Notice", body: "Could not play sound \"\(fileName).\(fileExtension)\".")
         }
@@ -716,8 +719,7 @@ class MainViewController: UIViewController {
     var backgroundPlayer: AVAudioPlayer?
     func startBackgrounding() {
         do {
-            let audioCheck = URL(fileURLWithPath: Bundle.main.path(forResource: "audioCheck", ofType: "mp3")!)
-            backgroundPlayer = try AVAudioPlayer(contentsOf: audioCheck)
+            backgroundPlayer = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "audioCheck", ofType: "mp3")!))
             if backgroundPlayer != nil {
                 backgroundPlayer!.numberOfLoops = -1
                 backgroundPlayer!.volume = 0.0
@@ -738,7 +740,7 @@ class MainViewController: UIViewController {
     
     func stopBackgrounding() {
         if backgroundPlayer != nil && backgroundPlayer!.isPlaying {
-            backgroundPlayer?.stop()
+            backgroundPlayer!.stop()
         }
     }
     
@@ -752,7 +754,7 @@ class MainViewController: UIViewController {
     func alert(title: String, body: String) {
         DispatchQueue.main.async {
             if self.presentedViewController == nil {
-                let alert = UIAlertController(title: title, message: body, preferredStyle: UIAlertController.Style.alert)
+                let alert = UIAlertController(title: title, message: body, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                 self.present(alert, animated: true, completion: nil)
             }
@@ -765,19 +767,17 @@ class MainViewController: UIViewController {
         content.body = body
         content.sound = UNNotificationSound.default
         
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false))
         UNUserNotificationCenter.current().add(request)
     }
     
     private var reachability : Reachability!
     func observeReachability() {
         do {
-            self.reachability = try Reachability()
+            reachability = try Reachability()
             NotificationCenter.default.addObserver(self, selector:#selector(self.reachabilityChanged), name: NSNotification.Name.reachabilityChanged, object: nil)
-            try self.reachability.startNotifier()
-        }
-        catch {
+            try reachability.startNotifier()
+        } catch {
             print("could not initiate connection manager")
         }
     }
@@ -787,79 +787,14 @@ class MainViewController: UIViewController {
         if firstDetection {
             firstDetection = false
         } else {
-            let reachability = note.object as! Reachability
-            let connection = reachability.connection
-            
+            let connection = (note.object as! Reachability).connection
             if connection == .cellular || connection == .unavailable || connection == .unavailable {
+                stop()
                 if bridge != nil {
                     bridge.disconnect()
-                    
-                    stop()
                 }
             } else if connection == .wifi {
                 hueSetup()
-            }
-        }
-    }
-}
-
-public class TransparentTextButton: UIButton {
-    
-    public override func draw(_ rect: CGRect) {
-        super.draw(rect)
-        
-        self.addTarget(self, action: #selector(pushDownAnimation(_:)), for: .touchDown)
-        self.addTarget(self, action: #selector(pushDownAnimation(_:)), for: .touchDragEnter)
-        self.addTarget(self, action: #selector(backUpAnimation(_:)), for: .touchDragExit)
-        self.addTarget(self, action: #selector(backUpAnimation(_:)), for: .touchUpInside)
-    }
-    
-    @objc func pushDownAnimation(_ sender: AnyObject) {
-        UIView.animate(withDuration: 0.15, animations: {
-            self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-        })
-    }
-    
-    @objc func backUpAnimation(_ sender: AnyObject) {
-        UIView.animate(withDuration: 0.15, animations: {
-            self.transform = CGAffineTransform.identity
-        })
-    }
-    
-    public func setTitle(_ title: String?, alpha: CGFloat) {
-        super.setTitle(title, for: .normal)
-        clearColorForTitle(alpha: alpha)
-    }
-    
-    func clearColorForTitle(alpha: CGFloat) {
-        let buttonSize = bounds.size
-        if let font = titleLabel?.font{
-            let attribs = [NSAttributedString.Key.font: font]
-            if let textSize = titleLabel?.text?.size(withAttributes: attribs){
-                UIGraphicsBeginImageContextWithOptions(buttonSize, false, UIScreen.main.scale)
-                
-                if let ctx = UIGraphicsGetCurrentContext(){
-                    ctx.setFillColor(UIColor.white.cgColor)
-                    ctx.setAlpha(alpha)
-                    
-                    let center = CGPoint(x: buttonSize.width / 2 - textSize.width / 2, y: buttonSize.height / 2 - textSize.height / 2)
-                    let path = UIBezierPath(rect: CGRect(x: 0, y: 0, width: buttonSize.width, height: buttonSize.height))
-                    ctx.addPath(path.cgPath)
-                    ctx.fillPath()
-                    ctx.setBlendMode(.destinationOut)
-                    
-                    titleLabel?.text?.draw(at: center, withAttributes: [NSAttributedString.Key.font: font])
-                    
-                    if let viewImage = UIGraphicsGetImageFromCurrentImageContext(){
-                        UIGraphicsEndImageContext()
-                        
-                        let maskLayer = CALayer()
-                        maskLayer.contents = ((viewImage.cgImage) as AnyObject)
-                        maskLayer.frame = bounds
-                        
-                        layer.mask = maskLayer
-                    }
-                }
             }
         }
     }
@@ -899,20 +834,19 @@ extension MainViewController: PHSBridgeConnectionObserver {
         case .disconnected:
             print("disconnected")
             
-            if settings.bridgeCell.detailTextLabel?.text == "Connected" {
+            if MainViewController.authenticated {
                 alert(title: "Notice", body: "Disconnected from the bridge.")
             }
+            
+            MainViewController.bridgeInfo = nil
+            bridge = nil
+            MainViewController.authenticated = false
             
             settings.bridgeCell.detailTextLabel?.text = "Not connected"
             settings.lightsCell.detailTextLabel?.text = "None selected"
             MainViewController.selectedLights.removeAll()
             MainViewController.allLights.removeAll()
             startButton.setTitle("Start", alpha: 0.9)
-            
-            MainViewController.bridgeInfo = nil
-            bridge = nil
-            MainViewController.authenticated = false
-            
             settings.tableView.reloadData()
             break
         case .notAuthenticated:
@@ -957,8 +891,8 @@ extension MainViewController: PHSBridgeStateUpdateObserver {
         case .initialized:
             print("good")
             
-            if self.presentedViewController != nil {
-                self.dismiss(animated: true, completion: nil)
+            if presentedViewController != nil {
+                dismiss(animated: true, completion: nil)
             }
             
             if bridge != nil {
@@ -999,21 +933,25 @@ extension MainViewController: MusicProviderViewControllerDelegate {
     }
     
     func didGetAppleMusicController(appleMusicController: AppleMusicController) {
-        UserDefaults.standard.set("appleMusic", forKey: "musicProvider")
-        MainViewController.musicProvider = "appleMusic"
-        self.appleMusicController = appleMusicController
-        self.dismiss(animated: true, completion: {
-            self.hueSetup()
-        })
+        DispatchQueue.main.async {
+            UserDefaults.standard.set("appleMusic", forKey: "musicProvider")
+            MainViewController.musicProvider = "appleMusic"
+            self.appleMusicController = appleMusicController
+            self.dismiss(animated: true, completion: {
+                self.hueSetup()
+            })
+        }
     }
     
     func didGetSpotifyController(spotifyController: SpotifyController) {
-        UserDefaults.standard.set("spotify", forKey: "musicProvider")
-        MainViewController.musicProvider = "spotify"
-        self.spotifyController = spotifyController
-        self.dismiss(animated: true, completion: {
-            self.hueSetup()
-        })
+        DispatchQueue.main.async {
+            UserDefaults.standard.set("spotify", forKey: "musicProvider")
+            MainViewController.musicProvider = "spotify"
+            self.spotifyController = spotifyController
+            self.dismiss(animated: true, completion: {
+                self.hueSetup()
+            })
+        }
     }
 }
 
@@ -1031,7 +969,7 @@ extension MainViewController: SettingsViewControllerDelegate {
         }
     }
     
-    func didSetBridgeInfo() {
+    func connectToBridge() {
         if !MainViewController.authenticated || (MainViewController.authenticated && bridge != nil && bridge.bridgeConfiguration.networkConfiguration.ipAddress != MainViewController.bridgeInfo.ipAddress) {
             connectFromBridgeInfo()
         }
@@ -1039,9 +977,66 @@ extension MainViewController: SettingsViewControllerDelegate {
 }
 
 extension MainViewController: PushButtonViewControllerDelegate {
-    func timerDidInvalidate() {
+    func timerDidExpire() {
         bridge.disconnect()
-        self.dismiss(animated: true, completion: nil)
+        dismiss(animated: true, completion: nil)
+    }
+}
+
+public class TransparentTextButton: UIButton {
+    public override func draw(_ rect: CGRect) {
+        super.draw(rect)
+        
+        self.addTarget(self, action: #selector(pushDownAnimation(_:)), for: .touchDown)
+        self.addTarget(self, action: #selector(pushDownAnimation(_:)), for: .touchDragEnter)
+        self.addTarget(self, action: #selector(backUpAnimation(_:)), for: .touchDragExit)
+        self.addTarget(self, action: #selector(backUpAnimation(_:)), for: .touchUpInside)
+    }
+    
+    @objc func pushDownAnimation(_ sender: AnyObject) {
+        UIView.animate(withDuration: 0.15, animations: {
+            self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+        })
+    }
+    
+    @objc func backUpAnimation(_ sender: AnyObject) {
+        UIView.animate(withDuration: 0.15, animations: {
+            self.transform = CGAffineTransform.identity
+        })
+    }
+    
+    public func setTitle(_ title: String?, alpha: CGFloat) {
+        super.setTitle(title, for: .normal)
+        titleLabel?.alpha = 0
+        clearColorForTitle(alpha: alpha)
+    }
+    
+    func clearColorForTitle(alpha: CGFloat) {
+        let buttonSize = bounds.size
+        if let font = titleLabel?.font {
+            let attributes = [NSAttributedString.Key.font: font]
+            if let textSize = titleLabel?.text?.size(withAttributes: attributes) {
+                UIGraphicsBeginImageContextWithOptions(buttonSize, false, UIScreen.main.scale)
+                if let ctx = UIGraphicsGetCurrentContext() {
+                    ctx.setFillColor(UIColor.white.cgColor)
+                    ctx.setAlpha(alpha)
+                    
+                    let center = CGPoint(x: buttonSize.width / 2 - textSize.width / 2, y: buttonSize.height / 2 - textSize.height / 2)
+                    let path = UIBezierPath(rect: CGRect(x: 0, y: 0, width: buttonSize.width, height: buttonSize.height))
+                    ctx.addPath(path.cgPath)
+                    ctx.fillPath()
+                    ctx.setBlendMode(.destinationOut)
+                    titleLabel?.text?.draw(at: center, withAttributes: [NSAttributedString.Key.font: font])
+                    if let viewImage = UIGraphicsGetImageFromCurrentImageContext() {
+                        UIGraphicsEndImageContext()
+                        let maskLayer = CALayer()
+                        maskLayer.contents = ((viewImage.cgImage) as AnyObject)
+                        maskLayer.frame = bounds
+                        layer.mask = maskLayer
+                    }
+                }
+            }
+        }
     }
 }
 

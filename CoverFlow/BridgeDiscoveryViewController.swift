@@ -6,68 +6,125 @@
 //
 
 import Foundation
-import UIKit
 
 protocol BridgeDiscoveryViewControllerDelegate {
     func didSetBridgeInfo()
 }
 
-class BridgeDiscoveryViewController: UITableViewController {
+class BridgeDiscoveryViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    // MARK: Variables and IBActions
+    // MARK: Variables, IBOutlets, and IBActions
     
-    lazy var bridgeDiscovery: PHSBridgeDiscovery = PHSBridgeDiscovery()
-    
-    var bridges: [BridgeInfo] = []
     var delegate: BridgeDiscoveryViewControllerDelegate?
     
-    @IBAction func enterIPAction(_ sender: Any) {
+    var bridges: [BridgeInfo] = []
+    lazy var bridgeDiscovery: PHSBridgeDiscovery = PHSBridgeDiscovery()
+    
+    @IBOutlet var automaticallySearchButton: UIButton!
+    @IBAction func automaticallySearchButtonAction(_ sender: Any) {
+        discoverBridges()
+    }
+    
+    @IBOutlet var enterIPButton: UIButton!
+    @IBAction func enterIPButtonAction(_ sender: Any) {
+        enterIP()
+    }
+    
+    @IBOutlet var tableView: UITableView!
+    
+    // MARK: View Related
+    
+    override func viewDidLoad() {
+        automaticallySearchButton.titleLabel?.textAlignment = .center
+        if view.bounds.width < 370 {
+            automaticallySearchButton.titleLabel?.font = automaticallySearchButton.titleLabel?.font.withSize(17)
+            enterIPButton.titleLabel?.font = enterIPButton.titleLabel?.font.withSize(17)
+        }
+        
+        tableView.rowHeight = 55
+        tableView.delegate = self
+        tableView.dataSource = self
+        addTopSeparator()
+        
+        if MainViewController.authenticated && MainViewController.bridgeInfo != nil {
+            bridges = [MainViewController.bridgeInfo]
+        } else {
+            discoverBridges()
+        }
+    }
+    
+    func addTopSeparator() {
+        let line = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: (1 / UIScreen.main.scale)))
+        tableView.tableHeaderView = line
+        line.backgroundColor = tableView.separatorColor
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        tableView.reloadData()
+    }
+    
+    // MARK: Functions
+    
+    func discoverBridges() {
         DispatchQueue.main.async {
-            let alert = UIAlertController(title: "Manually connect", message: "Enter the IP address of your bridge to manually connect to it:", preferredStyle: UIAlertController.Style.alert)
+            let searchingAlert = UIAlertController(title: "Finding bridges...", message: nil, preferredStyle: .alert)
+            self.present(searchingAlert, animated: true) {
+                self.bridgeDiscovery.search(.discoveryOptionUPNP) { [weak self] (results, returnCode) in
+                    guard let strongSelf = self else {
+                        return
+                    }
+                    
+                    if results != nil && !results!.isEmpty && returnCode == .success {
+                        let foundBridges:[BridgeInfo] = results!.map({ (key, value) in BridgeInfo(withDiscoveryResult: value) })
+                        strongSelf.bridges = foundBridges
+                        strongSelf.tableView.reloadData()
+                        
+                        searchingAlert.dismiss(animated: true, completion: nil)
+                    } else {
+                        strongSelf.bridges = []
+                        strongSelf.tableView.reloadData()
+                        
+                        let alert = UIAlertController(title: "Notice", message: "Could not find any bridges. Make sure \"Local Network\" access is enabled in settings and try searching again.", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
+                        searchingAlert.dismiss(animated: true) {
+                            strongSelf.present(alert, animated: true, completion: nil)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func enterIP() {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Manually connect", message: "Enter the IP address of your bridge to manually connect to it:", preferredStyle: .alert)
             alert.addTextField { (textField) in
                 textField.placeholder = "IP address"
-                textField.autocorrectionType = .no
                 textField.keyboardType = .decimalPad
             }
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { alertAction in
-                let searchingAlert = UIAlertController(title: "Finding bridge...", message: nil, preferredStyle: UIAlertController.Style.alert)
+                let searchingAlert = UIAlertController(title: "Finding bridge...", message: nil, preferredStyle: .alert)
                 alert.dismiss(animated: true) {
                     self.present(searchingAlert, animated: true, completion: {
-                        if let textFields = alert.textFields {
-                            if let ip = (textFields[0] as UITextField).text {
-                                let bridge = PHSSDK.getBridgeInformation(ip)
-                                if bridge != nil {
-                                    if let uniqueId = bridge?.uniqueId {
-                                        let bridgeInfo = BridgeInfo(ipAddress: ip, uniqueId: uniqueId)
-                                        searchingAlert.dismiss(animated: true, completion: {
-                                            MainViewController.bridgeInfo = bridgeInfo
-                                            self.delegate?.didSetBridgeInfo()
-                                            _ = self.navigationController?.popToRootViewController(animated: true)
-                                        })
-                                    } else {
-                                        searchingAlert.dismiss(animated: true, completion: {
-                                            let alert = UIAlertController(title: "Error", message: "Could not obtain unique ID.", preferredStyle: UIAlertController.Style.alert)
-                                            alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
-                                            self.present(alert, animated: true, completion: nil)
-                                        })
-                                    }
-                                } else {
-                                    searchingAlert.dismiss(animated: true, completion: {
-                                        let alert = UIAlertController(title: "Error", message: "Could not find bridge.", preferredStyle: UIAlertController.Style.alert)
-                                        alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
-                                        self.present(alert, animated: true, completion: nil)
-                                    })
-                                }
+                        if let ip = alert.textFields?.first?.text {
+                            let bridge = PHSSDK.getBridgeInformation(ip)
+                            if bridge != nil && bridge?.uniqueId != nil {
+                                let bridgeInfo = BridgeInfo(ipAddress: ip, uniqueId: bridge!.uniqueId)
+                                searchingAlert.dismiss(animated: true, completion: {
+                                    MainViewController.bridgeInfo = bridgeInfo
+                                    self.delegate?.didSetBridgeInfo()
+                                    _ = self.navigationController?.popToRootViewController(animated: true)
+                                })
                             } else {
                                 searchingAlert.dismiss(animated: true, completion: {
-                                    let alert = UIAlertController(title: "Error", message: "Could not get text.", preferredStyle: UIAlertController.Style.alert)
+                                    let alert = UIAlertController(title: "Error", message: "Could not find bridge.", preferredStyle: .alert)
                                     alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                                     self.present(alert, animated: true, completion: nil)
                                 })
                             }
                         } else {
                             searchingAlert.dismiss(animated: true, completion: {
-                                let alert = UIAlertController(title: "Error", message: "Could not get text field.", preferredStyle: UIAlertController.Style.alert)
+                                let alert = UIAlertController(title: "Error", message: "Could not get IP address.", preferredStyle: .alert)
                                 alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                                 self.present(alert, animated: true, completion: nil)
                             })
@@ -80,70 +137,20 @@ class BridgeDiscoveryViewController: UITableViewController {
         }
     }
     
-    // MARK: View Related
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        addTopSeparator()
-        
-        self.refreshControl = UIRefreshControl()
-        refreshControl!.addTarget(self, action: #selector(self.refresh(_:)), for: .valueChanged)
-        
-        if MainViewController.authenticated && MainViewController.bridgeInfo != nil {
-            bridges.append(MainViewController.bridgeInfo)
-        } else {
-            refreshControl!.beginRefreshing()
-            discoverBridges()
-        }
-    }
-    
-    func addTopSeparator() {
-        let line = UIView(frame: CGRect(x: 0, y: 0, width: self.tableView.frame.size.width, height: (1 / UIScreen.main.scale)))
-        self.tableView.tableHeaderView = line
-        line.backgroundColor = self.tableView.separatorColor
-    }
-    
-    @objc func refresh(_ sender: AnyObject) {
-        discoverBridges()
-    }
-    
-    func discoverBridges() {
-        bridgeDiscovery.search(.discoveryOptionUPNP) { [weak self] (results, returnCode) in
-            guard let strongSelf = self else {
-                return
-            }
-            
-            if let results = results {
-                let foundBridges:[BridgeInfo] = results.map({ (key, value) in BridgeInfo(withDiscoveryResult: value) })
-                strongSelf.bridges = foundBridges
-            } else {
-                DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "Notice", message: "Could not find bridges.", preferredStyle: UIAlertController.Style.alert)
-                    alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
-                    strongSelf.present(alert, animated: true, completion: nil)
-                }
-            }
-            
-            strongSelf.refreshControl!.endRefreshing()
-            strongSelf.tableView.reloadData()
-        }
-    }
-    
     // MARK: Table Related
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return bridges.count
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BridgeCell") as! BridgeCell
         cell.title.text = bridges[indexPath.row].ipAddress
-        cell.subtitle.text = bridges[indexPath.row].uniqueId
+        cell.bridgeImage.image = (traitCollection.userInterfaceStyle == .light) ? UIImage(named: "BridgeBlack") : UIImage(named: "BridgeWhite")
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if bridges.count > indexPath.row {
             let selectedBridgeInfo = bridges[indexPath.row]
             
@@ -152,7 +159,7 @@ class BridgeDiscoveryViewController: UITableViewController {
             _ = self.navigationController?.popToRootViewController(animated: true)
         } else {
             DispatchQueue.main.async {
-                let alert = UIAlertController(title: "Error", message: "Index out of bounds. Bridges:\(self.bridges.count). Index:\(indexPath.row).", preferredStyle: UIAlertController.Style.alert)
+                let alert = UIAlertController(title: "Error", message: "Index out of bounds. Bridges:\(self.bridges.count). Index:\(indexPath.row).", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                 self.present(alert, animated: true, completion: nil)
             }
@@ -162,5 +169,5 @@ class BridgeDiscoveryViewController: UITableViewController {
 
 class BridgeCell: UITableViewCell {
     @IBOutlet var title: UILabel!
-    @IBOutlet var subtitle: UILabel!
+    @IBOutlet var bridgeImage: UIImageView!
 }

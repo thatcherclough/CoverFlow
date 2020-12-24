@@ -6,16 +6,10 @@
 //
 
 import UIKit
-import MediaPlayer
-import ColorThiefSwift
-import StoreKit
-import Reachability
-import AVFoundation
-import Keys
 
 protocol SettingsViewControllerDelegate {
     func didSignOut()
-    func didSetBridgeInfo()
+    func connectToBridge()
 }
 
 class SettingsViewController: UITableViewController, UITextFieldDelegate {
@@ -26,7 +20,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     var connectToNewBridge: Bool = false
     
     @IBAction func doneButtonAction(_ sender: Any) {
-        self.dismiss(animated: true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
     
     @IBOutlet var bridgeCell: UITableViewCell!
@@ -70,7 +64,9 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet var brightnessLabel: UILabel!
     @IBOutlet var brightnessSlider: UISlider!
     @IBAction func brightnessChanged(_ sender: UISlider?) {
-        let rounded: Int = Int(brightnessSlider.value)
+        var rounded: Int = Int(brightnessSlider.value)
+        rounded = rounded == 0 ? 1 : rounded
+        
         brightness = Double(rounded) * 2.54
         brightnessSlider.value = Float(rounded)
         brightnessLabel.text = "\(rounded)%"
@@ -91,11 +87,11 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet var maximumColorsLabel: UILabel!
     @IBOutlet var maximumColorsStepper: UIStepper!
     @IBAction func maximumColorsStepperAction(_ sender: UIStepper?) {
-        let maximumColors = self.maximumColorsStepper.value > 4 ? 4.0 : (self.maximumColorsStepper.value < 1 ? 1.0 : self.maximumColorsStepper.value)
+        let maximumColors = maximumColorsStepper.value > 4 ? 4.0 : (maximumColorsStepper.value < 1 ? 1.0 : maximumColorsStepper.value)
         let maximumColorsInt = Int(maximumColors)
         self.maximumColors = maximumColorsInt
         maximumColorsStepper.value = maximumColors
-        maximumColorsLabel.text = maximumColors == 4.0 ? "Maximum colors: All" : "Maximum colors: \(maximumColorsInt)"
+        maximumColorsLabel.text = maximumColorsInt == 4 ? "Maximum colors: All" : "Maximum colors: \(maximumColorsInt)"
         
         DispatchQueue.global(qos: .background).async {
             UserDefaults.standard.setValue(maximumColors, forKey: "maximumColors")
@@ -105,7 +101,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet var musicProviderLabel: UILabel!
     @IBAction func signOutButtonAction(_ sender: Any) {
         DispatchQueue.main.async {
-            let alert = UIAlertController(title: "Sign out", message: "Are you sure you want to sign out?", preferredStyle: UIAlertController.Style.alert)
+            let alert = UIAlertController(title: "Sign out", message: "Are you sure you want to sign out?", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { alertAction in
                 self.delegate?.didSignOut()
             }))
@@ -120,8 +116,6 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        tableView.delaysContentTouches = false
         
         colorDurationSlider.minimumValue = 0
         colorDurationSlider.maximumValue = 40
@@ -184,26 +178,19 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if MainViewController.selectedLights.isEmpty {
-            lightsCell.detailTextLabel?.text = "None selected"
-        } else {
-            lightsCell.detailTextLabel?.text = "\(MainViewController.selectedLights.count) selected"
-        }
+        lightsCell.detailTextLabel?.text = MainViewController.selectedLights.count == 0 ? "None selected" : "\(MainViewController.selectedLights.count) selected"
         
-        if MainViewController.musicProvider != nil && MainViewController.musicProvider == "appleMusic" {
-            musicProviderLabel.text = "Music provider: Apple Music"
-        } else if MainViewController.musicProvider != nil && MainViewController.musicProvider == "spotify" {
-            musicProviderLabel.text = "Music provider: Spotify"
+        if MainViewController.musicProvider != nil {
+            musicProviderLabel.text = MainViewController.musicProvider == "spotify" ? "Music provider: Spotify" : "Music provider: Apple Music"
         }
         self.tableView.reloadData()
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        let localNetworkPermissionService = LocalNetworkPermissionService()
-        localNetworkPermissionService.triggerDialog()
+        LocalNetworkPermissionService().triggerDialog()
         
         if connectToNewBridge {
-            delegate?.didSetBridgeInfo()
+            delegate?.connectToBridge()
             connectToNewBridge = false
         }
     }
@@ -233,7 +220,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         
         if let label = cell.textLabel?.text {
             if label == "Thatcher Clough" {
-                let screenName =  "thatcherclough"
+                let screenName = "thatcherclough"
                 let appURL = NSURL(string: "twitter://user?screen_name=\(screenName)")!
                 let webURL = NSURL(string: "https://twitter.com/\(screenName)")!
                 
@@ -252,7 +239,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     func alert(title: String, body: String) {
         DispatchQueue.main.async {
             if self.presentedViewController == nil {
-                let alert = UIAlertController(title: title, message: body, preferredStyle: UIAlertController.Style.alert)
+                let alert = UIAlertController(title: title, message: body, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                 self.present(alert, animated: true, completion: nil)
             }

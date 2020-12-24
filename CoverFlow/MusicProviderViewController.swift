@@ -20,10 +20,9 @@ public class MusicProviderViewController: UIViewController {
     
     // MARK: Variables, IBOutlets, and IBActions
     
-    let keys = CoverFlowKeys()
-    
     var delegate: MusicProviderViewControllerDelegate?
     
+    let keys = CoverFlowKeys()
     var appleMusicController: AppleMusicController!
     var spotifyController: SpotifyController!
     
@@ -41,15 +40,17 @@ public class MusicProviderViewController: UIViewController {
     func requestLibraryAccess() {
         MPMediaLibrary.requestAuthorization { authorizationStatus in
             if authorizationStatus == .authorized {
-                DispatchQueue.main.async {
-                    if self.appleMusicController != nil {
-                        self.delegate?.didGetAppleMusicController(appleMusicController: self.appleMusicController)
-                    }
+                if self.appleMusicController != nil {
+                    self.delegate?.didGetAppleMusicController(appleMusicController: self.appleMusicController)
                 }
             } else {
+                self.appleMusicController = nil
+                MainViewController.musicProvider = nil
+                UserDefaults.standard.set(nil, forKey: "musicProvider")
+                
                 DispatchQueue.main.async {
                     if self.presentedViewController == nil {
-                        let alert = UIAlertController(title: "Notice", message: "Apple Music access is not enabled. Please enable \"Media and Apple Music\" access in settings.", preferredStyle: UIAlertController.Style.alert)
+                        let alert = UIAlertController(title: "Notice", message: "Apple Music access is not enabled. Please enable \"Media and Apple Music\" access in settings.", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                         self.present(alert, animated: true, completion: nil)
                     }
@@ -83,14 +84,17 @@ public class MusicProviderViewController: UIViewController {
     
     @objc func applicationEnteredForeground(notification: NSNotification) {
         if spotifyController != nil {
-            let accessCode = spotifyController.getAccessCodeFromReturnedURL()
-            if accessCode != nil {
-                spotifyController.getAccessAndRefreshTokens(accessCode: accessCode!)
-                self.delegate?.didGetSpotifyController(spotifyController: self.spotifyController)
+            if let accessCode = spotifyController.getAccessCodeFromReturnedURL() {
+                spotifyController.getAccessAndRefreshTokens(accessCode: accessCode)
+                delegate?.didGetSpotifyController(spotifyController: spotifyController)
             } else {
                 DispatchQueue.main.async {
+                    self.spotifyController = nil
+                    MainViewController.musicProvider = nil
+                    UserDefaults.standard.set(nil, forKey: "musicProvider")
+                    
                     if self.presentedViewController == nil {
-                        let alert = UIAlertController(title: "Error", message: "Could not connect to Spotify. Try connecting again.", preferredStyle: UIAlertController.Style.alert)
+                        let alert = UIAlertController(title: "Error", message: "Could not connect to Spotify. Try connecting again.", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                         self.present(alert, animated: true, completion: nil)
                     }

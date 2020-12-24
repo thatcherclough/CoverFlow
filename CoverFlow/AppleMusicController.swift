@@ -8,11 +8,10 @@
 import Foundation
 import StoreKit
 import MediaPlayer
-import Keys
 
 class AppleMusicController {
     
-    // MARK: Constructor and variables
+    // MARK: Variables and constructor
     
     var apiKey: String!
     var countryCode: String!
@@ -25,8 +24,7 @@ class AppleMusicController {
     
     func getCountryCode() {
         DispatchQueue.global(qos: .background).async {
-            let controller = SKCloudServiceController()
-            controller.requestStorefrontCountryCode { countryCode, error in
+            SKCloudServiceController().requestStorefrontCountryCode { countryCode, error in
                 if countryCode == nil || error != nil {
                     self.countryCode = "us"
                 } else {
@@ -63,17 +61,16 @@ class AppleMusicController {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.music.apple.com"
-        components.path = "/v1/catalog/\(countryCode ?? "us")/search"
+        components.path = "/v1/catalog/\(countryCode!)/search"
         components.queryItems = [
             URLQueryItem(name: "term", value: searchTerm),
             URLQueryItem(name: "limit", value: "15"),
             URLQueryItem(name: "types", value: "albums"),
         ]
         let url = components.url!
-        
         var request = URLRequest(url: url)
-        request.setValue("Bearer \(apiKey ?? "nil")", forHTTPHeaderField: "Authorization")
         request.httpMethod = "GET"
+        request.setValue("Bearer \(apiKey ?? "nil")", forHTTPHeaderField: "Authorization")
         
         let task = URLSession.shared.dataTask(with: request as URLRequest, completionHandler: { data, response, error in
             guard error == nil else {
@@ -101,10 +98,13 @@ class AppleMusicController {
                                             continue
                                         }
                                         
-                                        var url = artwork["url"] as? String
-                                        url = url?.replacingOccurrences(of: "{w}", with: "200")
-                                        url = url?.replacingOccurrences(of: "{h}", with: "200")
-                                        return completion(url)
+                                        if var url = artwork["url"] as? String {
+                                            url = url.replacingOccurrences(of: "{w}", with: "200")
+                                            url = url.replacingOccurrences(of: "{h}", with: "200")
+                                            return completion(url)
+                                        } else {
+                                            continue
+                                        }
                                     }
                                 }
                             }

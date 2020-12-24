@@ -8,14 +8,14 @@
 import Foundation
 
 struct BridgeInfo {
-    let ipAddress:String
-    let uniqueId:String
+    let ipAddress: String
+    let uniqueId: String
 }
 
 typealias BridgeInfoDiscoveryResult = BridgeInfo
 extension BridgeInfoDiscoveryResult {
     init(withDiscoveryResult discoveryResult: PHSBridgeDiscoveryResult) {
-        self.ipAddress = discoveryResult.ipAddress
-        self.uniqueId = discoveryResult.uniqueId
+        ipAddress = discoveryResult.ipAddress
+        uniqueId = discoveryResult.uniqueId
     }
 }

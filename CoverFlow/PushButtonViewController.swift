@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol PushButtonViewControllerDelegate {
-    func timerDidInvalidate()
+    func timerDidExpire()
 }
 
 class PushButtonViewController: UIViewController {
@@ -24,12 +24,11 @@ class PushButtonViewController: UIViewController {
     // MARK: View Related
     
     override func viewDidAppear(_ animated: Bool) {
-        self.countdown()
+        countdown()
     }
     
     func countdown() {
         var timeLeft: Float = 30
-        
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (timer) in
             if MainViewController.authenticated {
                 self.dismiss(animated: true, completion: nil)
@@ -37,21 +36,16 @@ class PushButtonViewController: UIViewController {
             }
             
             timeLeft -= 1
-            let progress = timeLeft / 30
-            self.progressBar.progress = progress
+            self.progressBar.progress = timeLeft / 30
             
             if timeLeft == 0 {
-                self.delegate?.timerDidInvalidate()
+                self.delegate?.timerDidExpire()
                 timer.invalidate()
             }
         }
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        if traitCollection.userInterfaceStyle == .light {
-            bridgeImage.image = UIImage(named: "BridgeBlack")
-        } else {
-            bridgeImage.image = UIImage(named: "BridgeWhite")
-        }
+        bridgeImage.image = (traitCollection.userInterfaceStyle == .light) ? UIImage(named: "BridgeBlack") : UIImage(named: "BridgeWhite")
     }
 }

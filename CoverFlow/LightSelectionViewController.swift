@@ -12,7 +12,7 @@ class LightSelectionViewController: UITableViewController {
     
     // MARK: View Related
     
-    override func viewDidAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         tableView.reloadData()
     }
     
@@ -25,13 +25,9 @@ class LightSelectionViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "LightsCell") as! LightsCell
         
-        let light = MainViewController.allLights[indexPath.row]
-        cell.title.text = light
-        if MainViewController.selectedLights.contains(light) {
-            cell.accessoryType = .checkmark
-        } else {
-            cell.accessoryType = .none
-        }
+        let lightName = MainViewController.allLights[indexPath.row]
+        cell.title.text = lightName
+        cell.accessoryType = MainViewController.selectedLights.contains(lightName) ? .checkmark : .none
         tableView.deselectRow(at: indexPath, animated: false)
         return cell
     }
@@ -40,12 +36,13 @@ class LightSelectionViewController: UITableViewController {
         let cell = tableView.cellForRow(at: indexPath) as! LightsCell
         cell.setSelected(false, animated: true)
         
-        let light = MainViewController.allLights[indexPath.row]
-        if MainViewController.selectedLights.contains(light) {
-            MainViewController.selectedLights.remove(at: MainViewController.selectedLights.firstIndex(of: light)!)
+        let lightName = MainViewController.allLights[indexPath.row]
+        let selectedLightsIndex = MainViewController.selectedLights.firstIndex(of: lightName)
+        if selectedLightsIndex != nil {
+            MainViewController.selectedLights.remove(at: selectedLightsIndex!)
             cell.accessoryType = .none
         } else {
-            MainViewController.selectedLights.append(light)
+            MainViewController.selectedLights.append(lightName)
             cell.accessoryType = .checkmark
         }
         

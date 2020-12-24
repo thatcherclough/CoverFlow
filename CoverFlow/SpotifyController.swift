@@ -9,17 +9,16 @@ import Foundation
 
 class SpotifyController: UIResponder, SPTSessionManagerDelegate {
     
-    // MARK: Constructor and variables
-    
-    private var clientID: String!
-    private var clientSecret: String!
-    private var redirectURI: URL!
+    // MARK: Variables and constructor
     
     var accessToken: String!
     var refreshToken: String!
     var codeVerifier: String!
-    
     var sessionManager: SPTSessionManager!
+    
+    private var clientID: String!
+    private var clientSecret: String!
+    private var redirectURI: URL!
     
     init(clientID: String, clientSecret: String, redirectURI: URL) {
         super.init()
@@ -28,9 +27,8 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
         self.clientSecret = clientSecret
         self.redirectURI = redirectURI
         
-        let refreshToken = UserDefaults.standard.string(forKey: "refreshToken")
-        if refreshToken != nil {
-            refreshAccessToken(refreshToken: refreshToken!)
+        if let refreshToken = UserDefaults.standard.string(forKey: "refreshToken") {
+            refreshAccessToken(refreshToken: refreshToken)
         } else {
             initSessionManager()
         }
@@ -39,9 +37,8 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
     // MARK: Session Manager Related
     
     func initSessionManager() {
-        let configuration = SPTConfiguration(clientID: self.clientID, redirectURL: self.redirectURI)
+        let configuration = SPTConfiguration(clientID: clientID, redirectURL: redirectURI)
         configuration.playURI = ""
-        
         sessionManager = SPTSessionManager(configuration: configuration, delegate: self)
     }
     
@@ -51,8 +48,7 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
         }
         
         if sessionManager != nil {
-            let scope: SPTScope = [.userReadCurrentlyPlaying]
-            sessionManager.initiateSession(with: scope, options: .clientOnly)
+            sessionManager.initiateSession(with: [.userReadCurrentlyPlaying], options: .clientOnly)
         }
     }
     
@@ -65,7 +61,6 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
                 if let accessCode = url!.queryParameters!["code"] {
                     let pkceProvider = sessionManager.value(forKey: "PKCEProvider")
                     codeVerifier = (pkceProvider as AnyObject).value(forKey: "codeVerifier") as? String
-                    
                     return accessCode
                 }
             }
@@ -80,8 +75,8 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
     // MARK: Web-API Related
     
     func resetAccessAndRefreshTokens() {
-        self.accessToken = "N/A"
-        self.refreshToken = "N/A"
+        accessToken = "N/A"
+        refreshToken = "N/A"
         UserDefaults.standard.set(nil, forKey: "refreshToken")
     }
     
@@ -105,21 +100,27 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
                 }
             }
         } else {
-            self.resetAccessAndRefreshTokens()
+            resetAccessAndRefreshTokens()
             return
         }
     }
     
     private func getAccessAndRefreshTokens(clientID: String, clientSecret: String, redirectURI: URL, accessCode: String, codeVerifier: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
         let url = URL(string: "https://accounts.spotify.com/api/token")!
-        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         let spotifyAuthKey = "Basic \((clientID + ":" + clientSecret).data(using: .utf8)!.base64EncodedString())"
         request.allHTTPHeaderFields = ["Authorization": spotifyAuthKey, "Content-Type": "application/x-www-form-urlencoded"]
         var requestBodyComponents = URLComponents()
         
-        requestBodyComponents.queryItems = [URLQueryItem(name: "client_id", value: clientID), URLQueryItem(name: "grant_type", value: "authorization_code"), URLQueryItem(name: "code", value: accessCode), URLQueryItem(name: "redirect_uri", value: redirectURI.absoluteString), URLQueryItem(name: "code_verifier", value: codeVerifier), URLQueryItem(name: "scope", value: "user-read-currently-playing"),]
+        requestBodyComponents.queryItems = [
+            URLQueryItem(name: "client_id", value: clientID),
+            URLQueryItem(name: "grant_type", value: "authorization_code"),
+            URLQueryItem(name: "code", value: accessCode),
+            URLQueryItem(name: "redirect_uri", value: redirectURI.absoluteString),
+            URLQueryItem(name: "code_verifier", value: codeVerifier),
+            URLQueryItem(name: "scope", value: "user-read-currently-playing")
+        ]
         request.httpBody = requestBodyComponents.query?.data(using: .utf8)
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -130,8 +131,12 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
                 return completion(nil, nil)
             }
             
-            let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
-            return completion(json, nil)
+            do {
+                let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+                return completion(json, nil)
+            } catch {
+                return completion(nil, nil)
+            }
         }
         task.resume()
     }
@@ -157,21 +162,24 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
                 }
             }
         } else {
-            self.resetAccessAndRefreshTokens()
+            resetAccessAndRefreshTokens()
             return
         }
     }
     
     private func refreshAccessToken (clientID: String, clientSecret: String, redirectURI: URL, refreshToken: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
         let url = URL(string: "https://accounts.spotify.com/api/token")!
-        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         let spotifyAuthKey = "Basic \((clientID + ":" + clientSecret).data(using: .utf8)!.base64EncodedString())"
         request.allHTTPHeaderFields = ["Authorization": spotifyAuthKey, "Content-Type": "application/x-www-form-urlencoded"]
         var requestBodyComponents = URLComponents()
         
-        requestBodyComponents.queryItems = [URLQueryItem(name: "client_id", value: clientID), URLQueryItem(name: "grant_type", value: "refresh_token"), URLQueryItem(name: "refresh_token", value: refreshToken),]
+        requestBodyComponents.queryItems = [
+            URLQueryItem(name: "client_id", value: clientID),
+            URLQueryItem(name: "grant_type", value: "refresh_token"),
+            URLQueryItem(name: "refresh_token", value: refreshToken)
+        ]
         request.httpBody = requestBodyComponents.query?.data(using: .utf8)
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -182,43 +190,47 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
                 return completion(nil, nil)
             }
             
-            let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
-            return completion(json, nil)
+            do {
+                let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+                return completion(json, nil)
+            } catch {
+                return completion(nil, nil)
+            }
         }
         task.resume()
     }
     
     public func getCurrentAlbum(completion: @escaping ([String: Any])->()) {
         if accessToken == nil {
-            return completion(["retry":"Access token not set"])
+            return completion(["retry": "Access token not set"])
         } else if accessToken == "N/A" {
-            return completion(["error":"Invalid access token"])
+            return completion(["error": "Invalid access token"])
         }
         
         let url = URL(string: "https://api.spotify.com/v1/me/player/currently-playing")!
-        
         var request = URLRequest(url: url)
-        request.setValue("Bearer \(accessToken!)", forHTTPHeaderField: "Authorization")
         request.httpMethod = "GET"
+        request.setValue("Bearer \(accessToken ?? "nil")", forHTTPHeaderField: "Authorization")
         
         let task = URLSession.shared.dataTask(with: request as URLRequest, completionHandler: { data, response, error in
             guard error == nil else {
-                return completion(["error":error?.localizedDescription ?? "An error occurred when fetching data from the Spotify API"])
+                return completion(["error": error?.localizedDescription ?? "An error occurred when fetching data from the Spotify API"])
             }
             guard let data = data else {
-                return completion(["error":"The Spotify API did not return any data"])
+                return completion(["error": "The Spotify API did not return any data"])
             }
             
             do {
                 if let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String: Any] {
-                    
                     if let error = json["error"] as? [String: Any] {
                         if let message = error["message"] as? String {
                             if message == "Invalid access token" && self.refreshToken != nil {
                                 self.refreshAccessToken(refreshToken: self.refreshToken)
                             } else {
-                                return completion(["error":message])
+                                return completion(["error": message])
                             }
+                        } else {
+                            return completion(["error": "An error occurred when fetching data from the Spotify API"])
                         }
                     } else {
                         if let item = json["item"] as? [String: Any] {
@@ -228,10 +240,10 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
                         }
                     }
                 } else {
-                    return completion(["error":"An error occurred when fetching data from the Spotify API"])
+                    return completion(["error": "An error occurred when fetching data from the Spotify API"])
                 }
             } catch {
-                return completion(["nothing_playing":"Nothing is playing on Spotify. Please play something"])
+                return completion(["nothing_playing": "Nothing is playing on Spotify. Start playing something"])
             }
         })
         task.resume()
@@ -240,9 +252,8 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
 
 extension URL {
     public var queryParameters: [String: String]? {
-        guard
-            let components = URLComponents(url: self, resolvingAgainstBaseURL: true),
-            let queryItems = components.queryItems else { return nil }
+        guard let components = URLComponents(url: self, resolvingAgainstBaseURL: true),
+              let queryItems = components.queryItems else { return nil }
         return queryItems.reduce(into: [String: String]()) { (result, item) in
             result[item.name] = item.value
         }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="iDV-Oy-MLF">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="iDV-Oy-MLF">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -14,61 +14,6 @@
         </array>
     </customFonts>
     <scenes>
-        <!--Bridge Discovery-->
-        <scene sceneID="Zlk-za-IrD">
-            <objects>
-                <tableViewController id="eK3-dy-wim" customClass="BridgeDiscoveryViewController" customModule="CoverFlow" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="55" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="tNq-MS-YdH">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="BridgeCell" textLabel="cEh-cZ-r6R" detailTextLabel="Nqi-F7-U3H" style="IBUITableViewCellStyleSubtitle" id="FFi-D4-n5G" customClass="BridgeCell" customModule="CoverFlow" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="414" height="55"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="FFi-D4-n5G" id="nWe-9f-b2N">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="55"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="cEh-cZ-r6R">
-                                            <rect key="frame" x="20" y="9" width="33" height="20.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Nqi-F7-U3H">
-                                            <rect key="frame" x="20" y="30.5" width="44" height="14.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                </tableViewCellContentView>
-                                <connections>
-                                    <outlet property="subtitle" destination="Nqi-F7-U3H" id="bbF-mg-1Va"/>
-                                    <outlet property="title" destination="cEh-cZ-r6R" id="109-9b-QLh"/>
-                                </connections>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="eK3-dy-wim" id="K6h-sc-9ll"/>
-                            <outlet property="delegate" destination="eK3-dy-wim" id="z3j-3I-QUW"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Bridge Discovery" largeTitleDisplayMode="never" id="SjY-OW-c2K">
-                        <barButtonItem key="rightBarButtonItem" title="Enter IP" id="wDm-Fi-OzR">
-                            <connections>
-                                <action selector="enterIPAction:" destination="eK3-dy-wim" id="0dj-T8-43M"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Ied-eJ-Ma6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-1643" y="1971"/>
-        </scene>
         <!--Settings-->
         <scene sceneID="oYK-z5-YIr">
             <objects>
@@ -104,7 +49,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="eK3-dy-wim" kind="show" identifier="toBridgeSelection" id="wCX-hO-imG"/>
+                                            <segue destination="9yt-hs-JRA" kind="show" identifier="toBridgeSelection" id="aZS-zy-RF6"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="DWy-nS-0qg" detailTextLabel="iS7-NR-vVo" style="IBUITableViewCellStyleValue1" id="grH-IJ-A4Z">
@@ -701,21 +646,21 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="lightbulb" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="laH-dM-q8L">
                                 <rect key="frame" x="30" y="89.5" width="41" height="42"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="75" id="h1W-N7-OUq"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="65" id="h1W-N7-OUq"/>
                                     <constraint firstAttribute="width" secondItem="laH-dM-q8L" secondAttribute="height" multiplier="1:1" id="nZO-RG-Mmc"/>
                                 </constraints>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="music.note" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="3zS-qI-J9D">
                                 <rect key="frame" x="30" y="215" width="41" height="39.5"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="75" id="4IM-yC-naQ"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="65" id="4IM-yC-naQ"/>
                                     <constraint firstAttribute="width" secondItem="3zS-qI-J9D" secondAttribute="height" multiplier="1:1" id="kza-d5-bpn"/>
                                 </constraints>
                             </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="tray.and.arrow.down.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="ua0-vl-bCx">
-                                <rect key="frame" x="30" y="337" width="41" height="42.5"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="slider.horizontal.3" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="ua0-vl-bCx">
+                                <rect key="frame" x="30" y="339" width="41" height="37.5"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="75" id="AMl-jf-f6u"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="65" id="AMl-jf-f6u"/>
                                     <constraint firstAttribute="width" secondItem="ua0-vl-bCx" secondAttribute="height" multiplier="1:1" id="d3X-zW-7Qd"/>
                                 </constraints>
                             </imageView>
@@ -731,8 +676,8 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enable notifications to be notified about errors." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3to-tA-axO">
-                                <rect key="frame" x="101" y="338" width="273.5" height="42.5"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lighting effects can be changed in settings." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3to-tA-axO">
+                                <rect key="frame" x="101" y="337" width="273.5" height="42.5"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -766,12 +711,134 @@
             </objects>
             <point key="canvasLocation" x="-1644" y="743"/>
         </scene>
+        <!--Bridge Discovery-->
+        <scene sceneID="5Ib-4L-KTi">
+            <objects>
+                <viewController storyboardIdentifier="bridgeSel" id="9yt-hs-JRA" customClass="BridgeDiscoveryViewController" customModule="CoverFlow" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ECj-oN-NCI">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="Fcs-o7-ymo">
+                                <rect key="frame" x="20" y="120" width="167" height="65"/>
+                                <color key="backgroundColor" systemColor="linkColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="65" id="cKi-fc-kxd"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <state key="normal" title="Automatically search">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="6"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="automaticallySearchButtonAction:" destination="9yt-hs-JRA" eventType="touchUpInside" id="Icb-rd-7k3"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1kc-eK-i8Q">
+                                <rect key="frame" x="227" y="120" width="167" height="65"/>
+                                <color key="backgroundColor" systemColor="linkColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <state key="normal" title="Enter IP">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="6"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="enterIPButtonAction:" destination="9yt-hs-JRA" eventType="touchUpInside" id="kEg-cl-8Vf"/>
+                                </connections>
+                            </button>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="cmw-2P-69k">
+                                <rect key="frame" x="20" y="225" width="374" height="617"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="BridgeCell" rowHeight="55" id="cVx-lw-lTr" customClass="BridgeCell" customModule="CoverFlow" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="374" height="55"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="cVx-lw-lTr" id="F4c-ws-qHP">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="55"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="192.168.86.01" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b4J-KS-uzT">
+                                                    <rect key="frame" x="65.5" y="11" width="288.5" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BridgeBlack" translatesAutoresizingMaskIntoConstraints="NO" id="Iqj-DT-qUR">
+                                                    <rect key="frame" x="20" y="11" width="33" height="33"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="Iqj-DT-qUR" secondAttribute="height" multiplier="1:1" id="GVu-nT-c4S"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tap to connect" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FsU-1U-Deu">
+                                                    <rect key="frame" x="65.5" y="29" width="288.5" height="15"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <color key="textColor" systemColor="systemGrayColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailingMargin" secondItem="FsU-1U-Deu" secondAttribute="trailing" id="QLB-eo-OQD"/>
+                                                <constraint firstItem="b4J-KS-uzT" firstAttribute="top" secondItem="F4c-ws-qHP" secondAttribute="topMargin" id="Uaj-FN-Ctr"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="b4J-KS-uzT" secondAttribute="trailing" id="YaF-Sh-rbr"/>
+                                                <constraint firstItem="b4J-KS-uzT" firstAttribute="leading" secondItem="Iqj-DT-qUR" secondAttribute="trailing" multiplier="1.05" constant="10" id="abh-vt-hla"/>
+                                                <constraint firstItem="FsU-1U-Deu" firstAttribute="leading" secondItem="Iqj-DT-qUR" secondAttribute="trailing" multiplier="1.05" constant="10" id="cJH-Y3-Sot"/>
+                                                <constraint firstItem="Iqj-DT-qUR" firstAttribute="leading" secondItem="F4c-ws-qHP" secondAttribute="leading" constant="20" id="cPy-2z-gzv"/>
+                                                <constraint firstItem="FsU-1U-Deu" firstAttribute="bottom" secondItem="F4c-ws-qHP" secondAttribute="bottomMargin" id="icF-Wl-XUW"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="Iqj-DT-qUR" secondAttribute="bottom" id="lYW-oC-yVT"/>
+                                                <constraint firstItem="Iqj-DT-qUR" firstAttribute="top" secondItem="F4c-ws-qHP" secondAttribute="topMargin" id="nr7-rk-7oZ"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <connections>
+                                            <outlet property="bridgeImage" destination="Iqj-DT-qUR" id="CPJ-AN-23y"/>
+                                            <outlet property="title" destination="b4J-KS-uzT" id="efi-SQ-3tE"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="xrp-kz-rx0"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Fcs-o7-ymo" firstAttribute="leading" secondItem="xrp-kz-rx0" secondAttribute="leading" constant="20" id="2z2-ms-zYq"/>
+                            <constraint firstItem="xrp-kz-rx0" firstAttribute="bottom" secondItem="cmw-2P-69k" secondAttribute="bottom" constant="20" id="9PZ-kS-k8T"/>
+                            <constraint firstItem="cmw-2P-69k" firstAttribute="leading" secondItem="xrp-kz-rx0" secondAttribute="leading" constant="20" id="Adr-5m-JAk"/>
+                            <constraint firstItem="xrp-kz-rx0" firstAttribute="centerX" secondItem="Fcs-o7-ymo" secondAttribute="trailing" constant="20" id="LYx-bN-Xnv"/>
+                            <constraint firstItem="cmw-2P-69k" firstAttribute="top" secondItem="Fcs-o7-ymo" secondAttribute="bottom" constant="40" id="PK8-NX-g9j"/>
+                            <constraint firstItem="xrp-kz-rx0" firstAttribute="trailing" secondItem="1kc-eK-i8Q" secondAttribute="trailing" constant="20" id="RvY-W7-4QR"/>
+                            <constraint firstItem="Fcs-o7-ymo" firstAttribute="bottom" secondItem="1kc-eK-i8Q" secondAttribute="bottom" id="S6h-nv-oll"/>
+                            <constraint firstItem="1kc-eK-i8Q" firstAttribute="leading" secondItem="xrp-kz-rx0" secondAttribute="centerX" constant="20" id="TxQ-w4-jsM"/>
+                            <constraint firstItem="Fcs-o7-ymo" firstAttribute="centerY" secondItem="xrp-kz-rx0" secondAttribute="top" multiplier="1.05" constant="60" id="jBL-Zc-JkC"/>
+                            <constraint firstItem="1kc-eK-i8Q" firstAttribute="top" secondItem="Fcs-o7-ymo" secondAttribute="top" id="kMx-oe-210"/>
+                            <constraint firstItem="xrp-kz-rx0" firstAttribute="trailing" secondItem="cmw-2P-69k" secondAttribute="trailing" constant="20" id="zVB-HU-uEf"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Bridge Discovery" id="z8q-ZV-wYf"/>
+                    <connections>
+                        <outlet property="automaticallySearchButton" destination="Fcs-o7-ymo" id="4Ro-aI-IGh"/>
+                        <outlet property="enterIPButton" destination="1kc-eK-i8Q" id="OKK-K3-D8h"/>
+                        <outlet property="tableView" destination="cmw-2P-69k" id="1Js-rx-CbH"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3Bq-Dk-AX2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1644.375" y="1970.0704225352113"/>
+        </scene>
     </scenes>
     <resources>
         <image name="BridgeBlack" width="783" height="783"/>
         <image name="lightbulb" catalog="system" width="113" height="128"/>
         <image name="music.note" catalog="system" width="97" height="128"/>
-        <image name="tray.and.arrow.down.fill" catalog="system" width="128" height="114"/>
+        <image name="slider.horizontal.3" catalog="system" width="128" height="100"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
@@ -783,6 +850,9 @@
         </systemColor>
         <systemColor name="systemBlueColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemGrayColor">
+            <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGroupedBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

@@ -184,10 +184,6 @@ class MainViewController: UIViewController {
                     let alert = UIAlertController(title: "Error", message: "Apple Music access has been revoked. Try connecting again.", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                     self.presentMusicProvider(alert: alert)
-                    
-                    self.appleMusicController = nil
-                    MainViewController.musicProvider = nil
-                    UserDefaults.standard.set(nil, forKey: "musicProvider")
                 }
             }
         } else if MainViewController.musicProvider == "spotify" && ((spotifyController == nil || (spotifyController != nil && spotifyController.refreshToken == "N/A")) && presentedViewController as? MusicProviderViewController == nil) {
@@ -196,17 +192,8 @@ class MainViewController: UIViewController {
             let alert = UIAlertController(title: "Error", message: "Spotify access has been revoked. Try connecting again.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
             presentMusicProvider(alert: alert)
-            
-            self.spotifyController = nil
-            MainViewController.musicProvider = nil
-            UserDefaults.standard.set(nil, forKey: "musicProvider")
         } else if MainViewController.musicProvider == nil && presentedViewController as? MusicProviderViewController == nil {
             presentMusicProvider(alert: nil)
-            
-            appleMusicController = nil
-            spotifyController = nil
-            MainViewController.musicProvider = nil
-            UserDefaults.standard.set(nil, forKey: "musicProvider")
         }
     }
     
@@ -219,10 +206,6 @@ class MainViewController: UIViewController {
                     let alert = UIAlertController(title: "Error", message: "Apple Music access has been revoked. Try connecting again.", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                     self.presentMusicProvider(alert: alert)
-                    
-                    self.appleMusicController = nil
-                    MainViewController.musicProvider = nil
-                    UserDefaults.standard.set(nil, forKey: "musicProvider")
                 } else {
                     self.hueSetup()
                 }
@@ -233,17 +216,8 @@ class MainViewController: UIViewController {
             let alert = UIAlertController(title: "Error", message: "Spotify access has been revoked. Try connecting again.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
             presentMusicProvider(alert: alert)
-            
-            self.spotifyController = nil
-            MainViewController.musicProvider = nil
-            UserDefaults.standard.set(nil, forKey: "musicProvider")
         } else if MainViewController.musicProvider == nil && presentedViewController as? MusicProviderViewController == nil {
             presentMusicProvider(alert: nil)
-            
-            appleMusicController = nil
-            spotifyController = nil
-            MainViewController.musicProvider = nil
-            UserDefaults.standard.set(nil, forKey: "musicProvider")
         } else {
             hueSetup()
         }
@@ -259,6 +233,11 @@ class MainViewController: UIViewController {
                     if alert != nil {
                         musicProvider.present(alert, animated: true, completion: nil)
                     }
+                    
+                    self.appleMusicController = nil
+                    self.spotifyController = nil
+                    MainViewController.musicProvider = nil
+                    UserDefaults.standard.set(nil, forKey: "musicProvider")
                 }
             }
         }
@@ -477,6 +456,12 @@ class MainViewController: UIViewController {
                     self.getCoverImageAndSetCurrentSongHues()
                 }
                 DispatchQueue.main.async {
+                    if let alert = self.presentedViewController as? UIAlertController {
+                        if alert.message! == "Nothing is playing on Spotify. Start playing something." {
+                            alert.dismiss(animated: true, completion: nil)
+                        }
+                    }
+                    
                     self.timer = Timer.scheduledTimer(withTimeInterval: wait, repeats: true) { (timer) in
                         if !self.currentColors.isEmpty && self.currentColors.count > currentColorIndex {
                             for light in self.bridge.bridgeState.getDevicesOf(.light) {
@@ -959,9 +944,6 @@ extension MainViewController: SettingsViewControllerDelegate {
     func didSignOut() {
         dismiss(animated: true) {
             self.presentMusicProvider(alert: nil)
-            
-            MainViewController.musicProvider = nil
-            UserDefaults.standard.set(nil, forKey: "musicProvider")
             
             if self.bridge != nil {
                 self.bridge.disconnect()

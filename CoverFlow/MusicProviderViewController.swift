@@ -45,8 +45,6 @@ public class MusicProviderViewController: UIViewController {
                 }
             } else {
                 self.appleMusicController = nil
-                MainViewController.musicProvider = nil
-                UserDefaults.standard.set(nil, forKey: "musicProvider")
                 
                 DispatchQueue.main.async {
                     if self.presentedViewController == nil {
@@ -90,8 +88,6 @@ public class MusicProviderViewController: UIViewController {
             } else {
                 DispatchQueue.main.async {
                     self.spotifyController = nil
-                    MainViewController.musicProvider = nil
-                    UserDefaults.standard.set(nil, forKey: "musicProvider")
                     
                     if self.presentedViewController == nil {
                         let alert = UIAlertController(title: "Error", message: "Could not connect to Spotify. Try connecting again.", preferredStyle: .alert)

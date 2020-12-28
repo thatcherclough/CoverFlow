@@ -767,19 +767,13 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="192.168.86.01" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b4J-KS-uzT">
-                                                    <rect key="frame" x="65.5" y="11" width="288.5" height="21"/>
+                                                    <rect key="frame" x="20" y="11" width="334" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BridgeBlack" translatesAutoresizingMaskIntoConstraints="NO" id="Iqj-DT-qUR">
-                                                    <rect key="frame" x="20" y="11" width="33" height="33"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" secondItem="Iqj-DT-qUR" secondAttribute="height" multiplier="1:1" id="GVu-nT-c4S"/>
-                                                    </constraints>
-                                                </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tap to connect" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FsU-1U-Deu">
-                                                    <rect key="frame" x="65.5" y="29" width="288.5" height="15"/>
+                                                    <rect key="frame" x="20" y="29" width="334" height="15"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                     <color key="textColor" systemColor="systemGrayColor"/>
                                                     <nil key="highlightedColor"/>
@@ -789,17 +783,13 @@
                                                 <constraint firstAttribute="trailingMargin" secondItem="FsU-1U-Deu" secondAttribute="trailing" id="QLB-eo-OQD"/>
                                                 <constraint firstItem="b4J-KS-uzT" firstAttribute="top" secondItem="F4c-ws-qHP" secondAttribute="topMargin" id="Uaj-FN-Ctr"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="b4J-KS-uzT" secondAttribute="trailing" id="YaF-Sh-rbr"/>
-                                                <constraint firstItem="b4J-KS-uzT" firstAttribute="leading" secondItem="Iqj-DT-qUR" secondAttribute="trailing" multiplier="1.05" constant="10" id="abh-vt-hla"/>
-                                                <constraint firstItem="FsU-1U-Deu" firstAttribute="leading" secondItem="Iqj-DT-qUR" secondAttribute="trailing" multiplier="1.05" constant="10" id="cJH-Y3-Sot"/>
-                                                <constraint firstItem="Iqj-DT-qUR" firstAttribute="leading" secondItem="F4c-ws-qHP" secondAttribute="leading" constant="20" id="cPy-2z-gzv"/>
+                                                <constraint firstItem="FsU-1U-Deu" firstAttribute="leading" secondItem="F4c-ws-qHP" secondAttribute="leadingMargin" id="YtO-pK-YuQ"/>
                                                 <constraint firstItem="FsU-1U-Deu" firstAttribute="bottom" secondItem="F4c-ws-qHP" secondAttribute="bottomMargin" id="icF-Wl-XUW"/>
-                                                <constraint firstAttribute="bottomMargin" secondItem="Iqj-DT-qUR" secondAttribute="bottom" id="lYW-oC-yVT"/>
-                                                <constraint firstItem="Iqj-DT-qUR" firstAttribute="top" secondItem="F4c-ws-qHP" secondAttribute="topMargin" id="nr7-rk-7oZ"/>
+                                                <constraint firstItem="b4J-KS-uzT" firstAttribute="leading" secondItem="F4c-ws-qHP" secondAttribute="leadingMargin" id="nIS-xe-21s"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <connections>
-                                            <outlet property="bridgeImage" destination="Iqj-DT-qUR" id="CPJ-AN-23y"/>
                                             <outlet property="title" destination="b4J-KS-uzT" id="efi-SQ-3tE"/>
                                         </connections>
                                     </tableViewCell>

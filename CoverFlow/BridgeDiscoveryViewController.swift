@@ -146,7 +146,6 @@ class BridgeDiscoveryViewController: UIViewController, UITableViewDelegate, UITa
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BridgeCell") as! BridgeCell
         cell.title.text = bridges[indexPath.row].ipAddress
-        cell.bridgeImage.image = (traitCollection.userInterfaceStyle == .light) ? UIImage(named: "BridgeBlack") : UIImage(named: "BridgeWhite")
         return cell
     }
     
@@ -169,5 +168,4 @@ class BridgeDiscoveryViewController: UIViewController, UITableViewDelegate, UITa
 
 class BridgeCell: UITableViewCell {
     @IBOutlet var title: UILabel!
-    @IBOutlet var bridgeImage: UIImageView!
 }

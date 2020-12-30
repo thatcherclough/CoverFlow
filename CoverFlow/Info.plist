@@ -37,7 +37,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppleMusicUsageDescription</key>
-	<string>CoverFlow uses uses Apple Music to get the current playing song&apos;s album cover.</string>
+	<string>CoverFlow uses uses Apple Music to get the current playing song's album cover.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>CoverFlow uses the local network to connect to Phillips Hue lights.</string>
 	<key>UIAppFonts</key>

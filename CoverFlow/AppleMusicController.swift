@@ -22,6 +22,34 @@ class AppleMusicController {
         getCountryCode()
     }
     
+    func getApiKey(baseUrl: String, completion: @escaping (String?)->()) {
+        let url = URL(string: "\(baseUrl)/api/apple_music/key")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        let task = URLSession.shared.dataTask(with: request as URLRequest, completionHandler: { data, response, error in
+            guard error == nil else {
+                return completion(nil)
+            }
+            guard let data = data else {
+                return completion(nil)
+            }
+            
+            do {
+                if let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String: Any] {
+                    if let key = json["key"] as? String {
+                        return completion(key)
+                    } else {
+                        return completion(nil)
+                    }
+                }
+            } catch {
+                return completion(nil)
+            }
+        })
+        task.resume()
+    }
+    
     func getCountryCode() {
         DispatchQueue.global(qos: .background).async {
             SKCloudServiceController().requestStorefrontCountryCode { countryCode, error in

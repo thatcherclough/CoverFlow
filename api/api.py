@@ -13,7 +13,7 @@ app.config["DEBUG"] = True
 @app.route("/api", methods=["GET"])
 def api():
     ret = {"message": "CoverFlow API"}
-    return jsonify(ret)
+    return jsonify(ret), 200
 
 
 @app.route("/api/apple_music/key", methods=["GET"])
@@ -22,10 +22,10 @@ def key():
 
     ret = None
     if key == None:
-        ret = {"error": "Could not generate API key"}
+        ret = {"error": "Could not generate key"}
     else:
         ret = {"key": key}
-    return jsonify(ret)
+    return jsonify(ret), 200
 
 
 @app.route("/api/spotify/swap", methods=["POST"])
@@ -45,7 +45,7 @@ def swap():
         return jsonify(ret)
     else:
         ret = {"error": "Missing parameters"}
-        return jsonify(ret)
+        return jsonify(ret), 200
 
 
 @app.route("/api/spotify/refresh", methods=["POST"])
@@ -64,7 +64,7 @@ def refresh():
         return jsonify(ret)
     else:
         ret = {"error": "Missing parameters"}
-        return jsonify(ret)
+        return jsonify(ret), 200
 
 
 app.run(host="0.0.0.0")

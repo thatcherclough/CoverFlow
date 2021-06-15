@@ -31,7 +31,7 @@ public class MusicProviderViewController: UIViewController {
     
     @IBAction func appleMusicButtonAction(_ sender: Any) {
         if appleMusicController == nil {
-            appleMusicController = AppleMusicController(apiKey: keys.appleMusicAPIKey1)
+            appleMusicController = AppleMusicController()
         }
         
         requestLibraryAccess()

@@ -137,20 +137,15 @@
 			isa = PBXGroup;
 			children = (
 				DDDF442725866D380013CCC4 /* Storyboards */,
+				DDE41A8B2675189B002E8A33 /* ViewControllers */,
 				DDAEDC97253CF53D002F3175 /* AppDelegate.swift */,
 				DDAEDC99253CF53D002F3175 /* SceneDelegate.swift */,
-				DDAEDC9B253CF53D002F3175 /* SettingsViewController.swift */,
 				DD439AD225609FE700082CEF /* SpotifyController.swift */,
 				DD439AD025609FDC00082CEF /* AppleMusicController.swift */,
-				DDFD8BE0253E382C00BBE27A /* PushButtonViewController.swift */,
-				DD21BD622592D8CE0069304C /* BridgeDiscoveryViewController.swift */,
 				DDFD8BDE253E323900BBE27A /* BridgeInfo.swift */,
+				DDB07A7B25799901003EA4AF /* LocalNetworkPermissionService.swift */,
 				DDAEDCA0253CF541002F3175 /* Assets.xcassets */,
 				DDAEDCA5253CF541002F3175 /* Info.plist */,
-				DDFD8BE2253E479400BBE27A /* LightSelectionViewController.swift */,
-				DDF07093256C375100353469 /* MusicProviderViewController.swift */,
-				DDB07A7B25799901003EA4AF /* LocalNetworkPermissionService.swift */,
-				DDB07A952579AD5C003EA4AF /* MainViewController.swift */,
 			);
 			path = CoverFlow;
 			sourceTree = "<group>";
@@ -162,6 +157,19 @@
 				DDAEDCA2253CF541002F3175 /* LaunchScreen.storyboard */,
 			);
 			path = Storyboards;
+			sourceTree = "<group>";
+		};
+		DDE41A8B2675189B002E8A33 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				DDF07093256C375100353469 /* MusicProviderViewController.swift */,
+				DDB07A952579AD5C003EA4AF /* MainViewController.swift */,
+				DDAEDC9B253CF53D002F3175 /* SettingsViewController.swift */,
+				DD21BD622592D8CE0069304C /* BridgeDiscoveryViewController.swift */,
+				DDFD8BE0253E382C00BBE27A /* PushButtonViewController.swift */,
+				DDFD8BE2253E479400BBE27A /* LightSelectionViewController.swift */,
+			);
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

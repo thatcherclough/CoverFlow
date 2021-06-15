@@ -17,6 +17,8 @@ class MainViewController: UIViewController {
     
     // MARK: Variables, IBOutlets, and IBActions
     
+    let apiBaseURL = "http://192.168.86.31:5000"
+    
     let keys = CoverFlowKeys()
     var canPushNotifications: Bool = false
     var appleMusicController: AppleMusicController!
@@ -48,12 +50,23 @@ class MainViewController: UIViewController {
         } else {
             startButton.isEnabled = false
             if startButton.titleLabel?.text == "Start" {
-                startButton.setTitle("Starting...", alpha: 0.9)
-                
-                DispatchQueue.global(qos: .background).async {
-                    self.getCurrentLightsStates()
-                    self.start()
-                    self.startBackgrounding()
+                checkAPI { (online) in
+                    if online {
+                        DispatchQueue.main.async {
+                            self.startButton.setTitle("Starting...", alpha: 0.9)
+                        }
+                        
+                        DispatchQueue.global(qos: .background).async {
+                            self.getCurrentLightsStates()
+                            self.start()
+                            self.startBackgrounding()
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                        self.alert(title: "Error", body: "CoverFlow API is not online. Try again later.")
+                        self.startButton.isEnabled = true
+                        }
+                    }
                 }
             } else {
                 stop()
@@ -110,7 +123,7 @@ class MainViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector:#selector(appMovedToForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
         
         if MainViewController.musicProvider == "appleMusic" && appleMusicController == nil {
-            appleMusicController = AppleMusicController(apiKey: keys.appleMusicAPIKey1)
+            appleMusicController = AppleMusicController()
         } else if MainViewController.musicProvider == "spotify" && spotifyController == nil {
             spotifyController = SpotifyController(clientID: keys.spotifyClientID, clientSecret: keys.spotifyClientSecret, redirectURI: URL(string: "coverflow://spotify-login-callback")!)
         }
@@ -284,6 +297,29 @@ class MainViewController: UIViewController {
         if !currentColors.isEmpty && animatedGradient != nil && startButton.titleLabel?.text == "Stop" {
             animatedGradient.startAnimating()
         }
+    }
+    
+    // MARK: API Related
+    
+    func checkAPI(completion: @escaping (Bool) -> Void) {
+        guard let url = URL(string: "\(apiBaseURL)/api") else { return }
+        
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 1.0
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard error == nil else {
+                return completion(false)
+            }
+            if let responseCode = response as? HTTPURLResponse {
+                if responseCode.statusCode == 200 {
+                    return completion(true)
+                } else {
+                    return completion(false)
+                }
+            }
+        }
+        task.resume()
     }
     
     // MARK: Bridge Related

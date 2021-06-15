@@ -13,17 +13,26 @@ class AppleMusicController {
     
     // MARK: Variables and constructor
     
+    let apiBaseURL = "http://192.168.86.31:5000"
+    
     var apiKey: String!
     var countryCode: String!
     let player = MPMusicPlayerController.systemMusicPlayer
     
-    init(apiKey: String) {
-        self.apiKey = apiKey
+    init() {
         getCountryCode()
+        
+        getApiKey() { (apiKey) in
+            if apiKey == nil {
+                // handle
+            } else {
+                self.apiKey = apiKey
+            }
+        }
     }
     
-    func getApiKey(baseUrl: String, completion: @escaping (String?)->()) {
-        let url = URL(string: "\(baseUrl)/api/apple_music/key")!
+    func getApiKey(completion: @escaping (String?) -> ()) {
+        let url = URL(string: "\(apiBaseURL)/api/apple_music/key")!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         
@@ -140,6 +149,7 @@ class AppleMusicController {
                     }
                 }
             } catch {
+                // handle (api key invalid)
                 return completion(nil)
             }
         })

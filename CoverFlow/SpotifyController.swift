@@ -14,8 +14,6 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
     // TODO:
     // Storring the api location
     // Hosting api
-    // API is off and connecting for the first time
-    // Apple Music implementation
     
     let apiBaseURL = "http://192.168.86.31:5000"
     

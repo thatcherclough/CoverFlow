@@ -63,7 +63,7 @@ class MainViewController: UIViewController {
                         }
                     } else {
                         DispatchQueue.main.async {
-                        self.alert(title: "Error", body: "CoverFlow API is not online. Try again later.")
+                        self.alert(title: "Error", body: "The CoverFlow API is not online. Try again later.")
                         self.startButton.isEnabled = true
                         }
                     }

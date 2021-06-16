@@ -21,13 +21,24 @@ class AppleMusicController {
     
     init() {
         getCountryCode()
+        setApiKey()
+    }
+    
+    func getCountryCode() {
+        countryCode = "us"
         
-        getApiKey() { (apiKey) in
-            if apiKey == nil {
-                // handle
-            } else {
-                self.apiKey = apiKey
+        DispatchQueue.global(qos: .background).async {
+            SKCloudServiceController().requestStorefrontCountryCode { countryCode, error in
+                if countryCode != nil && error == nil {
+                    self.countryCode = countryCode
+                }
             }
+        }
+    }
+    
+    func setApiKey() {
+        getApiKey { (apiKey) in
+            self.apiKey = apiKey
         }
     }
     
@@ -57,18 +68,6 @@ class AppleMusicController {
             }
         })
         task.resume()
-    }
-    
-    func getCountryCode() {
-        DispatchQueue.global(qos: .background).async {
-            SKCloudServiceController().requestStorefrontCountryCode { countryCode, error in
-                if countryCode == nil || error != nil {
-                    self.countryCode = "us"
-                } else {
-                    self.countryCode = countryCode
-                }
-            }
-        }
     }
     
     // MARK: Functions
@@ -149,8 +148,21 @@ class AppleMusicController {
                     }
                 }
             } catch {
-                // handle (api key invalid)
-                return completion(nil)
+                if data.count > 0 {
+                    return completion(nil)
+                } else {
+                    self.getApiKey { (apiKey) in
+                        if apiKey == nil {
+                            return completion(nil)
+                        } else {
+                            self.apiKey = apiKey
+                            
+                            self.getCoverFromAPI(albumName: albumName, artistName: artistName) { (url) in
+                                return completion(url)
+                            }
+                        }
+                    }
+                }
             }
         })
         task.resume()

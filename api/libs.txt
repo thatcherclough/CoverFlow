@@ -1,0 +1,8 @@
+List of required libraries:
+
+flask
+jsonify
+pyjwt
+cryptography
+six
+requests

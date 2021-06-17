@@ -30,11 +30,23 @@ public class MusicProviderViewController: UIViewController {
     @IBOutlet var headerConstraint: NSLayoutConstraint!
     
     @IBAction func appleMusicButtonAction(_ sender: Any) {
-        if appleMusicController == nil {
-            appleMusicController = AppleMusicController(apiKey: keys.appleMusicAPIKey1)
+        checkAPI { (online) in
+            if !online {
+                DispatchQueue.main.async {
+                    if self.presentedViewController == nil {
+                        let alert = UIAlertController(title: "Error", message: "The CoverFlow API is not online. Try again later.", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                }
+            } else {
+                if self.appleMusicController == nil {
+                    self.appleMusicController = AppleMusicController()
+                }
+                
+                self.requestLibraryAccess()
+            }
         }
-        
-        requestLibraryAccess()
     }
     
     func requestLibraryAccess() {
@@ -58,11 +70,25 @@ public class MusicProviderViewController: UIViewController {
     }
     
     @IBAction func spotifyButtonAction(_ sender: Any) {
-        if spotifyController == nil {
-            spotifyController = SpotifyController(clientID: keys.spotifyClientID, clientSecret: keys.spotifyClientSecret, redirectURI: URL(string: "coverflow://spotify-login-callback")!)
+        self.checkAPI { (online) in
+            if !online {
+                DispatchQueue.main.async {
+                    if self.presentedViewController == nil {
+                        let alert = UIAlertController(title: "Error", message: "The CoverFlow API is not online. Try again later.", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                }
+            } else {
+                DispatchQueue.main.async {
+                    if self.spotifyController == nil {
+                        self.spotifyController = SpotifyController(clientID: self.keys.spotifyClientID, redirectURI: URL(string: self.keys.spotifyRedirectUri)!)
+                    }
+                    
+                    self.spotifyController.connect()
+                }
+            }
         }
-        
-        spotifyController.connect()
     }
     
     // MARK: View Related
@@ -104,6 +130,39 @@ public class MusicProviderViewController: UIViewController {
             if error == nil {
                 self.delegate?.didGetNotificationsSettings(canPushNotifications: granted)
             }
+            
+            self.checkAPI { (online) in
+                if !online {
+                    DispatchQueue.main.async {
+                        if self.presentedViewController == nil {
+                            let alert = UIAlertController(title: "Error", message: "The CoverFlow API is not online. Try again later.", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
+                            self.present(alert, animated: true, completion: nil)
+                        }
+                    }
+                }
+            }
         }
+    }
+    
+    func checkAPI(completion: @escaping (Bool) -> Void) {
+        guard let url = URL(string: "\(keys.apiBaseUrl)/api") else { return }
+        
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 1.0
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard error == nil else {
+                return completion(false)
+            }
+            if let responseCode = response as? HTTPURLResponse {
+                if responseCode.statusCode == 200 {
+                    return completion(true)
+                } else {
+                    return completion(false)
+                }
+            }
+        }
+        task.resume()
     }
 }

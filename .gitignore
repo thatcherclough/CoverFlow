@@ -2,3 +2,7 @@
 /Pods
 *xcworkspace/xcuserdata/*
 /videos/
+/api/real_api.py
+/api/real_data.json
+/api/.vscode
+.vscode

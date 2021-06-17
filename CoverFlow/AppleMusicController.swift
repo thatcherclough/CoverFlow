@@ -8,30 +8,66 @@
 import Foundation
 import StoreKit
 import MediaPlayer
+import Keys
 
 class AppleMusicController {
     
     // MARK: Variables and constructor
     
+    let keys = CoverFlowKeys()
     var apiKey: String!
     var countryCode: String!
     let player = MPMusicPlayerController.systemMusicPlayer
     
-    init(apiKey: String) {
-        self.apiKey = apiKey
+    init() {
         getCountryCode()
+        setApiKey()
     }
     
     func getCountryCode() {
+        countryCode = "us"
+        
         DispatchQueue.global(qos: .background).async {
             SKCloudServiceController().requestStorefrontCountryCode { countryCode, error in
-                if countryCode == nil || error != nil {
-                    self.countryCode = "us"
-                } else {
+                if countryCode != nil && error == nil {
                     self.countryCode = countryCode
                 }
             }
         }
+    }
+    
+    func setApiKey() {
+        getApiKey { (apiKey) in
+            self.apiKey = apiKey
+        }
+    }
+    
+    func getApiKey(completion: @escaping (String?) -> ()) {
+        let url = URL(string: "\(keys.apiBaseUrl)/api/apple_music/key")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        let task = URLSession.shared.dataTask(with: request as URLRequest, completionHandler: { data, response, error in
+            guard error == nil else {
+                return completion(nil)
+            }
+            guard let data = data else {
+                return completion(nil)
+            }
+            
+            do {
+                if let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String: Any] {
+                    if let key = json["key"] as? String {
+                        return completion(key)
+                    } else {
+                        return completion(nil)
+                    }
+                }
+            } catch {
+                return completion(nil)
+            }
+        })
+        task.resume()
     }
     
     // MARK: Functions
@@ -112,7 +148,21 @@ class AppleMusicController {
                     }
                 }
             } catch {
-                return completion(nil)
+                if data.count > 0 {
+                    return completion(nil)
+                } else {
+                    self.getApiKey { (apiKey) in
+                        if apiKey == nil {
+                            return completion(nil)
+                        } else {
+                            self.apiKey = apiKey
+                            
+                            self.getCoverFromAPI(albumName: albumName, artistName: artistName) { (url) in
+                                return completion(url)
+                            }
+                        }
+                    }
+                }
             }
         })
         task.resume()

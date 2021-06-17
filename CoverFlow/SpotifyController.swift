@@ -6,30 +6,31 @@
 //
 
 import Foundation
+import Keys
 
 class SpotifyController: UIResponder, SPTSessionManagerDelegate {
     
     // MARK: Variables and constructor
     
+    let keys = CoverFlowKeys()
     var accessToken: String!
     var refreshToken: String!
     var codeVerifier: String!
     var sessionManager: SPTSessionManager!
     
     private var clientID: String!
-    private var clientSecret: String!
     private var redirectURI: URL!
     
-    init(clientID: String, clientSecret: String, redirectURI: URL) {
+    init(clientID: String, redirectURI: URL) {
         super.init()
         
         self.clientID = clientID
-        self.clientSecret = clientSecret
         self.redirectURI = redirectURI
         
         if let refreshToken = UserDefaults.standard.string(forKey: "refreshToken") {
             refreshAccessToken(refreshToken: refreshToken)
         } else {
+            resetAccessAndRefreshTokens()
             initSessionManager()
         }
     }
@@ -81,17 +82,17 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
     }
     
     func getAccessAndRefreshTokens(accessCode: String) {
-        if clientID != nil && clientSecret != nil && redirectURI != nil && codeVerifier != nil {
-            getAccessAndRefreshTokens(clientID: clientID, clientSecret: clientSecret, redirectURI: redirectURI, accessCode: accessCode, codeVerifier: codeVerifier) { (data, error) in
-                if error != nil || data == nil {
+        if codeVerifier != nil {
+            getAccessAndRefreshTokens(accessCode: accessCode, codeVerifier: codeVerifier) { data in
+                if data == nil {
                     self.resetAccessAndRefreshTokens()
                     return
                 } else {
                     if let accessToken = data!["access_token"] as? String,
                        let refreshToken = data!["refresh_token"] as? String {
+                        self.setUserDefault(key: "refreshToken", value: refreshToken)
                         self.accessToken = accessToken
                         self.refreshToken = refreshToken
-                        UserDefaults.standard.set(refreshToken, forKey: "refreshToken")
                         return
                     } else {
                         self.resetAccessAndRefreshTokens()
@@ -105,37 +106,36 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
         }
     }
     
-    private func getAccessAndRefreshTokens(clientID: String, clientSecret: String, redirectURI: URL, accessCode: String, codeVerifier: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
-        let url = URL(string: "https://accounts.spotify.com/api/token")!
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        let spotifyAuthKey = "Basic \((clientID + ":" + clientSecret).data(using: .utf8)!.base64EncodedString())"
-        request.allHTTPHeaderFields = ["Authorization": spotifyAuthKey, "Content-Type": "application/x-www-form-urlencoded"]
-        var requestBodyComponents = URLComponents()
-        
-        requestBodyComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: clientID),
-            URLQueryItem(name: "grant_type", value: "authorization_code"),
-            URLQueryItem(name: "code", value: accessCode),
-            URLQueryItem(name: "redirect_uri", value: redirectURI.absoluteString),
-            URLQueryItem(name: "code_verifier", value: codeVerifier),
-            URLQueryItem(name: "scope", value: "user-read-currently-playing")
+    private func getAccessAndRefreshTokens(accessCode: String, codeVerifier: String, completion: @escaping ([String:Any]?) -> Void) {
+        var urlComponents = URLComponents(string: "\(keys.apiBaseUrl)/api/spotify/swap")!
+        urlComponents.queryItems = [
+            URLQueryItem(name: "access_code", value: accessCode),
+            URLQueryItem(name: "code_verifier", value: codeVerifier)
         ]
-        request.httpBody = requestBodyComponents.query?.data(using: .utf8)
+        
+        var request = URLRequest(url: urlComponents.url!)
+        request.httpMethod = "POST"
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard error == nil else {
-                return completion(nil, error)
+                return completion(nil)
             }
             guard let data = data else {
-                return completion(nil, nil)
+                return completion(nil)
             }
             
             do {
-                let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-                return completion(json, nil)
+                if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                    if json["error"] != nil {
+                        return completion(nil)
+                    } else {
+                        return completion(json)
+                    }
+                } else {
+                    return completion(nil)
+                }
             } catch {
-                return completion(nil, nil)
+                return completion(nil)
             }
         }
         task.resume()
@@ -143,61 +143,71 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
     
     func refreshAccessToken(refreshToken: String) {
         self.refreshToken = refreshToken
-        if clientID != nil && clientSecret != nil && redirectURI != nil {
-            refreshAccessToken(clientID: clientID, clientSecret: clientSecret, redirectURI: redirectURI, refreshToken: refreshToken) { (data, error) in
-                if error != nil || data == nil {
-                    self.resetAccessAndRefreshTokens()
+        
+        refreshAccessToken(refreshToken: refreshToken) { data in
+            if data == nil {
+                self.resetAccessAndRefreshTokens()
+                return
+            } else {
+                if let accessToken = data!["access_token"] as? String,
+                   let refreshToken = data!["refresh_token"] as? String {
+                    self.setUserDefault(key: "refreshToken", value: refreshToken)
+                    self.accessToken = accessToken
+                    self.refreshToken = refreshToken
                     return
                 } else {
-                    if let accessToken = data!["access_token"] as? String,
-                       let refreshToken = data!["refresh_token"] as? String {
-                        self.accessToken = accessToken
-                        self.refreshToken = refreshToken
-                        UserDefaults.standard.set(refreshToken, forKey: "refreshToken")
-                        return
-                    } else {
-                        self.resetAccessAndRefreshTokens()
-                        return
-                    }
+                    self.resetAccessAndRefreshTokens()
+                    return
                 }
             }
-        } else {
-            resetAccessAndRefreshTokens()
-            return
         }
     }
     
-    private func refreshAccessToken (clientID: String, clientSecret: String, redirectURI: URL, refreshToken: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
-        let url = URL(string: "https://accounts.spotify.com/api/token")!
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        let spotifyAuthKey = "Basic \((clientID + ":" + clientSecret).data(using: .utf8)!.base64EncodedString())"
-        request.allHTTPHeaderFields = ["Authorization": spotifyAuthKey, "Content-Type": "application/x-www-form-urlencoded"]
-        var requestBodyComponents = URLComponents()
-        
-        requestBodyComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: clientID),
-            URLQueryItem(name: "grant_type", value: "refresh_token"),
+    private func refreshAccessToken(refreshToken: String, completion: @escaping ([String: Any]?) -> Void) {
+        var urlComponents = URLComponents(string: "\(keys.apiBaseUrl)/api/spotify/refresh")!
+        urlComponents.queryItems = [
             URLQueryItem(name: "refresh_token", value: refreshToken)
         ]
-        request.httpBody = requestBodyComponents.query?.data(using: .utf8)
+        
+        var request = URLRequest(url: urlComponents.url!)
+        request.httpMethod = "POST"
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard error == nil else {
-                return completion(nil, error)
+                return completion(nil)
             }
             guard let data = data else {
-                return completion(nil, nil)
+                return completion(nil)
             }
             
             do {
-                let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-                return completion(json, nil)
+                if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                    if json["error"] != nil {
+                        return completion(nil)
+                    } else {
+                        return completion(json)
+                    }
+                } else {
+                    return completion(nil)
+                }
             } catch {
-                return completion(nil, nil)
+                return completion(nil)
             }
         }
         task.resume()
+    }
+    
+    func setUserDefault(key: String, value: String) {
+        setUserDefault(key: key, value: value) {
+            if UserDefaults.standard.string(forKey: key) != value {
+                self.setUserDefault(key: key, value: value)
+            }
+        }
+    }
+    
+    func setUserDefault(key: String, value: String?, completion: ()->()) {
+        UserDefaults.standard.setValue(value, forKey: key)
+        return completion()
     }
     
     public func getCurrentAlbum(completion: @escaping ([String: Any])->()) {

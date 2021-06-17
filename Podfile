@@ -4,9 +4,9 @@ platform :ios, '13.0'
 plugin 'cocoapods-keys', {
     :project => "CoverFlow",
     :keys => [
-        "AppleMusicAPIKey1",
+        "ApiBaseUrl",
         "SpotifyClientID",
-        "SpotifyClientSecret"
+        "SpotifyRedirectUri"
     ]
 }
 

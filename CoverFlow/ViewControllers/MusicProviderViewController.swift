@@ -20,8 +20,6 @@ public class MusicProviderViewController: UIViewController {
     
     // MARK: Variables, IBOutlets, and IBActions
     
-    let apiBaseURL = "http://192.168.86.31:5000"
-    
     var delegate: MusicProviderViewControllerDelegate?
     
     let keys = CoverFlowKeys()
@@ -32,7 +30,7 @@ public class MusicProviderViewController: UIViewController {
     @IBOutlet var headerConstraint: NSLayoutConstraint!
     
     @IBAction func appleMusicButtonAction(_ sender: Any) {
-        self.checkAPI { (online) in
+        checkAPI { (online) in
             if !online {
                 DispatchQueue.main.async {
                     if self.presentedViewController == nil {
@@ -82,11 +80,13 @@ public class MusicProviderViewController: UIViewController {
                     }
                 }
             } else {
-                if self.spotifyController == nil {
-                    self.spotifyController = SpotifyController(clientID: self.keys.spotifyClientID, clientSecret: self.keys.spotifyClientSecret, redirectURI: URL(string: "coverflow://spotify-login-callback")!)
+                DispatchQueue.main.async {
+                    if self.spotifyController == nil {
+                        self.spotifyController = SpotifyController(clientID: self.keys.spotifyClientID, redirectURI: URL(string: self.keys.spotifyRedirectUri)!)
+                    }
+                    
+                    self.spotifyController.connect()
                 }
-                
-                self.spotifyController.connect()
             }
         }
     }
@@ -146,7 +146,7 @@ public class MusicProviderViewController: UIViewController {
     }
     
     func checkAPI(completion: @escaping (Bool) -> Void) {
-        guard let url = URL(string: "\(apiBaseURL)/api") else { return }
+        guard let url = URL(string: "\(keys.apiBaseUrl)/api") else { return }
         
         var request = URLRequest(url: url)
         request.timeoutInterval = 1.0

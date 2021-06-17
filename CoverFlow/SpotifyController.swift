@@ -6,17 +6,13 @@
 //
 
 import Foundation
+import Keys
 
 class SpotifyController: UIResponder, SPTSessionManagerDelegate {
     
     // MARK: Variables and constructor
     
-    // TODO:
-    // Storring the api location
-    // Hosting api
-    
-    let apiBaseURL = "http://192.168.86.31:5000"
-    
+    let keys = CoverFlowKeys()
     var accessToken: String!
     var refreshToken: String!
     var codeVerifier: String!
@@ -25,7 +21,7 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
     private var clientID: String!
     private var redirectURI: URL!
     
-    init(clientID: String, clientSecret: String, redirectURI: URL) {
+    init(clientID: String, redirectURI: URL) {
         super.init()
         
         self.clientID = clientID
@@ -111,7 +107,7 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
     }
     
     private func getAccessAndRefreshTokens(accessCode: String, codeVerifier: String, completion: @escaping ([String:Any]?) -> Void) {
-        var urlComponents = URLComponents(string: "\(apiBaseURL)/api/spotify/swap")!
+        var urlComponents = URLComponents(string: "\(keys.apiBaseUrl)/api/spotify/swap")!
         urlComponents.queryItems = [
             URLQueryItem(name: "access_code", value: accessCode),
             URLQueryItem(name: "code_verifier", value: codeVerifier)
@@ -167,21 +163,8 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
         }
     }
     
-    func setUserDefault(key: String, value: String) {
-        setUserDefault(key: key, value: value) {
-            if UserDefaults.standard.string(forKey: key) != value {
-                self.setUserDefault(key: key, value: value)
-            }
-        }
-    }
-
-    func setUserDefault(key: String, value: String?, completion: ()->()) {
-        UserDefaults.standard.setValue(value, forKey: key)
-        return completion()
-    }
-    
     private func refreshAccessToken(refreshToken: String, completion: @escaping ([String: Any]?) -> Void) {
-        var urlComponents = URLComponents(string: "\(apiBaseURL)/api/spotify/refresh")!
+        var urlComponents = URLComponents(string: "\(keys.apiBaseUrl)/api/spotify/refresh")!
         urlComponents.queryItems = [
             URLQueryItem(name: "refresh_token", value: refreshToken)
         ]
@@ -212,6 +195,19 @@ class SpotifyController: UIResponder, SPTSessionManagerDelegate {
             }
         }
         task.resume()
+    }
+    
+    func setUserDefault(key: String, value: String) {
+        setUserDefault(key: key, value: value) {
+            if UserDefaults.standard.string(forKey: key) != value {
+                self.setUserDefault(key: key, value: value)
+            }
+        }
+    }
+    
+    func setUserDefault(key: String, value: String?, completion: ()->()) {
+        UserDefaults.standard.setValue(value, forKey: key)
+        return completion()
     }
     
     public func getCurrentAlbum(completion: @escaping ([String: Any])->()) {

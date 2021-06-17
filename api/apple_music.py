@@ -4,7 +4,7 @@ from flask import json
 
 alg = "ES256"
 time_now = datetime.datetime.now()
-time_expired = datetime.datetime.now() + datetime.timedelta(days=180)
+time_expired = datetime.datetime.now() + datetime.timedelta(hours=2)
 
 
 def generateKey(data_file_path):

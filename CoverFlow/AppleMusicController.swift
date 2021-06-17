@@ -8,13 +8,13 @@
 import Foundation
 import StoreKit
 import MediaPlayer
+import Keys
 
 class AppleMusicController {
     
     // MARK: Variables and constructor
     
-    let apiBaseURL = "http://192.168.86.31:5000"
-    
+    let keys = CoverFlowKeys()
     var apiKey: String!
     var countryCode: String!
     let player = MPMusicPlayerController.systemMusicPlayer
@@ -43,7 +43,7 @@ class AppleMusicController {
     }
     
     func getApiKey(completion: @escaping (String?) -> ()) {
-        let url = URL(string: "\(apiBaseURL)/api/apple_music/key")!
+        let url = URL(string: "\(keys.apiBaseUrl)/api/apple_music/key")!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         
